@@ -29,3 +29,11 @@ export function GetPublicRepositories() {
 export function GetRepositoriesForAuthenticatedUser(arg1) {
   return window['go']['main']['App']['GetRepositoriesForAuthenticatedUser'](arg1);
 }
+
+export function GetSelection(arg1) {
+  return window['go']['main']['App']['GetSelection'](arg1);
+}
+
+export function Greet(arg1) {
+  return window['go']['main']['App']['Greet'](arg1);
+}

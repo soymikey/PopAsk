@@ -1,10 +1,18 @@
 import NavBar from "./components/NavBar";
 import { FloatButton, Layout } from "antd";
 import { Outlet } from "react-router-dom";
+import { useEffect } from "react";
+import { EventsOn } from "../wailsjs/runtime/runtime";
 
 const { Content } = Layout;
 
 const App = () => {
+  useEffect(() => {
+    EventsOn("GET_SELECTION", (event) => {
+      console.log("event", event);
+    });
+  }, []);
+
   return (
     <Layout
       style={{

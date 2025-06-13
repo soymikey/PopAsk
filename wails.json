@@ -9,5 +9,7 @@
   "author": {
     "name": "Joseph Udonsak",
     "email": "joseph.udonsak@live.co.uk"
-  }
+  },
+  "allowSystemDialogs": true,
+  "allowSystemAccess": true
 }

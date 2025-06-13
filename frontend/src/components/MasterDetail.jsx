@@ -24,7 +24,7 @@ const MasterDetail = ({ title, items, getItemDescription, detailLayout }) => {
               }}
             >
               <Card bordered={false} style={{ boxShadow: "none" }}>
-                {items.map((item, index) => (
+                {items?.map((item, index) => (
                   <ListItem
                     key={index}
                     item={item}
