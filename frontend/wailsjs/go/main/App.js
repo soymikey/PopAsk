@@ -6,6 +6,10 @@ export function CreateNewGist(arg1, arg2) {
   return window['go']['main']['App']['CreateNewGist'](arg1, arg2);
 }
 
+export function CreateScreenshot(arg1) {
+  return window['go']['main']['App']['CreateScreenshot'](arg1);
+}
+
 export function GetGistContent(arg1, arg2) {
   return window['go']['main']['App']['GetGistContent'](arg1, arg2);
 }

@@ -5,6 +5,8 @@ import {context} from '../models';
 
 export function CreateNewGist(arg1:main.Gist,arg2:string):Promise<any>;
 
+export function CreateScreenshot(arg1:context.Context):Promise<string>;
+
 export function GetGistContent(arg1:string,arg2:string):Promise<string>;
 
 export function GetGistsForAuthenticatedUser(arg1:string):Promise<main.APIResponse>;

@@ -2,8 +2,10 @@ package main
 
 import (
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"os"
 	"os/exec"
 	"time"
 
@@ -12,6 +14,7 @@ import (
 )
 
 const SHIFT_KEY_CODE = 0x38
+const COMMAND_KEY_CODE = 0x37
 
 // App struct
 type App struct {
@@ -48,6 +51,20 @@ func (a *App) domReady(ctx context.Context) {
 		}
 	})
 
+	hook.Register(hook.KeyDown, []string{"command"}, func(e hook.Event) {
+		if e.Rawcode == COMMAND_KEY_CODE {
+			println("Command key pressed")
+			time.Sleep(100 * time.Millisecond)
+			base64Str, err := a.CreateScreenshot(ctx)
+			if err != nil {
+				fmt.Printf("Error: %v\n", err)
+				return
+			}
+			runtime.EventsEmit(ctx, "CREATE_SCREENSHOT", base64Str)
+			println("Screenshot created:")
+		}
+	})
+
 	s := hook.Start()
 	<-hook.Process(s)
 }
@@ -69,6 +86,35 @@ func (a *App) GetSelection(ctx context.Context) (string, error) {
 	}
 
 	return text, nil
+}
+
+func (a *App) CreateScreenshot(ctx context.Context) (string, error) {
+	// 生成带时间戳的文件名
+	timestamp := time.Now().Format("20060102_150405")
+	filename := fmt.Sprintf("screenshot_%s.png", timestamp)
+
+	cmd := exec.Command("screencapture", "-i", filename)
+
+	if err := cmd.Run(); err != nil {
+		return "", fmt.Errorf("failed to execute screenshot command: %v", err)
+	}
+
+	// 读取图片文件并转换为base64
+	imgData, err := os.ReadFile(filename)
+	if err != nil {
+		return "", fmt.Errorf("failed to read screenshot file: %v", err)
+	}
+
+	// 转换为base64
+	base64Str := base64.StdEncoding.EncodeToString(imgData)
+
+	// 添加标准base64前缀
+	base64WithPrefix := "data:image/png;base64," + base64Str
+
+	// 清理临时文件
+	os.Remove(filename)
+
+	return base64WithPrefix, nil
 }
 
 // beforeClose is called when the application is about to quit,
