@@ -7,14 +7,15 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strings"
 	"time"
 
 	hook "github.com/robotn/gohook"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-const SHIFT_KEY_CODE = 0x38
-const COMMAND_KEY_CODE = 0x37
+const COMMAND_KEY_CODE = 3675
+const SPACE_KEY_CODE = 57
 
 // App struct
 type App struct {
@@ -34,34 +35,51 @@ func (a *App) startup(ctx context.Context) {
 
 // domReady is called after front-end resources have been loaded
 func (a *App) domReady(ctx context.Context) {
-	// 注册 Shift 键按下事件
-	hook.Register(hook.KeyDown, []string{"shift"}, func(e hook.Event) {
-		// 检查是否只有 Shift 键被按下
-		if e.Rawcode == SHIFT_KEY_CODE {
-			// 添加短暂延迟确保文本已选中
-			time.Sleep(100 * time.Millisecond)
+	var lastSpaceTime time.Time
+	var lastCmdTime time.Time
 
-			text, err := a.GetSelection(ctx)
-			if err != nil {
-				fmt.Printf("Error: %v\n", err)
-				return
+	hook.Register(hook.KeyDown, []string{}, func(e hook.Event) {
+		// 注册双击空格键
+		if e.Keycode == SPACE_KEY_CODE {
+
+			spaceNow := time.Now()
+			if !lastSpaceTime.IsZero() && spaceNow.Sub(lastSpaceTime) < 300*time.Millisecond {
+				println("Double space detected!")
+
+				// 开始截图
+				base64Str, err := a.CreateScreenshot(ctx)
+				if err != nil {
+					fmt.Printf("Error: %v\n", err)
+					return
+				}
+				runtime.EventsEmit(ctx, "CREATE_SCREENSHOT", base64Str)
+				println("Screenshot created:")
+
 			}
-			runtime.EventsEmit(ctx, "GET_SELECTION", text)
-			println("Selected text:", text)
+			lastSpaceTime = spaceNow
 		}
-	})
+		// 注册双击cmd
+		if e.Keycode == COMMAND_KEY_CODE {
+			cmdNow := time.Now()
+			if !lastCmdTime.IsZero() && cmdNow.Sub(lastCmdTime) < 300*time.Millisecond {
+				println("Double command detected!")
 
-	hook.Register(hook.KeyDown, []string{"command"}, func(e hook.Event) {
-		if e.Rawcode == COMMAND_KEY_CODE {
-			println("Command key pressed")
-			time.Sleep(100 * time.Millisecond)
-			base64Str, err := a.CreateScreenshot(ctx)
-			if err != nil {
-				fmt.Printf("Error: %v\n", err)
-				return
+				text, err := a.GetSelection(ctx)
+				if err != nil {
+					fmt.Printf("Error: %v\n", err)
+					return
+				}
+				//发送文本
+				if len(text) == 0 {
+					return
+				}
+
+				//dsfadfasdfelo worl testl
+				runtime.EventsEmit(ctx, "GET_SELECTION", text)
+				println("Selected text:", text)
+
 			}
-			runtime.EventsEmit(ctx, "CREATE_SCREENSHOT", base64Str)
-			println("Screenshot created:")
+			lastCmdTime = cmdNow
 		}
 	})
 
@@ -70,6 +88,15 @@ func (a *App) domReady(ctx context.Context) {
 }
 
 func (a *App) GetSelection(ctx context.Context) (string, error) {
+	// 保存当前剪贴板内容
+	originalText, err := runtime.ClipboardGetText(ctx)
+	if err != nil {
+		return "", fmt.Errorf("failed to get original clipboard text: %v", err)
+	}
+	if err := runtime.ClipboardSetText(ctx, ""); err != nil {
+		return "", fmt.Errorf("failed to restore original clipboard text: %v", err)
+	}
+
 	// 模拟 Cmd+C
 	cmd := exec.Command("osascript", "-e", "tell application \"System Events\" to keystroke \"c\" using command down")
 	if err := cmd.Run(); err != nil {
@@ -77,15 +104,21 @@ func (a *App) GetSelection(ctx context.Context) (string, error) {
 	}
 
 	// 添加短暂延迟确保复制完成
-	time.Sleep(100 * time.Millisecond)
+	// time.Sleep(100 * time.Millisecond)
 
 	// 获取剪贴板内容
 	text, err := runtime.ClipboardGetText(ctx)
+	println("text1:", text)
 	if err != nil {
 		return "", fmt.Errorf("failed to get clipboard text: %v", err)
 	}
 
-	return text, nil
+	// 恢复原始剪贴板内容
+	if err := runtime.ClipboardSetText(ctx, originalText); err != nil {
+		return "", fmt.Errorf("failed to restore original clipboard text: %v", err)
+	}
+
+	return strings.TrimSpace(text), nil
 }
 
 func (a *App) CreateScreenshot(ctx context.Context) (string, error) {
