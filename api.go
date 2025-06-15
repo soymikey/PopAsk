@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func makeRequest(requestType, url, token string, payload []byte ) ([]byte, error){
+func makeRequest(requestType, url, token string, payload []byte) ([]byte, error) {
 	client := &http.Client{}
 
 	var request *http.Request
@@ -15,11 +15,11 @@ func makeRequest(requestType, url, token string, payload []byte ) ([]byte, error
 	if payload != nil {
 		requestBody := bytes.NewReader(payload)
 		request, _ = http.NewRequest(requestType, url, requestBody)
-	}else {
+	} else {
 		request, _ = http.NewRequest(requestType, url, nil)
 	}
 
-	request.Header.Set("Accept", "application/vnd.github+json")
+	request.Header.Add("Content-Type", "application/json")
 
 	if token != "" {
 		request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
@@ -39,6 +39,6 @@ func MakeGetRequest(url string, token string) ([]byte, error) {
 	return makeRequest("GET", url, token, nil)
 }
 
-func MakePostRequest(url, token string, payload []byte) ([]byte, error){
+func MakePostRequest(url, token string, payload []byte) ([]byte, error) {
 	return makeRequest("POST", url, token, payload)
 }

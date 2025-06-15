@@ -37,8 +37,8 @@ func (a *App) startup(ctx context.Context) {
 func (a *App) domReady(ctx context.Context) {
 	var lastSpaceTime time.Time
 	var lastCmdTime time.Time
-
-	hook.Register(hook.KeyDown, []string{}, func(e hook.Event) {
+	println("domReady-------")
+	hook.Register(hook.KeyUp, []string{}, func(e hook.Event) {
 		// 注册双击空格键
 		if e.Keycode == SPACE_KEY_CODE {
 
@@ -83,8 +83,10 @@ func (a *App) domReady(ctx context.Context) {
 		}
 	})
 
-	s := hook.Start()
-	<-hook.Process(s)
+	go func() {
+		s := hook.Start()
+		<-hook.Process(s)
+	}()
 }
 
 func (a *App) GetSelection(ctx context.Context) (string, error) {
@@ -176,6 +178,7 @@ type Gist struct {
 }
 
 const BASE_URL = "https://api.github.com"
+const SERVER_URL = "http://localhost:3000"
 
 var githubResponse APIResponse
 
@@ -274,4 +277,30 @@ func (a *App) CreateNewGist(gist Gist, token string) (interface{}, error) {
 	json.Unmarshal(response, &githubResponse)
 
 	return githubResponse, nil
+}
+
+type ChatRequest struct {
+	Message string `json:"message"`
+}
+
+type ChatResponse struct {
+	Code    int         `json:"code"`
+	Data    interface{} `json:"data"`
+	Message string      `json:"message"`
+}
+
+func (a *App) ChatAPI(message string) (ChatResponse, error) {
+	var chatResponse ChatResponse
+
+	requestBody, _ := json.Marshal(ChatRequest{Message: message})
+	url := fmt.Sprintf("%s/ai/chat", SERVER_URL)
+	response, err := MakePostRequest(url, "", requestBody)
+
+	if err != nil {
+		return ChatResponse{}, err
+	}
+
+	json.Unmarshal(response, &chatResponse)
+
+	return chatResponse, nil
 }
