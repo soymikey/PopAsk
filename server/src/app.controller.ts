@@ -9,4 +9,14 @@ export class AppController {
   getHello(): string {
     return this.appService.getHello();
   }
+
+  @Get('success')
+  success() {
+    return this.appService.success();
+  }
+
+  @Get('error')
+  error() {
+    return this.appService.error();
+  }
 }
