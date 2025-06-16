@@ -3,7 +3,6 @@ export namespace main {
 	export class ChatResponse {
 	    code: number;
 	    data: any;
-	    message: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new ChatResponse(source);
@@ -13,7 +12,6 @@ export namespace main {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.code = source["code"];
 	        this.data = source["data"];
-	        this.message = source["message"];
 	    }
 	}
 	export class Gist {

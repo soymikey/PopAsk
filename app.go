@@ -35,52 +35,79 @@ func (a *App) startup(ctx context.Context) {
 
 // domReady is called after front-end resources have been loaded
 func (a *App) domReady(ctx context.Context) {
-	var lastSpaceTime time.Time
-	var lastCmdTime time.Time
-	println("domReady-------")
-	hook.Register(hook.KeyUp, []string{}, func(e hook.Event) {
-		// 注册双击空格键
-		if e.Keycode == SPACE_KEY_CODE {
+	// var lastSpaceTime time.Time
+	// var lastCmdTime time.Time
+	// hook.Register(hook.KeyUp, []string{}, func(e hook.Event) {
+	// 	// 注册双击空格键
+	// 	if e.Keycode == SPACE_KEY_CODE {
 
-			spaceNow := time.Now()
-			if !lastSpaceTime.IsZero() && spaceNow.Sub(lastSpaceTime) < 300*time.Millisecond {
-				println("Double space detected!")
+	// 		spaceNow := time.Now()
+	// 		if !lastSpaceTime.IsZero() && spaceNow.Sub(lastSpaceTime) < 300*time.Millisecond {
+	// 			println("Double space detected!")
 
-				// 开始截图
-				base64Str, err := a.CreateScreenshot(ctx)
-				if err != nil {
-					fmt.Printf("Error: %v\n", err)
-					return
-				}
-				runtime.EventsEmit(ctx, "CREATE_SCREENSHOT", base64Str)
-				println("Screenshot created:")
+	// 			// 开始截图
+	// 			base64Str, err := a.CreateScreenshot(ctx)
+	// 			if err != nil {
+	// 				fmt.Printf("Error: %v\n", err)
+	// 				return
+	// 			}
+	// 			runtime.EventsEmit(ctx, "CREATE_SCREENSHOT", base64Str)
+	// 			println("Screenshot created:")
 
-			}
-			lastSpaceTime = spaceNow
+	// 		}
+	// 		lastSpaceTime = spaceNow
+	// 	}
+	// 	// 注册双击cmd
+	// 	if e.Keycode == COMMAND_KEY_CODE {
+	// 		cmdNow := time.Now()
+	// 		if !lastCmdTime.IsZero() && cmdNow.Sub(lastCmdTime) < 300*time.Millisecond {
+	// 			println("Double command detected!")
+
+	// 			text, err := a.GetSelection(ctx)
+	// 			if err != nil {
+	// 				fmt.Printf("Error: %v\n", err)
+	// 				return
+	// 			}
+	// 			//发送文本
+	// 			if len(text) == 0 {
+	// 				return
+	// 			}
+
+	// 			//dsfadfasdfelo worl testl
+	// 			runtime.EventsEmit(ctx, "GET_SELECTION", text)
+	// 			println("Selected text:", text)
+
+	// 		}
+	// 		lastCmdTime = cmdNow
+	// 	}
+	// })
+	// Ctrl/Cmd + Shift + O
+	hook.Register(hook.KeyDown, []string{"ctrl", "shift", "o"}, func(e hook.Event) {
+		// 开始截图
+		base64Str, err := a.CreateScreenshot(ctx)
+		if err != nil {
+			fmt.Printf("Error: %v\n", err)
+			return
 		}
-		// 注册双击cmd
-		if e.Keycode == COMMAND_KEY_CODE {
-			cmdNow := time.Now()
-			if !lastCmdTime.IsZero() && cmdNow.Sub(lastCmdTime) < 300*time.Millisecond {
-				println("Double command detected!")
+		runtime.EventsEmit(ctx, "CREATE_SCREENSHOT", base64Str)
+		println("Screenshot created:")
 
-				text, err := a.GetSelection(ctx)
-				if err != nil {
-					fmt.Printf("Error: %v\n", err)
-					return
-				}
-				//发送文本
-				if len(text) == 0 {
-					return
-				}
-
-				//dsfadfasdfelo worl testl
-				runtime.EventsEmit(ctx, "GET_SELECTION", text)
-				println("Selected text:", text)
-
-			}
-			lastCmdTime = cmdNow
+	})
+	// Ctrl/Cmd + Shift + S
+	hook.Register(hook.KeyUp, []string{"ctrl", "shift", "s"}, func(e hook.Event) {
+		text, err := a.GetSelection(ctx)
+		if err != nil {
+			fmt.Printf("Error: %v\n", err)
+			return
 		}
+		//发送文本
+		if len(text) == 0 {
+			return
+		}
+
+		//dsfadfasdfelo worl testl
+		runtime.EventsEmit(ctx, "GET_SELECTION", text)
+		println("Selected text:", text)
 	})
 
 	go func() {
@@ -178,7 +205,7 @@ type Gist struct {
 }
 
 const BASE_URL = "https://api.github.com"
-const SERVER_URL = "http://localhost:3000"
+const SERVER_URL = "https://extension.migaox.com"
 
 var githubResponse APIResponse
 
@@ -284,16 +311,15 @@ type ChatRequest struct {
 }
 
 type ChatResponse struct {
-	Code    int         `json:"code"`
-	Data    interface{} `json:"data"`
-	Message string      `json:"message"`
+	Code int         `json:"code"`
+	Data interface{} `json:"data"`
 }
 
 func (a *App) ChatAPI(message string) (ChatResponse, error) {
 	var chatResponse ChatResponse
 
 	requestBody, _ := json.Marshal(ChatRequest{Message: message})
-	url := fmt.Sprintf("%s/ai/chat", SERVER_URL)
+	url := fmt.Sprintf("%s/ai-translator/openai", SERVER_URL)
 	response, err := MakePostRequest(url, "", requestBody)
 
 	if err != nil {

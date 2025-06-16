@@ -1,24 +1,36 @@
 import NavBar from "./components/NavBar";
-import { Button, FloatButton, Layout, message, Select } from "antd";
+import {
+  Button,
+  FloatButton,
+  Layout,
+  message,
+  Select,
+  Input,
+  Flex,
+} from "antd";
 import { Outlet } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { EventsOn } from "../wailsjs/runtime/runtime";
+import { EventsOn, EventsOff } from "../wailsjs/runtime/runtime";
 import Tesseract from "tesseract.js";
 import { ChatAPI } from "../wailsjs/go/main/App";
+const { TextArea } = Input;
 
 const { Content } = Layout;
+
+const defaultORCLang = ["chi_sim"];
+const defaultPrompt = "翻译成中文";
 
 const App = () => {
   const [messageApi, contextHolder] = message.useMessage();
 
   const [screenshot, setScreenshot] = useState(null);
   const [selection, setSelection] = useState(null);
-  const [selectedLang, setSelectedLang] = useState("chi_sim");
+  const [ORCLang, setORCLang] = useState(defaultORCLang);
   const [chatResponse, setChatResponse] = useState(null);
-  const [selectedPrompt, setSelectedPrompt] = useState("翻译成中文");
+  const [selectedPrompt, setSelectedPrompt] = useState(defaultPrompt);
   const [isLoading, setIsLoading] = useState(false);
 
-  const languageOptions = [
+  const ORCLangOptions = [
     { value: "chi_sim", label: "简体中文" },
     { value: "eng", label: "英文" },
   ];
@@ -29,28 +41,25 @@ const App = () => {
   ];
 
   const handleChat = async (message) => {
-    console.log("handleChat message:", message);
     setChatResponse(null);
     setIsLoading(true);
+    console.log("message", message);
     const response = await ChatAPI(message);
     setIsLoading(false);
+    console.log("response", response);
     if (response.code === 200) {
       setChatResponse(response.data);
     } else {
       messageApi.open({
         type: "error",
-        content: response.message,
+        content: response.data,
       });
     }
   };
 
   const onChangeLangHandler = (value) => {
-    // 如果是多个,则拼接
-    if (value.length > 1) {
-      setSelectedLang(value.join("+"));
-    } else {
-      setSelectedLang(value[0]);
-    }
+    console.log("value", value);
+    setORCLang(value);
   };
 
   const onChangePromptHandler = (value) => {
@@ -64,18 +73,28 @@ const App = () => {
     `;
   };
   const onSelectionHandler = async (text) => {
+    if (text.length === 0) {
+      return;
+    }
     setSelection(text);
     handleChat(messageGenerator(selectedPrompt, text));
   };
 
   const onScreenshotHandler = async (event) => {
-    const result = await Tesseract.recognize(event, selectedLang);
+    console.log("ORCLang", ORCLang);
+    const lang = ORCLang.length > 1 ? ORCLang.join("+") : ORCLang[0];
+    const result = await Tesseract.recognize(event, lang);
     // 去除中文,日文,韩文之间的空格
     const formatResult = result.data.text.replace(
       /(?<=[\u4e00-\u9fa5\u3040-\u309F\u30A0-\u30FF\uAC00-\uD7AF])\s+(?=[\u4e00-\u9fa5\u3040-\u309F\u30A0-\u30FF\uAC00-\uD7AF])/g,
       ""
     );
     onSelectionHandler(formatResult);
+  };
+
+  const onChangeSelectionHandler = (event) => {
+    console.log("event", event.target.value);
+    setSelection(event.target.value);
   };
 
   useEffect(() => {
@@ -87,7 +106,11 @@ const App = () => {
       console.log("CREATE_SCREENSHOT event:", event);
       onScreenshotHandler(event);
     });
-  }, []);
+    return () => {
+      EventsOff("GET_SELECTION");
+      EventsOff("CREATE_SCREENSHOT");
+    };
+  }, [ORCLang, selectedPrompt]);
 
   return (
     <>
@@ -98,24 +121,41 @@ const App = () => {
         }}
       >
         {isLoading && <div>Loading...</div>}
-        {selection && <h1>selection:{selection}</h1>}
+        {/* {selection && <h1>selection:{selection}</h1>} */}
         {chatResponse && <h2>chatResponse:{chatResponse}</h2>}
-        <Select
-          mode="multiple"
-          style={{ width: 200, marginBottom: 16 }}
-          options={languageOptions}
-          value={selectedLang}
-          onChange={onChangeLangHandler}
-          placeholder="选择识别语言"
+        <div>
+          ORC 识别语言:
+          <Select
+            mode="multiple"
+            style={{ width: 200, marginBottom: 16 }}
+            options={ORCLangOptions}
+            value={ORCLang}
+            onChange={onChangeLangHandler}
+            placeholder="选择识别语言"
+          />
+        </div>
+        <div>
+          提示词:
+          <Select
+            style={{ width: 200, marginBottom: 16 }}
+            options={promptOptions}
+            value={selectedPrompt}
+            onChange={onChangePromptHandler}
+            placeholder="选择提示词"
+          />
+        </div>
+
+        <TextArea
+          autoSize
+          placeholder="maxLength is 6"
+          value={selection}
+          onChange={onChangeSelectionHandler}
         />
-        <Select
-          style={{ width: 200, marginBottom: 16 }}
-          options={promptOptions}
-          value={selectedPrompt}
-          onChange={onChangePromptHandler}
-          placeholder="选择提示词"
-        />
-        <NavBar />
+        <Flex style={{ marginTop: 16 }} justify="flex-end" align="center">
+          <Button type="primary">Ask</Button>
+        </Flex>
+
+        {/* <NavBar />
         <Layout className="site-layout">
           <Content
             style={{
@@ -132,7 +172,7 @@ const App = () => {
               <FloatButton.BackTop />
             </div>
           </Content>
-        </Layout>
+        </Layout> */}
       </Layout>
     </>
   );
