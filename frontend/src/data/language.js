@@ -1,4 +1,4 @@
-export const language = [
+export const OCR_LANGUAGE = [
     { langcode: "afr", lang: "Afrikaans" },
     { langcode: "amh", lang: "Amharic" },
     { langcode: "ara", lang: "Arabic" },
@@ -101,4 +101,54 @@ export const language = [
     { langcode: "uzb_cyrl", lang: "Uzbek - Cyrillic" },
     { langcode: "vie", lang: "Vietnamese" },
     { langcode: "yid", lang: "Yiddish" },
+]
+
+export const OCR_LANGUAGE_OPTIONS = OCR_LANGUAGE.map((item) => ({
+    value: item.langcode,
+    label: item.lang,
+}));
+
+// Code Generation
+// "Write a function that [specific task]"
+// "Debug this code: [code snippet]"
+// "Optimize this code for performance: [code snippet]"
+// Code Explanation
+// "Explain how this code works: [code snippet]"
+// "What's wrong with this code? [code snippet]"
+// "Convert this code from [language] to [language]: [code snippet]"\
+
+export const PROMPT_OPTIONS = [
+    {
+        value: 'Code Generation', label: 'Code Generation', disabled: true, children: [
+            { value: "Write a function that:\n", label: "Write a function that" },
+            { value: "Debug this code:\n", label: "Debug this code" },
+            { value: "Optimize this code for performance:\n", label: "Optimize this code for performance" },
+        ]
+    },
+    {
+        valueue: 'Code Explanation', label: 'Code Explanation', disabled: true,
+        children: [
+            { value: "Explain how this code works:\n", label: "Explain how this code works" },
+            { value: "What's wrong with this code?\n", label: "What's wrong with this code" },
+        ]
+    },
+
+]
+
+export const TAG_COLORS = [
+    "processing",
+    "success",
+    "error",
+    "warning",
+    "magenta",
+    "red",
+    "volcano",
+    "orange",
+    "gold",
+    "lime",
+    "green",
+    "cyan",
+    "blue",
+    "geekblue",
+    "purple",
 ]

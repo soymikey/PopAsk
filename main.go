@@ -24,13 +24,15 @@ func main() {
 
 	// Create application with options
 	err := wails.Run(&options.App{
-		Title:             "AI-Assistant",
-		Width:             1024,
-		Height:            768,
-		MinWidth:          1024,
-		MinHeight:         768,
-		MaxWidth:          1280,
-		MaxHeight:         800,
+		Title: "AI-Assistant",
+		// Width:             1024,
+		// Height:            768,
+		// MinWidth:          1024,
+		// MinHeight:         768,
+		// MaxWidth:          1280,
+		// MaxHeight:         800,
+		Height:            500,
+		Width:             400,
 		DisableResize:     false,
 		Fullscreen:        false,
 		Frameless:         false,
@@ -48,6 +50,7 @@ func main() {
 		OnBeforeClose:    app.beforeClose,
 		OnShutdown:       app.shutdown,
 		WindowStartState: options.Normal,
+		AlwaysOnTop:      true,
 		Bind: []interface{}{
 			app,
 		},

@@ -84,6 +84,7 @@ func (a *App) domReady(ctx context.Context) {
 	// })
 	// Ctrl/Cmd + Shift + O
 	hook.Register(hook.KeyDown, []string{"ctrl", "shift", "o"}, func(e hook.Event) {
+		println("Ctrl/Cmd + Shift + O")
 		// 开始截图
 		base64Str, err := a.CreateScreenshot(ctx)
 		if err != nil {
@@ -95,18 +96,18 @@ func (a *App) domReady(ctx context.Context) {
 
 	})
 	// Ctrl/Cmd + Shift + S
-	hook.Register(hook.KeyUp, []string{"ctrl", "shift", "s"}, func(e hook.Event) {
+	hook.Register(hook.KeyDown, []string{"ctrl", "shift", "s"}, func(e hook.Event) {
+		println("Ctrl/Cmd + Shift + S")
 		text, err := a.GetSelection(ctx)
 		if err != nil {
 			fmt.Printf("Error: %v\n", err)
 			return
 		}
-		//发送文本
-		if len(text) == 0 {
-			return
-		}
+		// //发送文本
+		// if len(text) == 0 {
+		// 	return
+		// }
 
-		//dsfadfasdfelo worl testl
 		runtime.EventsEmit(ctx, "GET_SELECTION", text)
 		println("Selected text:", text)
 	})
@@ -159,7 +160,7 @@ func (a *App) GetSelection(ctx context.Context) (string, error) {
 	}
 
 	// 添加短暂延迟确保复制完成
-	// time.Sleep(100 * time.Millisecond)
+	time.Sleep(100 * time.Millisecond)
 
 	// 获取剪贴板内容
 	text, err := runtime.ClipboardGetText(ctx)
