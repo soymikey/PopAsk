@@ -1,13 +1,5 @@
 import NavBar from "./components/NavBar";
-import {
-  Button,
-  FloatButton,
-  Layout,
-  message,
-  Select,
-  Input,
-  Flex,
-} from "antd";
+import { Button, FloatButton, Layout, message, Select, Input } from "antd";
 import { Outlet } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { EventsOn, EventsOff } from "../wailsjs/runtime/runtime";
@@ -151,9 +143,7 @@ const App = () => {
           value={selection}
           onChange={onChangeSelectionHandler}
         />
-        <Flex style={{ marginTop: 16 }} justify="flex-end" align="center">
-          <Button type="primary">Ask</Button>
-        </Flex>
+        <Button type="primary">Ask</Button>
 
         {/* <NavBar />
         <Layout className="site-layout">

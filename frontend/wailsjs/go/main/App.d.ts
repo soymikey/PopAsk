@@ -15,6 +15,8 @@ export function GetGistsForAuthenticatedUser(arg1:string):Promise<main.APIRespon
 
 export function GetMoreInformationFromURL(arg1:string,arg2:string):Promise<main.APIResponse>;
 
+export function GetMousePosition():Promise<any>;
+
 export function GetPublicGists():Promise<main.APIResponse>;
 
 export function GetPublicRepositories():Promise<main.APIResponse>;
@@ -24,3 +26,5 @@ export function GetRepositoriesForAuthenticatedUser(arg1:string):Promise<main.AP
 export function GetSelection(arg1:context.Context):Promise<string>;
 
 export function Greet(arg1:string):Promise<string>;
+
+export function ShowPopWindow():Promise<void>;

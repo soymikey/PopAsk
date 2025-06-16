@@ -26,6 +26,10 @@ export function GetMoreInformationFromURL(arg1, arg2) {
   return window['go']['main']['App']['GetMoreInformationFromURL'](arg1, arg2);
 }
 
+export function GetMousePosition() {
+  return window['go']['main']['App']['GetMousePosition']();
+}
+
 export function GetPublicGists() {
   return window['go']['main']['App']['GetPublicGists']();
 }
@@ -44,4 +48,8 @@ export function GetSelection(arg1) {
 
 export function Greet(arg1) {
   return window['go']['main']['App']['Greet'](arg1);
+}
+
+export function ShowPopWindow() {
+  return window['go']['main']['App']['ShowPopWindow']();
 }
