@@ -9,9 +9,10 @@ import {
   Spin,
   TreeSelect,
   Tag,
+  Tooltip,
 } from "antd";
 import { Outlet } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   EventsOn,
   EventsOff,
@@ -32,7 +33,7 @@ const { TextArea } = Input;
 const { Content } = Layout;
 
 const defaultORCLang = ["eng"];
-const defaultPrompt = "Write a function that:\n";
+const defaultPrompt = "帮我翻译成中文:\n";
 const RECENT_PROMPTS_KEY = "recentPrompts";
 const App = () => {
   const [messageApi, contextHolder] = message.useMessage();
@@ -44,6 +45,7 @@ const App = () => {
   const [selectedPrompt, setSelectedPrompt] = useState(defaultPrompt);
   const [isLoading, setIsLoading] = useState(false);
   const [recentPrompts, setRecentPrompts] = useState([]);
+  const askRef = useRef(null);
 
   const handleChat = async (message) => {
     setChatResponse(null);
@@ -67,7 +69,13 @@ const App = () => {
   };
 
   const onChangeLangHandler = (value) => {
-    console.log("value", value);
+    if (value.length > 5) {
+      messageApi.open({
+        type: "error",
+        content: "can't select more than 5 languages",
+      });
+      return;
+    }
     setORCLang(value);
   };
 
@@ -88,11 +96,11 @@ const App = () => {
       return;
     }
     setSelection(text);
-    handleChat(messageGenerator(selectedPrompt, text));
+    setChatResponse(null);
+    // handleChat(messageGenerator(selectedPrompt, text));
   };
 
   const onScreenshotHandler = async (event) => {
-    console.log("ORCLang", ORCLang);
     const lang = ORCLang.length > 1 ? ORCLang.join("+") : ORCLang[0];
     const result = await Tesseract.recognize(event, lang);
     // 去除中文,日文,韩文之间的空格
@@ -129,7 +137,7 @@ const App = () => {
 
   useEffect(() => {
     window.addEventListener("blur", () => {
-      WindowHide();
+      // WindowHide();
     });
   }, []);
 
@@ -144,11 +152,21 @@ const App = () => {
     localStorage.setItem(RECENT_PROMPTS_KEY, JSON.stringify(recentPrompts));
   }, [recentPrompts]);
 
+  useEffect(() => {
+    // cmd+enter 的是 触发点击按钮
+    window.addEventListener("keydown", (e) => {
+      if (e.metaKey && e.key === "Enter") {
+        askRef.current.click();
+      }
+    });
+  }, [askRef]);
+
   return (
     <>
       {contextHolder}
       <Layout
         style={{
+          padding: 8,
           minHeight: "100vh",
         }}
       >
@@ -156,18 +174,7 @@ const App = () => {
           {chatResponse && <h2>chatResponse:{chatResponse}</h2>} */}
         <div className="setting-container">
           <div style={{ display: "flex", alignItems: "center" }}>
-            <span>ORC 识别语言:</span>
-            <Select
-              mode="multiple"
-              style={{ width: 200 }}
-              options={OCR_LANGUAGE_OPTIONS}
-              value={ORCLang}
-              onChange={onChangeLangHandler}
-              placeholder="选择识别语言"
-            />
-          </div>
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <span>提示词:</span>
+            <span>Prompts:</span>
             {/* <Select
             style={{ width: 200,  }}
             options={promptOptions}
@@ -189,39 +196,59 @@ const App = () => {
               onPopupScroll={() => {}}
             />
           </div>
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <Tooltip title="Cmd+Shift+O" placement="right">
+              <span>ORC:</span>
+            </Tooltip>
+
+            <Select
+              mode="multiple"
+              style={{ width: 300 }}
+              options={OCR_LANGUAGE_OPTIONS}
+              value={ORCLang}
+              onChange={onChangeLangHandler}
+              placeholder="选择识别语言"
+            />
+          </div>
         </div>
-        <div className="content-container" style={{ marginTop: 32 }}>
+        <div className="content-container" style={{ marginTop: 16 }}>
           <div
             style={{
               marginBottom: 16,
               display: "flex",
-              gap: 8,
+              gap: 4,
               flexWrap: "wrap",
             }}
             className="recent-prompts"
           >
             {recentPrompts.map((prompt, index) => (
-              <Tag
-                key={prompt}
-                closable
-                onClose={(e) => {
-                  e.stopPropagation();
-                  setRecentPrompts(recentPrompts.filter((_, i) => i !== index));
-                }}
-                color={TAG_COLORS[index % TAG_COLORS.length]}
-                onChange={(e) => {
+              <div
+                onClick={(e) => {
                   e.stopPropagation();
                   setSelectedPrompt(prompt);
                 }}
               >
-                {prompt}
-              </Tag>
+                <Tag
+                  key={prompt}
+                  closable
+                  onClose={(e) => {
+                    e.stopPropagation();
+                    setRecentPrompts(
+                      recentPrompts.filter((_, i) => i !== index)
+                    );
+                  }}
+                  color={TAG_COLORS[index % TAG_COLORS.length]}
+                >
+                  {prompt}
+                </Tag>
+              </div>
             ))}
           </div>
           <TextArea
-            autoSize
-            minRows={3}
-            maxRows={10}
+            // autoSize
+            // minRows={3}
+            // maxRows={10}
+            autoSize={{ minRows: 3, maxRows: 10 }}
             placeholder="Quickly input your question"
             value={`${selectedPrompt}${selection}`}
             onChange={onChangeSelectionHandler}
@@ -235,6 +262,8 @@ const App = () => {
             }}
           >
             <Button
+              title="cmd+enter"
+              ref={askRef}
               type="primary"
               loading={isLoading}
               onClick={() => {
@@ -245,14 +274,14 @@ const App = () => {
             </Button>
           </div>
 
-          <TextArea
-            autoSize
-            minRows={3}
-            maxRows={10}
-            value={chatResponse || ""}
-            onChange={() => {}}
-            style={{ marginTop: 16 }}
-          />
+          {chatResponse && (
+            <TextArea
+              autoSize={{ minRows: 1, maxRows: 20 }}
+              value={chatResponse || ""}
+              onChange={() => {}}
+              style={{ marginTop: 16 }}
+            />
+          )}
         </div>
 
         {/* <NavBar />

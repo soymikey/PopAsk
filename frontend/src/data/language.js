@@ -119,6 +119,14 @@ export const OCR_LANGUAGE_OPTIONS = OCR_LANGUAGE.map((item) => ({
 
 export const PROMPT_OPTIONS = [
     {
+        value: '翻译', label: '翻译', disabled: true,
+        children: [
+            { value: "帮我翻译成中文:\n", label: "帮我翻译成中文" },
+            { value: "帮我翻译成英文:\n", label: "帮我翻译成英文" },
+            { value: "这个是什么意思?:\n", label: "这个是什么意思" },
+        ]
+    },
+    {
         value: 'Code Generation', label: 'Code Generation', disabled: true, children: [
             { value: "Write a function that:\n", label: "Write a function that" },
             { value: "Debug this code:\n", label: "Debug this code" },
@@ -132,6 +140,7 @@ export const PROMPT_OPTIONS = [
             { value: "What's wrong with this code?\n", label: "What's wrong with this code" },
         ]
     },
+
 
 ]
 
