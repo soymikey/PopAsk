@@ -1,0 +1,7 @@
+.recent-prompt-item:hover {
+  cursor: pointer;
+  opacity: 0.5;
+}
+.ant-tag {
+  margin-right: 0;
+}

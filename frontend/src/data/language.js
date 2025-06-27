@@ -118,30 +118,18 @@ export const OCR_LANGUAGE_OPTIONS = OCR_LANGUAGE.map((item) => ({
 // "Convert this code from [language] to [language]: [code snippet]"\
 
 export const PROMPT_OPTIONS = [
-    {
-        value: '翻译', label: '翻译', disabled: true,
-        children: [
-            { value: "帮我翻译成中文:\n", label: "帮我翻译成中文" },
-            { value: "帮我翻译成英文:\n", label: "帮我翻译成英文" },
-            { value: "这个是什么意思?:\n", label: "这个是什么意思" },
-        ]
-    },
-    {
-        value: 'Code Generation', label: 'Code Generation', disabled: true, children: [
-            { value: "Write a function that:\n", label: "Write a function that" },
-            { value: "Debug this code:\n", label: "Debug this code" },
-            { value: "Optimize this code for performance:\n", label: "Optimize this code for performance" },
-        ]
-    },
-    {
-        valueue: 'Code Explanation', label: 'Code Explanation', disabled: true,
-        children: [
-            { value: "Explain how this code works:\n", label: "Explain how this code works" },
-            { value: "What's wrong with this code?\n", label: "What's wrong with this code" },
-        ]
-    },
-
-
+    "帮我翻译成中文:\n",
+    "帮我翻译成英文:\n",
+    "这个是什么意思?:\n",
+    "帮我总结一下:\n",
+    "帮我解释一下:\n",
+    "帮我优化一下:\n",
+    "帮我检查一下:\n",
+    "帮我改写一下:\n",
+    "帮我分析一下:\n",
+    "帮我对比一下:\n",
+    "帮我推荐一下:\n",
+    "帮我生成一下:\n",
 ]
 
 export const TAG_COLORS = [

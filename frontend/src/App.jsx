@@ -1,17 +1,22 @@
 import NavBar from "./components/NavBar";
 import {
   Button,
-  FloatButton,
   Layout,
   message,
   Select,
   Input,
   Spin,
-  TreeSelect,
   Tag,
   Tooltip,
+  Divider,
+  Space,
 } from "antd";
-import { Outlet } from "react-router-dom";
+import {
+  PlusOutlined,
+  DeleteOutlined,
+  InfoCircleOutlined,
+} from "@ant-design/icons";
+
 import { useEffect, useState, useRef } from "react";
 import {
   EventsOn,
@@ -28,9 +33,9 @@ import {
   PROMPT_OPTIONS,
   TAG_COLORS,
 } from "./data/language";
+import { messageGenerator, breadLine, languageFormate } from "./utils";
+import "./app.css";
 const { TextArea } = Input;
-
-const { Content } = Layout;
 
 const defaultORCLang = ["eng"];
 const defaultPrompt = "帮我翻译成中文:\n";
@@ -44,15 +49,34 @@ const App = () => {
   const [chatResponse, setChatResponse] = useState(null);
   const [selectedPrompt, setSelectedPrompt] = useState(defaultPrompt);
   const [isLoading, setIsLoading] = useState(false);
+  const [isAskLoading, setIsAskLoading] = useState(false);
+
   const [recentPrompts, setRecentPrompts] = useState([]);
   const askRef = useRef(null);
 
+  const [items, setItems] = useState(PROMPT_OPTIONS);
+  const [newPrompt, setNewPrompt] = useState("");
+  const inputRef = useRef(null);
+
+  const onNewPromptChange = (event) => {
+    setNewPrompt(event.target.value);
+  };
+
+  const addPrompt = (e) => {
+    e.preventDefault();
+    setItems([...items, `${breadLine(newPrompt)}`]);
+    setNewPrompt("");
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 0);
+  };
+
   const handleChat = async (message) => {
     setChatResponse(null);
-    setIsLoading(true);
+    setIsAskLoading(true);
     console.log("message", message);
     const response = await ChatAPI(message);
-    setIsLoading(false);
+    setIsAskLoading(false);
     console.log("response", response);
     if (response.code === 200) {
       setChatResponse(response.data);
@@ -79,19 +103,16 @@ const App = () => {
     setORCLang(value);
   };
 
-  const onChangePromptHandler = (value) => {
-    setSelectedPrompt(value);
-  };
-
-  const messageGenerator = (prompt, text) => {
-    return `
-    ${prompt}
-    ${text}
-    `;
-  };
-  const onSelectionHandler = async (text) => {
+  const onSelectionHandler = async (selection, isOCR = false) => {
+    let text = selection;
     WindowShow();
-
+    setIsLoading(true);
+    if (isOCR) {
+      const lang = ORCLang.length > 1 ? ORCLang.join("+") : ORCLang[0];
+      const result = await Tesseract.recognize(selection, lang);
+      text = languageFormate(result?.data?.text || "");
+    }
+    setIsLoading(false);
     if (text.length === 0) {
       return;
     }
@@ -100,24 +121,18 @@ const App = () => {
     // handleChat(messageGenerator(selectedPrompt, text));
   };
 
-  const onScreenshotHandler = async (event) => {
-    const lang = ORCLang.length > 1 ? ORCLang.join("+") : ORCLang[0];
-    const result = await Tesseract.recognize(event, lang);
-    // 去除中文,日文,韩文之间的空格
-    const formatResult = result.data.text.replace(
-      /(?<=[\u4e00-\u9fa5\u3040-\u309F\u30A0-\u30FF\uAC00-\uD7AF])\s+(?=[\u4e00-\u9fa5\u3040-\u309F\u30A0-\u30FF\uAC00-\uD7AF])/g,
-      ""
-    );
-    onSelectionHandler(formatResult);
-  };
-
   const onChangeSelectionHandler = (event) => {
-    if (event.target.value.length > selectedPrompt.length) {
-      const value = event.target.value.replace(`${selectedPrompt}`, "");
-      setSelection(value);
-    } else {
-      setSelection("");
+    if (event.target.value.length < selectedPrompt.length - 1) {
+      setSelectedPrompt("");
     }
+
+    setSelection(event.target.value);
+    // if (event.target.value.length > selectedPrompt.length) {
+    //   const value = event.target.value.replace(`${selectedPrompt}`, "");
+    //   setSelection(value);
+    // } else {
+    //   setSelection("");
+    // }
   };
 
   useEffect(() => {
@@ -127,7 +142,7 @@ const App = () => {
     });
     EventsOn("CREATE_SCREENSHOT", async (event) => {
       console.log("CREATE_SCREENSHOT event:", event);
-      onScreenshotHandler(event);
+      onSelectionHandler(event, true);
     });
     return () => {
       EventsOff("GET_SELECTION");
@@ -143,8 +158,11 @@ const App = () => {
 
   useEffect(() => {
     const recentPrompts = localStorage.getItem(RECENT_PROMPTS_KEY);
-    if (recentPrompts) {
-      setRecentPrompts(JSON.parse(recentPrompts));
+    const parsedRecentPrompts = recentPrompts ? JSON.parse(recentPrompts) : [];
+    if (parsedRecentPrompts.length > 0) {
+      setRecentPrompts(parsedRecentPrompts);
+    } else {
+      setRecentPrompts(PROMPT_OPTIONS);
     }
   }, []);
 
@@ -161,130 +179,218 @@ const App = () => {
     });
   }, [askRef]);
 
+  const onSelectPromptHandler = (value) => {
+    setSelectedPrompt(value);
+    for (const prompt of PROMPT_OPTIONS) {
+      if (selection.startsWith(prompt)) {
+        const newSelection = selection.slice(prompt.length);
+        setSelection(`${value}${newSelection}`);
+        return;
+      }
+    }
+    setSelection(`${value}${selection}`);
+  };
+
+  const dropdownRenderElement = (menu) => {
+    const customMenuItem = (
+      <>
+        <Divider style={{ margin: "8px 0" }} />
+        <Space style={{ padding: "0 8px 4px" }}>
+          <Input
+            placeholder="Please enter prompt"
+            ref={inputRef}
+            value={newPrompt}
+            onChange={onNewPromptChange}
+            onKeyDown={(e) => e.stopPropagation()}
+          />
+          <Button
+            size="small"
+            type="text"
+            icon={<PlusOutlined />}
+            onClick={addPrompt}
+          >
+            Add Prompt
+          </Button>
+        </Space>
+      </>
+    );
+    return (
+      <>
+        {menu} {customMenuItem}
+      </>
+    );
+  };
+
+  const renderPromptOptions = (items) => {
+    const options = items.map((item, index) => ({
+      label: (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <span>{`${item}`}</span>
+          <Button
+            type="text"
+            icon={<DeleteOutlined />}
+            onClick={() => {
+              setItems(items.filter((i) => i !== item));
+            }}
+          />
+        </div>
+      ),
+      value: item,
+      name: item,
+    }));
+    return options;
+  };
+
   return (
     <>
       {contextHolder}
-      <Layout
-        style={{
-          padding: 8,
-          minHeight: "100vh",
-        }}
-      >
-        {/* {selection && <h1>selection:{selection}</h1>}
-          {chatResponse && <h2>chatResponse:{chatResponse}</h2>} */}
-        <div className="setting-container">
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <span>Prompts:</span>
-            {/* <Select
-            style={{ width: 200,  }}
-            options={promptOptions}
-            value={selectedPrompt}
-            onChange={onChangePromptHandler}
-            placeholder="选择提示词"
-          /> */}
-            <TreeSelect
-              showSearch
-              value={selectedPrompt}
-              style={{ width: 300 }}
-              styles={{
-                popup: { root: { maxHeight: 400, overflow: "auto" } },
-              }}
-              placeholder="Please select"
-              treeDefaultExpandAll
-              onChange={onChangePromptHandler}
-              treeData={PROMPT_OPTIONS}
-              onPopupScroll={() => {}}
-            />
-          </div>
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <Tooltip title="Cmd+Shift+O" placement="right">
-              <span>ORC:</span>
-            </Tooltip>
+      <Spin spinning={isLoading}>
+        <Layout
+          style={{
+            padding: 8,
+            minHeight: "100vh",
+          }}
+        >
+          {/* {selection && <h1>selection:{selection}</h1>} */}
+          {/* {chatResponse && <h2>chatResponse:{chatResponse}</h2>} */}
+          <div
+            className="setting-container"
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 8,
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <span>Prompts:</span>
 
-            <Select
-              mode="multiple"
-              style={{ width: 300 }}
-              options={OCR_LANGUAGE_OPTIONS}
-              value={ORCLang}
-              onChange={onChangeLangHandler}
-              placeholder="选择识别语言"
-            />
-          </div>
-        </div>
-        <div className="content-container" style={{ marginTop: 16 }}>
-          <div
-            style={{
-              marginBottom: 16,
-              display: "flex",
-              gap: 4,
-              flexWrap: "wrap",
-            }}
-            className="recent-prompts"
-          >
-            {recentPrompts.map((prompt, index) => (
-              <div
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSelectedPrompt(prompt);
-                }}
+              <Select
+                style={{ width: 300 }}
+                placeholder="Select Prompt"
+                dropdownRender={dropdownRenderElement}
+                onSelect={onSelectPromptHandler}
+                options={renderPromptOptions(items)}
+                value={selectedPrompt}
+              />
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span>ORC:</span>
+
+              <Select
+                mode="multiple"
+                style={{ width: 300 }}
+                options={OCR_LANGUAGE_OPTIONS}
+                value={ORCLang}
+                onChange={onChangeLangHandler}
+                placeholder="选择识别语言"
+              />
+              {/* 添加一个InfoIcon */}
+              <Tooltip
+                title={
+                  <div>
+                    <div>Cmd+Shift+O</div>
+                    <div>Select a language to OCR</div>
+                  </div>
+                }
+                placement="top"
               >
-                <Tag
-                  key={prompt}
-                  closable
-                  onClose={(e) => {
-                    e.stopPropagation();
-                    setRecentPrompts(
-                      recentPrompts.filter((_, i) => i !== index)
-                    );
-                  }}
-                  color={TAG_COLORS[index % TAG_COLORS.length]}
-                >
-                  {prompt}
-                </Tag>
-              </div>
-            ))}
+                <InfoCircleOutlined />
+              </Tooltip>
+            </div>
           </div>
-          <TextArea
-            // autoSize
-            // minRows={3}
-            // maxRows={10}
-            autoSize={{ minRows: 3, maxRows: 10 }}
-            placeholder="Quickly input your question"
-            value={`${selectedPrompt}${selection}`}
-            onChange={onChangeSelectionHandler}
-            allowClear
-          />
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              marginTop: 16,
-            }}
-          >
-            <Button
-              title="cmd+enter"
-              ref={askRef}
-              type="primary"
-              loading={isLoading}
-              onClick={() => {
-                handleChat(messageGenerator(selectedPrompt, selection));
+          <div className="content-container" style={{ marginTop: 16 }}>
+            <div
+              style={{
+                marginBottom: 16,
+                display: "flex",
+                gap: 4,
+                flexWrap: "wrap",
+              }}
+              className="recent-prompts"
+            >
+              {recentPrompts?.map((prompt, index) => (
+                <div
+                  key={prompt}
+                  onClick={(e) => {
+                    onSelectPromptHandler(prompt);
+                  }}
+                  className="recent-prompt-item"
+                  title={prompt}
+                >
+                  <Tag
+                    key={prompt}
+                    closable
+                    onClose={(e) => {
+                      e.stopPropagation();
+                      setRecentPrompts(
+                        recentPrompts.filter((_, i) => i !== index)
+                      );
+                    }}
+                    color={TAG_COLORS[index % TAG_COLORS.length]}
+                    style={{
+                      maxWidth: 134,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div
+                      style={{
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {prompt}
+                    </div>
+                  </Tag>
+                </div>
+              ))}
+            </div>
+            <TextArea
+              autoSize={{ minRows: 3, maxRows: 10 }}
+              placeholder="Quickly input your question"
+              value={`${selection}`}
+              onChange={onChangeSelectionHandler}
+              allowClear
+            />
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                marginTop: 16,
               }}
             >
-              {isLoading ? "Thinking..." : "Ask"}
-            </Button>
+              <Button
+                title="cmd+enter"
+                ref={askRef}
+                type="primary"
+                loading={isAskLoading}
+                onClick={() => {
+                  handleChat(messageGenerator(selectedPrompt, selection));
+                }}
+              >
+                {isAskLoading ? "Thinking..." : "Ask"}
+              </Button>
+            </div>
+
+            {chatResponse && (
+              <TextArea
+                autoSize={{ minRows: 1, maxRows: 20 }}
+                value={chatResponse || ""}
+                onChange={() => {}}
+                style={{ marginTop: 16 }}
+              />
+            )}
           </div>
 
-          {chatResponse && (
-            <TextArea
-              autoSize={{ minRows: 1, maxRows: 20 }}
-              value={chatResponse || ""}
-              onChange={() => {}}
-              style={{ marginTop: 16 }}
-            />
-          )}
-        </div>
-
-        {/* <NavBar />
+          {/* <NavBar />
         <Layout className="site-layout">
           <Content
             style={{
@@ -302,7 +408,8 @@ const App = () => {
             </div>
           </Content>
         </Layout> */}
-      </Layout>
+        </Layout>
+      </Spin>
     </>
   );
 };
