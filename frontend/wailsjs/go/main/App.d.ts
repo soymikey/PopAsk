@@ -17,8 +17,6 @@ export function GetMoreInformationFromURL(arg1:string,arg2:string):Promise<main.
 
 export function GetMousePosition():Promise<any>;
 
-export function GetPromptList():Promise<Array<{[key: string]: any}>>;
-
 export function GetPublicGists():Promise<main.APIResponse>;
 
 export function GetPublicRepositories():Promise<main.APIResponse>;

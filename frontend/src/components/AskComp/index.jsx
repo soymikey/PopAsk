@@ -41,15 +41,16 @@ import {
   RECENT_PROMPTS_KEY,
   PROMPT_LIST_KEY,
   SELECTED_PROMPT_KEY,
+  ORC_LANG_KEY,
 } from "../../constant";
 const { TextArea } = Input;
 
-const App = () => {
+const App = ({ setActiveKey }) => {
   const [messageApi, contextHolder] = message.useMessage();
 
   const [screenshot, setScreenshot] = useState(null);
   const [selection, setSelection] = useState("");
-  const [ORCLang, setORCLang] = useState(DEFAULT_ORC_LANG);
+  const [ORCLang, setORCLang] = useLocalStorage(ORC_LANG_KEY, DEFAULT_ORC_LANG);
   const [chatResponse, setChatResponse] = useState(null);
   const [selectedPrompt, setSelectedPrompt] = useLocalStorage(
     SELECTED_PROMPT_KEY,
@@ -113,29 +114,50 @@ const App = () => {
     setORCLang(value);
   };
 
-  const onSelectionHandler = async (selection, isOCR = false) => {
-    const { text: selectionText, shortcut, prompt, autoAsking } = selection;
-    console.log("selection", selection);
-    let text = selectionText;
-    WindowShow();
-    setIsLoading(true);
-    if (isOCR) {
-      const lang = ORCLang.length > 1 ? ORCLang.join("+") : ORCLang[0];
-      const result = await Tesseract.recognize(selection, lang);
-      text = languageFormate(result?.data?.text || "");
-    }
-    setIsLoading(false);
-    if (text.length === 0) {
-      return;
-    }
-    if (prompt) {
-      setSelectedPrompt(prompt);
-    }
+  const onSelectionHandler = async (selection) => {
+    try {
+      const {
+        text: selectionText,
+        shortcut,
+        prompt,
+        autoAsking,
+        isOCR,
+        isOpenWindow,
+      } = selection;
+      console.log("selection", selection);
+      let text = selectionText;
+      WindowShow();
+      setActiveKey("ask");
 
-    setSelection(messageGenerator(prompt, text));
-    setChatResponse(null);
-    if (autoAsking) {
-      handleChat(messageGenerator(prompt, text));
+      setIsLoading(true);
+      if (isOCR) {
+        const lang = ORCLang.length > 1 ? ORCLang.join("+") : ORCLang[0];
+        const result = await Tesseract.recognize(text, lang);
+        text = languageFormate(result?.data?.text || "");
+      }
+      if (text.length === 0) {
+        return;
+      }
+      let prompt_ = prompt;
+      if (isOpenWindow || isOCR) {
+        prompt_ = selectedPrompt;
+      }
+
+      setSelectedPrompt(prompt_);
+
+      setSelection(messageGenerator(prompt_, text));
+      setChatResponse(null);
+      if (autoAsking) {
+        handleChat(messageGenerator(prompt_, text));
+      }
+    } catch (error) {
+      console.log("error", error);
+      messageApi.open({
+        type: "error",
+        content: error?.message || "error",
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -153,13 +175,9 @@ const App = () => {
 
       onSelectionHandler(event);
     });
-    EventsOn("CREATE_SCREENSHOT", async (event) => {
-      console.log("CREATE_SCREENSHOT event:", event);
-      onSelectionHandler(event, true);
-    });
+
     return () => {
       EventsOff("GET_SELECTION");
-      EventsOff("CREATE_SCREENSHOT");
     };
   }, [ORCLang, selectedPrompt]);
 
@@ -256,9 +274,9 @@ const App = () => {
     return options;
   };
 
-  // useEffect(() => {
-  //   setPromptList(PROMPT_OPTIONS);
-  // }, []);
+  useEffect(() => {
+    console.log("AskComp");
+  }, []);
   return (
     <>
       {contextHolder}
@@ -306,12 +324,7 @@ const App = () => {
             />
             {/* 添加一个InfoIcon */}
             <Tooltip
-              title={
-                <div>
-                  <div>Cmd+Shift+O</div>
-                  <div>Select a language to OCR</div>
-                </div>
-              }
+              title={<>Select multiple languages to OCR</>}
               placement="top"
             >
               <InfoCircleOutlined />

@@ -20,10 +20,11 @@ const SPACE_KEY_CODE = 57
 
 // App struct
 type App struct {
-	ctx        context.Context
-	keyRecords []string
-	promptList []map[string]interface{}
-	hookChan   chan hook.Event
+	ctx             context.Context
+	keyRecords      []string
+	promptList      []map[string]interface{}
+	systemShortcuts []map[string]interface{}
+	hookChan        chan hook.Event
 }
 
 // NewApp creates a new App application struct
@@ -36,7 +37,7 @@ func (a *App) startup(ctx context.Context) {
 	// Perform your setup here
 	a.ctx = ctx
 	a.keyRecords = []string{}
-	runtime.EventsOn(ctx, "syncPromptList", func(data ...interface{}) {
+	runtime.EventsOn(ctx, "syncShortcutList", func(data ...interface{}) {
 		if len(data) > 0 {
 			a.SetPromptList(data[0].(string))
 			a.RegisterKeyboardShortcut(ctx)
@@ -82,59 +83,80 @@ func (a *App) RegisterKeyboardShortcut(ctx context.Context) {
 		println("RegisterKeyboardShortcut", prompt["shortcut"].(string))
 		hook.Register(hook.KeyDown, shortcut, func(e hook.Event) {
 			println("Shortcut triggered:", prompt["shortcut"].(string))
-			text, err := a.GetSelection(ctx)
-			if err != nil {
-				fmt.Printf("Error getting selection: %v\n", err)
-				return
+			autoAsking := true
+			text := ""
+			err := error(nil)
+			isOpenWindowShortcut := prompt["value"].(string) == "Open Window"
+			isOrcShortcut := prompt["value"].(string) == "ORC"
+
+			if isOpenWindowShortcut || isOrcShortcut {
+				autoAsking = false
 			}
+
+			if isOrcShortcut {
+				text, err = a.CreateScreenshot(ctx)
+				if err != nil {
+					fmt.Printf("Error: %v\n", err)
+					return
+				}
+			} else {
+				text, err = a.GetSelection(ctx)
+				if err != nil {
+					fmt.Printf("Error getting selection: %v\n", err)
+					return
+				}
+			}
+
 			runtime.EventsEmit(ctx, "GET_SELECTION", map[string]interface{}{
-				"text":       text,
-				"shortcut":   prompt["shortcut"].(string),
-				"prompt":     prompt["value"].(string),
-				"autoAsking": true,
+				"text":         text,
+				"shortcut":     prompt["shortcut"].(string),
+				"prompt":       prompt["value"].(string),
+				"autoAsking":   autoAsking,
+				"isOCR":        isOrcShortcut,
+				"isOpenWindow": isOpenWindowShortcut,
 			})
 			println("Selected text:", text)
 		})
 	}
 
-	// Ctrl/Cmd + Shift + O
-	hook.Register(hook.KeyDown, []string{"ctrl", "shift", "o"}, func(e hook.Event) {
-		println("Ctrl/Cmd + Shift + O")
-		// 开始截图
-		base64Str, err := a.CreateScreenshot(ctx)
-		if err != nil {
-			fmt.Printf("Error: %v\n", err)
-			return
-		}
-		runtime.EventsEmit(ctx, "CREATE_SCREENSHOT", map[string]interface{}{
-			"text":       base64Str,
-			"shortcut":   "ctrl+shift+o",
-			"prompt":     "",
-			"autoAsking": false,
-		})
-		println("Screenshot created:")
+	// // Ctrl/Cmd + Shift + O
+	// hook.Register(hook.KeyDown, []string{"ctrl", "shift", "o"}, func(e hook.Event) {
+	// 	println("Ctrl/Cmd + Shift + O")
+	// 	// 开始截图
+	// 	base64Str, err := a.CreateScreenshot(ctx)
+	// 	if err != nil {
+	// 		fmt.Printf("Error: %v\n", err)
+	// 		return
+	// 	}
+	// 	runtime.EventsEmit(ctx, "CREATE_SCREENSHOT", map[string]interface{}{
+	// 		"text":       base64Str,
+	// 		"shortcut":   "ctrl+shift+o",
+	// 		"prompt":     "",
+	// 		"autoAsking": false,
+	// 	})
+	// 	println("Screenshot created:")
 
-	})
-	// Ctrl/Cmd + Shift + S
-	hook.Register(hook.KeyDown, []string{"ctrl", "shift", "s"}, func(e hook.Event) {
-		println("Ctrl/Cmd + Shift + S")
-		text, err := a.GetSelection(ctx)
-		if err != nil {
-			fmt.Printf("Error: %v\n", err)
-			return
-		}
-		// //发送文本
-		// if len(text) == 0 {
-		// 	return
-		// }
-		println("Selected text:", text)
-		runtime.EventsEmit(ctx, "GET_SELECTION", map[string]interface{}{
-			"text":       text,
-			"shortcut":   "ctrl+shift+s",
-			"prompt":     "",
-			"autoAsking": false,
-		})
-	})
+	// })
+	// // Ctrl/Cmd + Shift + S
+	// hook.Register(hook.KeyDown, []string{"ctrl", "shift", "s"}, func(e hook.Event) {
+	// 	println("Ctrl/Cmd + Shift + S")
+	// 	text, err := a.GetSelection(ctx)
+	// 	if err != nil {
+	// 		fmt.Printf("Error: %v\n", err)
+	// 		return
+	// 	}
+	// 	// //发送文本
+	// 	// if len(text) == 0 {
+	// 	// 	return
+	// 	// }
+	// 	println("Selected text:", text)
+	// 	runtime.EventsEmit(ctx, "GET_SELECTION", map[string]interface{}{
+	// 		"text":       text,
+	// 		"shortcut":   "ctrl+shift+s",
+	// 		"prompt":     "",
+	// 		"autoAsking": false,
+	// 	})
+	// })
 	// hook.Register(hook.KeyDown, []string{"ctrl", "shift", "1"}, func(e hook.Event) {
 	// 	text, err := a.GetSelection(ctx)
 	// 	if err != nil {
@@ -458,9 +480,4 @@ func (a *App) SetPromptList(jsonData string) error {
 	}
 	println("Prompt list updated with", len(promptItems), "items")
 	return nil
-}
-
-// GetPromptList returns the current prompt list
-func (a *App) GetPromptList() []map[string]interface{} {
-	return a.promptList
 }

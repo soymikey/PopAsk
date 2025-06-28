@@ -2,21 +2,30 @@ import { Layout, Tabs } from "antd";
 import AskComp from "./components/AskComp";
 import SettingsComp from "./components/SettingsComp";
 import useLocalStorage from "./hooks/useLocalStorage";
-import { PROMPT_LIST_KEY } from "./constant";
-import { useEffect } from "react";
+import {
+  PROMPT_LIST_KEY,
+  SYSTEM_SHORTCUT_KEY,
+  DEFAULT_SHORTCUT_LIST,
+} from "./constant";
+import { useEffect, useState } from "react";
 import { EventsEmit } from "../wailsjs/runtime/runtime";
 
 const App = () => {
   const [promptList] = useLocalStorage(PROMPT_LIST_KEY, []);
+  const [systemShortcuts] = useLocalStorage(
+    SYSTEM_SHORTCUT_KEY,
+    DEFAULT_SHORTCUT_LIST
+  );
+  const [activeKey, setActiveKey] = useState("ask");
   const onChange = (key) => {
-    console.log(key);
+    setActiveKey(key);
   };
 
   const items = [
     {
       key: "ask",
       label: "Ask",
-      children: <AskComp />,
+      children: <AskComp setActiveKey={setActiveKey} />,
     },
     {
       key: "settings",
@@ -25,8 +34,11 @@ const App = () => {
     },
   ];
   useEffect(() => {
-    EventsEmit("syncPromptList", JSON.stringify(promptList));
-  }, [promptList]);
+    EventsEmit(
+      "syncShortcutList",
+      JSON.stringify([...promptList, ...systemShortcuts])
+    );
+  }, []);
   return (
     <Layout
       style={{
@@ -36,10 +48,10 @@ const App = () => {
       }}
     >
       <Tabs
-        defaultActiveKey="ask"
+        defaultActiveKey={activeKey}
+        activeKey={activeKey}
         items={items}
         onChange={onChange}
-        destroyInactiveTabPane
       />
     </Layout>
   );

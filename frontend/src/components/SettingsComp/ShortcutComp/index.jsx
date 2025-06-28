@@ -1,4 +1,5 @@
 import { Input, Select } from "antd";
+const { Option } = Select;
 import React, { useEffect, useState } from "react";
 
 function ShortcutComp({ localPrompt, setLocalPromptList, localPromptList }) {

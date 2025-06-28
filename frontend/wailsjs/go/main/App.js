@@ -30,10 +30,6 @@ export function GetMousePosition() {
   return window['go']['main']['App']['GetMousePosition']();
 }
 
-export function GetPromptList() {
-  return window['go']['main']['App']['GetPromptList']();
-}
-
 export function GetPublicGists() {
   return window['go']['main']['App']['GetPublicGists']();
 }
