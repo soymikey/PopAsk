@@ -1,13 +1,18 @@
+
 export const messageGenerator = (prompt, text) => {
     return `${prompt}
     ${text}`;
 };
 
-export const breadLine = (text) => {
+export const newPromptGenerator = (text) => {
     if (text.length === 0) {
         return text;
     }
-    return `${text}\n`;
+    return {
+        label: `${text}\n`,
+        value: `${text}\n`,
+        shortcut: "",
+    };
 };
 
 export const languageFormate = (text) => {

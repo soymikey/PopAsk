@@ -5,3 +5,9 @@
 .ant-tag {
   margin-right: 0;
 }
+
+.ant-select-selection-item {
+  button {
+    display: none;
+  }
+}

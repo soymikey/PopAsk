@@ -1,6 +1,6 @@
 import { Layout, Tabs } from "antd";
 import AskComp from "./components/AskComp";
-import ShortcutComp from "./components/ShortcutComp";
+import SettingsComp from "./components/SettingsComp";
 
 const App = () => {
   const onChange = (key) => {
@@ -14,9 +14,9 @@ const App = () => {
       children: <AskComp />,
     },
     {
-      key: "shortcuts",
-      label: "Shortcuts",
-      children: <ShortcutComp />,
+      key: "settings",
+      label: "Settings",
+      children: <SettingsComp />,
     },
   ];
   return (

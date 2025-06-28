@@ -29,28 +29,42 @@ import {
   PROMPT_OPTIONS,
   TAG_COLORS,
 } from "../../data/language";
-import { messageGenerator, breadLine, languageFormate } from "../../utils";
+import {
+  messageGenerator,
+  newPromptGenerator,
+  languageFormate,
+} from "../../utils";
+import useLocalStorage from "../../hooks/useLocalStorage";
 import "./index.css";
+import {
+  DEFAULT_ORC_LANG,
+  RECENT_PROMPTS_KEY,
+  PROMPT_LIST_KEY,
+  SELECTED_PROMPT_KEY,
+} from "../../constant";
 const { TextArea } = Input;
 
-const defaultORCLang = ["eng"];
-const defaultPrompt = "帮我翻译成中文:\n";
-const RECENT_PROMPTS_KEY = "recentPrompts";
 const App = () => {
   const [messageApi, contextHolder] = message.useMessage();
 
   const [screenshot, setScreenshot] = useState(null);
   const [selection, setSelection] = useState("");
-  const [ORCLang, setORCLang] = useState(defaultORCLang);
+  const [ORCLang, setORCLang] = useState(DEFAULT_ORC_LANG);
   const [chatResponse, setChatResponse] = useState(null);
-  const [selectedPrompt, setSelectedPrompt] = useState(defaultPrompt);
+  const [selectedPrompt, setSelectedPrompt] = useLocalStorage(
+    SELECTED_PROMPT_KEY,
+    ""
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [isAskLoading, setIsAskLoading] = useState(false);
 
-  const [recentPrompts, setRecentPrompts] = useState([]);
+  const [recentPrompts, setRecentPrompts] = useLocalStorage(
+    RECENT_PROMPTS_KEY,
+    []
+  );
   const askRef = useRef(null);
 
-  const [items, setItems] = useState(PROMPT_OPTIONS);
+  const [promptList, setPromptList] = useLocalStorage(PROMPT_LIST_KEY, []);
   const [newPrompt, setNewPrompt] = useState("");
   const inputRef = useRef(null);
 
@@ -60,7 +74,7 @@ const App = () => {
 
   const addPrompt = (e) => {
     e.preventDefault();
-    setItems([...items, `${breadLine(newPrompt)}`]);
+    setPromptList([...promptList, `${newPromptGenerator(newPrompt)}`]);
     setNewPrompt("");
     setTimeout(() => {
       inputRef.current?.focus();
@@ -100,7 +114,9 @@ const App = () => {
   };
 
   const onSelectionHandler = async (selection, isOCR = false) => {
-    let text = selection;
+    const { text: selectionText, prompt, autoAsking } = selection;
+    console.log("selection", selection);
+    let text = selectionText;
     WindowShow();
     setIsLoading(true);
     if (isOCR) {
@@ -112,9 +128,15 @@ const App = () => {
     if (text.length === 0) {
       return;
     }
+    if (prompt) {
+      setSelectedPrompt(prompt);
+    }
+
     setSelection(text);
     setChatResponse(null);
-    // handleChat(messageGenerator(selectedPrompt, text));
+    if (autoAsking) {
+      handleChat(messageGenerator(selectedPrompt, text));
+    }
   };
 
   const onChangeSelectionHandler = (event) => {
@@ -123,17 +145,12 @@ const App = () => {
     }
 
     setSelection(event.target.value);
-    // if (event.target.value.length > selectedPrompt.length) {
-    //   const value = event.target.value.replace(`${selectedPrompt}`, "");
-    //   setSelection(value);
-    // } else {
-    //   setSelection("");
-    // }
   };
 
   useEffect(() => {
     EventsOn("GET_SELECTION", (event) => {
       console.log("GET_SELECTION event:", event);
+
       onSelectionHandler(event);
     });
     EventsOn("CREATE_SCREENSHOT", async (event) => {
@@ -153,20 +170,6 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    const recentPrompts = localStorage.getItem(RECENT_PROMPTS_KEY);
-    const parsedRecentPrompts = recentPrompts ? JSON.parse(recentPrompts) : [];
-    if (parsedRecentPrompts.length > 0) {
-      setRecentPrompts(parsedRecentPrompts);
-    } else {
-      setRecentPrompts(PROMPT_OPTIONS);
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem(RECENT_PROMPTS_KEY, JSON.stringify(recentPrompts));
-  }, [recentPrompts]);
-
-  useEffect(() => {
     // cmd+enter 的是 触发点击按钮
     window.addEventListener("keydown", (e) => {
       if (e.metaKey && e.key === "Enter") {
@@ -177,9 +180,9 @@ const App = () => {
 
   const onSelectPromptHandler = (value) => {
     setSelectedPrompt(value);
-    for (const prompt of PROMPT_OPTIONS) {
-      if (selection.startsWith(prompt)) {
-        const newSelection = selection.slice(prompt.length);
+    for (const prompt of promptList) {
+      if (selection.startsWith(prompt.value)) {
+        const newSelection = selection.slice(prompt.value.length);
         setSelection(`${value}${newSelection}`);
         return;
       }
@@ -221,28 +224,32 @@ const App = () => {
     const options = items.map((item, index) => ({
       label: (
         <div
+          key={item.value}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
           }}
         >
-          <span>{`${item}`}</span>
+          <span>{`${item.value}`}</span>
           <Button
             type="text"
             icon={<DeleteOutlined />}
             onClick={() => {
-              setItems(items.filter((i) => i !== item));
+              setPromptList(items.filter((i) => i.value !== item.value));
             }}
           />
         </div>
       ),
-      value: item,
-      name: item,
+      value: item.value,
+      name: item.value,
     }));
     return options;
   };
 
+  // useEffect(() => {
+  //   setPromptList(PROMPT_OPTIONS);
+  // }, []);
   return (
     <>
       {contextHolder}
@@ -265,7 +272,7 @@ const App = () => {
               placeholder="Select Prompt"
               dropdownRender={dropdownRenderElement}
               onSelect={onSelectPromptHandler}
-              options={renderPromptOptions(items)}
+              options={renderPromptOptions(promptList)}
               value={selectedPrompt}
             />
           </div>

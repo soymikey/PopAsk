@@ -118,18 +118,18 @@ export const OCR_LANGUAGE_OPTIONS = OCR_LANGUAGE.map((item) => ({
 // "Convert this code from [language] to [language]: [code snippet]"\
 
 export const PROMPT_OPTIONS = [
-    "帮我翻译成中文:\n",
-    "帮我翻译成英文:\n",
-    "这个是什么意思?:\n",
-    "帮我总结一下:\n",
-    "帮我解释一下:\n",
-    "帮我优化一下:\n",
-    "帮我检查一下:\n",
-    "帮我改写一下:\n",
-    "帮我分析一下:\n",
-    "帮我对比一下:\n",
-    "帮我推荐一下:\n",
-    "帮我生成一下:\n",
+    { label: "帮我翻译成中文:\n", value: "帮我翻译成中文:\n", shortcut: "" },
+    { label: "帮我翻译成英文:\n", value: "帮我翻译成英文:\n", shortcut: "" },
+    { label: "这个是什么意思?:\n", value: "这个是什么意思?:\n", shortcut: "" },
+    { label: "帮我总结一下:\n", value: "帮我总结一下:\n", shortcut: "" },
+    { label: "帮我解释一下:\n", value: "帮我解释一下:\n", shortcut: "" },
+    { label: "帮我优化一下:\n", value: "帮我优化一下:\n", shortcut: "" },
+    { label: "帮我检查一下:\n", value: "帮我检查一下:\n", shortcut: "" },
+    { label: "帮我改写一下:\n", value: "帮我改写一下:\n", shortcut: "" },
+    { label: "帮我分析一下:\n", value: "帮我分析一下:\n", shortcut: "" },
+    { label: "帮我对比一下:\n", value: "帮我对比一下:\n", shortcut: "" },
+    { label: "帮我推荐一下:\n", value: "帮我推荐一下:\n", shortcut: "" },
+    { label: "帮我生成一下:\n", value: "帮我生成一下:\n", shortcut: "" },
 ]
 
 export const TAG_COLORS = [

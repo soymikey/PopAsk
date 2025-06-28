@@ -20,7 +20,8 @@ const SPACE_KEY_CODE = 57
 
 // App struct
 type App struct {
-	ctx context.Context
+	ctx        context.Context
+	keyRecords []string
 }
 
 // NewApp creates a new App application struct
@@ -32,6 +33,23 @@ func NewApp() *App {
 func (a *App) startup(ctx context.Context) {
 	// Perform your setup here
 	a.ctx = ctx
+	a.keyRecords = []string{}
+}
+
+// addKeyRecord adds a record to keyRecords, maintaining max 3 records with FIFO behavior
+func (a *App) addKeyRecord(record string) {
+	println("addKeyRecord", record)
+	// Check if the new record is the same as the last one
+	if len(a.keyRecords) > 0 && a.keyRecords[len(a.keyRecords)-1] == record {
+		return // Skip adding if it's the same as the last record
+	}
+
+	a.keyRecords = append(a.keyRecords, record)
+	if len(a.keyRecords) > 3 {
+		a.keyRecords = a.keyRecords[1:] // Remove the first (oldest) record
+
+	}
+
 }
 
 // domReady is called after front-end resources have been loaded
@@ -108,8 +126,18 @@ func (a *App) domReady(ctx context.Context) {
 		// 	return
 		// }
 
-		runtime.EventsEmit(ctx, "GET_SELECTION", text)
+		runtime.EventsEmit(ctx, "GET_SELECTION", map[string]interface{}{"text": text, "key": "ctrl+shift+s"})
 		println("Selected text:", text)
+	})
+	hook.Register(hook.KeyDown, []string{"ctrl", "shift", "1"}, func(e hook.Event) {
+		text, err := a.GetSelection(ctx)
+		if err != nil {
+			fmt.Printf("Error: %v\n", err)
+			return
+		}
+		runtime.EventsEmit(ctx, "GET_SELECTION", map[string]interface{}{"text": text, "key": "ctrl+shift+1", "prompt": "帮我翻译成中文:\n", "autoAsking": true})
+		println("Selected text:", text)
+
 	})
 
 	// 鼠标点击

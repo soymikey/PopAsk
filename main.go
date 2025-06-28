@@ -50,7 +50,7 @@ func main() {
 		OnBeforeClose:    app.beforeClose,
 		OnShutdown:       app.shutdown,
 		WindowStartState: options.Normal,
-		AlwaysOnTop:      true,
+		// AlwaysOnTop:      true,
 		Bind: []interface{}{
 			app,
 		},
