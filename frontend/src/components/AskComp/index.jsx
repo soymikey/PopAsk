@@ -230,15 +230,23 @@ const App = () => {
             alignItems: "center",
             justifyContent: "space-between",
           }}
+          title={`${item.value}`}
         >
-          <span>{`${item.value}`}</span>
-          <Button
-            type="text"
-            icon={<DeleteOutlined />}
-            onClick={() => {
-              setPromptList(items.filter((i) => i.value !== item.value));
-            }}
-          />
+          <div style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
+            {`${item.value}`}
+          </div>
+          <div>
+            <span>{`${item?.shortcut}`}</span>
+            <Button
+              type="text"
+              icon={<DeleteOutlined />}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setPromptList(items.filter((i) => i.value !== item.value));
+              }}
+            />
+          </div>
         </div>
       ),
       value: item.value,
@@ -268,7 +276,7 @@ const App = () => {
             <span>Prompts:</span>
 
             <Select
-              style={{ width: 300 }}
+              style={{ width: 350 }}
               placeholder="Select Prompt"
               dropdownRender={dropdownRenderElement}
               onSelect={onSelectPromptHandler}

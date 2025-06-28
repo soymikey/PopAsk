@@ -27,7 +27,12 @@ const App = () => {
         paddingRight: 8,
       }}
     >
-      <Tabs defaultActiveKey="ask" items={items} onChange={onChange} />
+      <Tabs
+        defaultActiveKey="ask"
+        items={items}
+        onChange={onChange}
+        destroyInactiveTabPane
+      />
     </Layout>
   );
 };

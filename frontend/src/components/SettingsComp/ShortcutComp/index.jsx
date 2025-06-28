@@ -1,10 +1,9 @@
 import { Input, Select } from "antd";
 import React, { useEffect, useState } from "react";
 
-function ShortcutComp({ promptList }) {
+function ShortcutComp({ localPrompt, setLocalPromptList, localPromptList }) {
   const [defaultP1, setDefaultP1] = useState("ctrl+shift");
   const [defaultP2, setDefaultP2] = useState("");
-  const [selectedPrompt, setSelectedPrompt] = useState();
 
   const handleP1Change = (value) => {
     setDefaultP1(value);
@@ -13,45 +12,72 @@ function ShortcutComp({ promptList }) {
 
   const handleChange = (e) => {
     const inputValue = e.target.value;
-    const lastChar = inputValue.slice(-1);
 
-    // 只允许数字和字母
+    // 清空输入时重置状态
+    if (inputValue.length === 0) {
+      setDefaultP2("");
+      updatePromptShortcut("");
+      return;
+    }
+
+    const lastChar = inputValue.slice(-1).toLowerCase();
+
+    // 只允许数字和字母，自动转换为小写
     if (/^[a-zA-Z0-9]$/.test(lastChar)) {
       setDefaultP2(lastChar);
+      updatePromptShortcut(`${defaultP1}+${lastChar}`);
     }
   };
 
-  const handleSelectChange = (value) => {
-    setSelectedPrompt(value);
+  const updatePromptShortcut = (shortcut) => {
+    setLocalPromptList(
+      localPromptList.map((prompt) =>
+        prompt.value === localPrompt.value ? { ...prompt, shortcut } : prompt
+      )
+    );
   };
 
   useEffect(() => {
-    setDefaultP1(defaultP1);
-    setDefaultP2(defaultP2);
-  }, [defaultP1, defaultP2]);
-
-  useEffect(() => {
-    setSelectedPrompt(promptList[0]);
-  }, [promptList]);
+    if (localPrompt?.shortcut) {
+      const lastPlusIndex = localPrompt.shortcut.lastIndexOf("+");
+      const p1 = localPrompt.shortcut.substring(0, lastPlusIndex);
+      const p2 = localPrompt.shortcut.substring(lastPlusIndex + 1);
+      setDefaultP1(p1);
+      setDefaultP2(p2);
+    }
+  }, [localPrompt]);
 
   const selectBefore = (
-    <Select value={defaultP1} onChange={handleP1Change}>
+    <Select
+      value={defaultP1}
+      onChange={handleP1Change}
+      style={{ width: "110px" }}
+    >
       <Option value="ctrl+shift">Ctrl+Shift</Option>
       <Option value="ctrl">Ctrl</Option>
     </Select>
   );
   return (
-    <div style={{ display: "flex", alignItems: "center", marginTop: 10 }}>
-      <Select
-        style={{ width: 500, marginRight: 10 }}
-        options={promptList.map((prompt, index) => ({
-          label: `${prompt}`,
-          value: prompt,
-        }))}
-        onChange={handleSelectChange}
-        value={selectedPrompt}
-      />
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        marginTop: 10,
+      }}
+    >
+      <div
+        style={{
+          width: "90%",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          whiteSpace: "nowrap",
+        }}
+      >
+        {localPrompt.value}
+      </div>
       <Input
+        style={{ width: "200px" }}
         addonBefore={selectBefore}
         value={defaultP2}
         onChange={handleChange}
