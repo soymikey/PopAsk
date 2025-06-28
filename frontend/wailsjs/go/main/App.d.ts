@@ -29,6 +29,6 @@ export function Greet(arg1:string):Promise<string>;
 
 export function RegisterKeyboardShortcut(arg1:context.Context):Promise<void>;
 
-export function SetPromptList(arg1:string):Promise<void>;
+export function SetShortcutList(arg1:string):Promise<void>;
 
 export function ShowPopWindow():Promise<void>;

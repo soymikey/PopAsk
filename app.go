@@ -22,7 +22,7 @@ const SPACE_KEY_CODE = 57
 type App struct {
 	ctx             context.Context
 	keyRecords      []string
-	promptList      []map[string]interface{}
+	shortcutList    []map[string]interface{}
 	systemShortcuts []map[string]interface{}
 	hookChan        chan hook.Event
 }
@@ -39,7 +39,7 @@ func (a *App) startup(ctx context.Context) {
 	a.keyRecords = []string{}
 	runtime.EventsOn(ctx, "syncShortcutList", func(data ...interface{}) {
 		if len(data) > 0 {
-			a.SetPromptList(data[0].(string))
+			a.SetShortcutList(data[0].(string))
 			a.RegisterKeyboardShortcut(ctx)
 		}
 	})
@@ -75,7 +75,7 @@ func (a *App) RegisterKeyboardShortcut(ctx context.Context) {
 
 	// Start new hook listener
 	a.hookChan = make(chan hook.Event)
-	for _, prompt := range a.promptList {
+	for _, prompt := range a.shortcutList {
 		if prompt["shortcut"] == "" {
 			continue
 		}
@@ -101,8 +101,16 @@ func (a *App) RegisterKeyboardShortcut(ctx context.Context) {
 				}
 			} else {
 				text, err = a.GetSelection(ctx)
+				if text == "" {
+					time.Sleep(100 * time.Millisecond)
+					text, err = a.GetSelection(ctx)
+					if text == "" {
+						time.Sleep(100 * time.Millisecond)
+						text, err = a.GetSelection(ctx)
+					}
+				}
 				if err != nil {
-					fmt.Printf("Error getting selection: %v\n", err)
+					fmt.Printf("Error getting selection after retries: %v\n", err)
 					return
 				}
 			}
@@ -116,6 +124,8 @@ func (a *App) RegisterKeyboardShortcut(ctx context.Context) {
 				"isOpenWindow": isOpenWindowShortcut,
 			})
 			println("Selected text:", text)
+			fmt.Printf("Error: %v\n", err)
+
 		})
 	}
 
@@ -456,28 +466,28 @@ func (a *App) ShowPopWindow() {
 	}
 }
 
-type PromptItem struct {
+type ShortcutItem struct {
 	Label    string `json:"label"`
 	Value    string `json:"value"`
 	Shortcut string `json:"shortcut"`
 }
 
-// SetPromptList sets the prompt list from frontend JSON string
-func (a *App) SetPromptList(jsonData string) error {
-	var promptItems []PromptItem
-	err := json.Unmarshal([]byte(jsonData), &promptItems)
+// SetShortcutList sets the prompt list from frontend JSON string
+func (a *App) SetShortcutList(jsonData string) error {
+	var shortcutItems []ShortcutItem
+	err := json.Unmarshal([]byte(jsonData), &shortcutItems)
 	if err != nil {
 		return fmt.Errorf("failed to unmarshal prompt list: %v", err)
 	}
 
-	a.promptList = make([]map[string]interface{}, len(promptItems))
-	for i, item := range promptItems {
-		a.promptList[i] = map[string]interface{}{
+	a.shortcutList = make([]map[string]interface{}, len(shortcutItems))
+	for i, item := range shortcutItems {
+		a.shortcutList[i] = map[string]interface{}{
 			"label":    item.Label,
 			"value":    item.Value,
 			"shortcut": item.Shortcut,
 		}
 	}
-	println("Prompt list updated with", len(promptItems), "items")
+	println("Prompt list updated with", len(shortcutItems), "items")
 	return nil
 }

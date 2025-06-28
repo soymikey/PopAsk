@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ShortcutComp from "./ShortcutComp";
-import { Button } from "antd";
+import { Button, message } from "antd";
 import {
   DEFAULT_SHORTCUT_LIST,
   PROMPT_LIST_KEY,
@@ -18,7 +18,31 @@ function SettingsComp() {
     DEFAULT_SHORTCUT_LIST
   );
 
+  const validateShortcut = () => {
+    const list = [...localPromptList, ...systemShortcutsLocal];
+    const shortcutMap = new Map();
+
+    for (const item of list) {
+      if (!item?.shortcut) continue;
+
+      if (shortcutMap.has(item.shortcut)) {
+        return {
+          error: true,
+          message: `Shortcut already exists: [${item.shortcut}]`,
+        };
+      }
+      shortcutMap.set(item.shortcut, item);
+    }
+
+    return { error: false, message: "" };
+  };
+
   const handleSave = () => {
+    const validateResult = validateShortcut();
+    if (validateResult.error) {
+      message.error(validateResult.message);
+      return;
+    }
     setPromptList(localPromptList);
     setSystemShortcuts(systemShortcutsLocal);
     EventsEmit(

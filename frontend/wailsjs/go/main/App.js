@@ -54,8 +54,8 @@ export function RegisterKeyboardShortcut(arg1) {
   return window['go']['main']['App']['RegisterKeyboardShortcut'](arg1);
 }
 
-export function SetPromptList(arg1) {
-  return window['go']['main']['App']['SetPromptList'](arg1);
+export function SetShortcutList(arg1) {
+  return window['go']['main']['App']['SetShortcutList'](arg1);
 }
 
 export function ShowPopWindow() {
