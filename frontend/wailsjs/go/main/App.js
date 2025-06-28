@@ -30,6 +30,10 @@ export function GetMousePosition() {
   return window['go']['main']['App']['GetMousePosition']();
 }
 
+export function GetPromptList() {
+  return window['go']['main']['App']['GetPromptList']();
+}
+
 export function GetPublicGists() {
   return window['go']['main']['App']['GetPublicGists']();
 }
@@ -48,6 +52,14 @@ export function GetSelection(arg1) {
 
 export function Greet(arg1) {
   return window['go']['main']['App']['Greet'](arg1);
+}
+
+export function RegisterKeyboardShortcut(arg1) {
+  return window['go']['main']['App']['RegisterKeyboardShortcut'](arg1);
+}
+
+export function SetPromptList(arg1) {
+  return window['go']['main']['App']['SetPromptList'](arg1);
 }
 
 export function ShowPopWindow() {

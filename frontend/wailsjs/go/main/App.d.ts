@@ -17,6 +17,8 @@ export function GetMoreInformationFromURL(arg1:string,arg2:string):Promise<main.
 
 export function GetMousePosition():Promise<any>;
 
+export function GetPromptList():Promise<Array<{[key: string]: any}>>;
+
 export function GetPublicGists():Promise<main.APIResponse>;
 
 export function GetPublicRepositories():Promise<main.APIResponse>;
@@ -26,5 +28,9 @@ export function GetRepositoriesForAuthenticatedUser(arg1:string):Promise<main.AP
 export function GetSelection(arg1:context.Context):Promise<string>;
 
 export function Greet(arg1:string):Promise<string>;
+
+export function RegisterKeyboardShortcut(arg1:context.Context):Promise<void>;
+
+export function SetPromptList(arg1:string):Promise<void>;
 
 export function ShowPopWindow():Promise<void>;

@@ -22,6 +22,8 @@ const SPACE_KEY_CODE = 57
 type App struct {
 	ctx        context.Context
 	keyRecords []string
+	promptList []map[string]interface{}
+	hookChan   chan hook.Event
 }
 
 // NewApp creates a new App application struct
@@ -34,6 +36,12 @@ func (a *App) startup(ctx context.Context) {
 	// Perform your setup here
 	a.ctx = ctx
 	a.keyRecords = []string{}
+	runtime.EventsOn(ctx, "syncPromptList", func(data ...interface{}) {
+		if len(data) > 0 {
+			a.SetPromptList(data[0].(string))
+			a.RegisterKeyboardShortcut(ctx)
+		}
+	})
 }
 
 // addKeyRecord adds a record to keyRecords, maintaining max 3 records with FIFO behavior
@@ -54,52 +62,41 @@ func (a *App) addKeyRecord(record string) {
 
 // domReady is called after front-end resources have been loaded
 func (a *App) domReady(ctx context.Context) {
-	// var lastSpaceTime time.Time
-	// var lastCmdTime time.Time
-	// hook.Register(hook.KeyUp, []string{}, func(e hook.Event) {
-	// 	// 注册双击空格键
-	// 	if e.Keycode == SPACE_KEY_CODE {
+}
 
-	// 		spaceNow := time.Now()
-	// 		if !lastSpaceTime.IsZero() && spaceNow.Sub(lastSpaceTime) < 300*time.Millisecond {
-	// 			println("Double space detected!")
+func (a *App) RegisterKeyboardShortcut(ctx context.Context) {
 
-	// 			// 开始截图
-	// 			base64Str, err := a.CreateScreenshot(ctx)
-	// 			if err != nil {
-	// 				fmt.Printf("Error: %v\n", err)
-	// 				return
-	// 			}
-	// 			runtime.EventsEmit(ctx, "CREATE_SCREENSHOT", base64Str)
-	// 			println("Screenshot created:")
+	// Clear existing hooks if any
+	if a.hookChan != nil {
+		hook.End()
+		close(a.hookChan)
+	}
 
-	// 		}
-	// 		lastSpaceTime = spaceNow
-	// 	}
-	// 	// 注册双击cmd
-	// 	if e.Keycode == COMMAND_KEY_CODE {
-	// 		cmdNow := time.Now()
-	// 		if !lastCmdTime.IsZero() && cmdNow.Sub(lastCmdTime) < 300*time.Millisecond {
-	// 			println("Double command detected!")
+	// Start new hook listener
+	a.hookChan = make(chan hook.Event)
+	for _, prompt := range a.promptList {
+		if prompt["shortcut"] == "" {
+			continue
+		}
+		shortcut := strings.Split(prompt["shortcut"].(string), "+")
+		println("RegisterKeyboardShortcut", prompt["shortcut"].(string))
+		hook.Register(hook.KeyDown, shortcut, func(e hook.Event) {
+			println("Shortcut triggered:", prompt["shortcut"].(string))
+			text, err := a.GetSelection(ctx)
+			if err != nil {
+				fmt.Printf("Error getting selection: %v\n", err)
+				return
+			}
+			runtime.EventsEmit(ctx, "GET_SELECTION", map[string]interface{}{
+				"text":       text,
+				"shortcut":   prompt["shortcut"].(string),
+				"prompt":     prompt["value"].(string),
+				"autoAsking": true,
+			})
+			println("Selected text:", text)
+		})
+	}
 
-	// 			text, err := a.GetSelection(ctx)
-	// 			if err != nil {
-	// 				fmt.Printf("Error: %v\n", err)
-	// 				return
-	// 			}
-	// 			//发送文本
-	// 			if len(text) == 0 {
-	// 				return
-	// 			}
-
-	// 			//dsfadfasdfelo worl testl
-	// 			runtime.EventsEmit(ctx, "GET_SELECTION", text)
-	// 			println("Selected text:", text)
-
-	// 		}
-	// 		lastCmdTime = cmdNow
-	// 	}
-	// })
 	// Ctrl/Cmd + Shift + O
 	hook.Register(hook.KeyDown, []string{"ctrl", "shift", "o"}, func(e hook.Event) {
 		println("Ctrl/Cmd + Shift + O")
@@ -109,7 +106,12 @@ func (a *App) domReady(ctx context.Context) {
 			fmt.Printf("Error: %v\n", err)
 			return
 		}
-		runtime.EventsEmit(ctx, "CREATE_SCREENSHOT", base64Str)
+		runtime.EventsEmit(ctx, "CREATE_SCREENSHOT", map[string]interface{}{
+			"text":       base64Str,
+			"shortcut":   "ctrl+shift+o",
+			"prompt":     "",
+			"autoAsking": false,
+		})
 		println("Screenshot created:")
 
 	})
@@ -125,50 +127,27 @@ func (a *App) domReady(ctx context.Context) {
 		// if len(text) == 0 {
 		// 	return
 		// }
-
-		runtime.EventsEmit(ctx, "GET_SELECTION", map[string]interface{}{"text": text, "key": "ctrl+shift+s"})
 		println("Selected text:", text)
+		runtime.EventsEmit(ctx, "GET_SELECTION", map[string]interface{}{
+			"text":       text,
+			"shortcut":   "ctrl+shift+s",
+			"prompt":     "",
+			"autoAsking": false,
+		})
 	})
-	hook.Register(hook.KeyDown, []string{"ctrl", "shift", "1"}, func(e hook.Event) {
-		text, err := a.GetSelection(ctx)
-		if err != nil {
-			fmt.Printf("Error: %v\n", err)
-			return
-		}
-		runtime.EventsEmit(ctx, "GET_SELECTION", map[string]interface{}{"text": text, "key": "ctrl+shift+1", "prompt": "帮我翻译成中文:\n", "autoAsking": true})
-		println("Selected text:", text)
-
-	})
-
-	// 鼠标点击
-	// var debouncedFunc func()
-	// debouncedFunc, _ = lo.NewDebounce(500*time.Millisecond, func() {
-	// 	println("Mouse Hold")
-	// 	// text, err := a.GetSelection(ctx)
-	// 	// if err != nil {
-	// 	// 	fmt.Printf("Error: %v\n", err)
-	// 	// 	return
-	// 	// }
-	// 	// // println("text:", text)
-	// 	// //发送文本
-	// 	// if len(text) == 0 {
-	// 	// 	return
-	// 	// }
-	// 	runtime.EventsEmit(ctx, "MOUSE_SELECTION", "")
-	// })
-
-	// hook.Register(hook.MouseHold, []string{}, func(e hook.Event) {
-	// 	debouncedFunc()
-	// })
-	// hook.Register(hook.MouseUp, []string{}, func(e hook.Event) {
-	// 	println("Mouse Up")
+	// hook.Register(hook.KeyDown, []string{"ctrl", "shift", "1"}, func(e hook.Event) {
+	// 	text, err := a.GetSelection(ctx)
+	// 	if err != nil {
+	// 		fmt.Printf("Error: %v\n", err)
+	// 		return
+	// 	}
+	// 	runtime.EventsEmit(ctx, "GET_SELECTION", map[string]interface{}{"text": text, "key": "ctrl+shift+1", "prompt": "帮我翻译成中文:\n", "autoAsking": true})
+	// 	println("Selected text:", text)
 
 	// })
 
-	go func() {
-		s := hook.Start()
-		<-hook.Process(s)
-	}()
+	s := hook.Start()
+	<-hook.Process(s)
 }
 
 func (a *App) GetSelection(ctx context.Context) (string, error) {
@@ -188,7 +167,7 @@ func (a *App) GetSelection(ctx context.Context) (string, error) {
 	}
 
 	// 添加短暂延迟确保复制完成
-	time.Sleep(100 * time.Millisecond)
+	time.Sleep(300 * time.Millisecond)
 
 	// 获取剪贴板内容
 	text, err := runtime.ClipboardGetText(ctx)
@@ -453,4 +432,35 @@ func (a *App) ShowPopWindow() {
 			return
 		}
 	}
+}
+
+type PromptItem struct {
+	Label    string `json:"label"`
+	Value    string `json:"value"`
+	Shortcut string `json:"shortcut"`
+}
+
+// SetPromptList sets the prompt list from frontend JSON string
+func (a *App) SetPromptList(jsonData string) error {
+	var promptItems []PromptItem
+	err := json.Unmarshal([]byte(jsonData), &promptItems)
+	if err != nil {
+		return fmt.Errorf("failed to unmarshal prompt list: %v", err)
+	}
+
+	a.promptList = make([]map[string]interface{}, len(promptItems))
+	for i, item := range promptItems {
+		a.promptList[i] = map[string]interface{}{
+			"label":    item.Label,
+			"value":    item.Value,
+			"shortcut": item.Shortcut,
+		}
+	}
+	println("Prompt list updated with", len(promptItems), "items")
+	return nil
+}
+
+// GetPromptList returns the current prompt list
+func (a *App) GetPromptList() []map[string]interface{} {
+	return a.promptList
 }

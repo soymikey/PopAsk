@@ -3,6 +3,7 @@ import ShortcutComp from "./ShortcutComp";
 import { Button } from "antd";
 import { PROMPT_LIST_KEY } from "../../constant";
 import useLocalStorage from "../../hooks/useLocalStorage";
+import { EventsEmit } from "../../../wailsjs/runtime/runtime";
 
 function SettingsComp() {
   const [localPromptList, setLocalPromptList] = useState([]);
@@ -10,6 +11,7 @@ function SettingsComp() {
 
   const handleSave = () => {
     setPromptList(localPromptList);
+    EventsEmit("syncPromptList", JSON.stringify(localPromptList));
   };
 
   useEffect(() => {

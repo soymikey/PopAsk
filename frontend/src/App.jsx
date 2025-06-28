@@ -1,8 +1,13 @@
 import { Layout, Tabs } from "antd";
 import AskComp from "./components/AskComp";
 import SettingsComp from "./components/SettingsComp";
+import useLocalStorage from "./hooks/useLocalStorage";
+import { PROMPT_LIST_KEY } from "./constant";
+import { useEffect } from "react";
+import { EventsEmit } from "../wailsjs/runtime/runtime";
 
 const App = () => {
+  const [promptList] = useLocalStorage(PROMPT_LIST_KEY, []);
   const onChange = (key) => {
     console.log(key);
   };
@@ -19,6 +24,9 @@ const App = () => {
       children: <SettingsComp />,
     },
   ];
+  useEffect(() => {
+    EventsEmit("syncPromptList", JSON.stringify(promptList));
+  }, [promptList]);
   return (
     <Layout
       style={{

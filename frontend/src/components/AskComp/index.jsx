@@ -114,7 +114,7 @@ const App = () => {
   };
 
   const onSelectionHandler = async (selection, isOCR = false) => {
-    const { text: selectionText, prompt, autoAsking } = selection;
+    const { text: selectionText, shortcut, prompt, autoAsking } = selection;
     console.log("selection", selection);
     let text = selectionText;
     WindowShow();
@@ -132,10 +132,10 @@ const App = () => {
       setSelectedPrompt(prompt);
     }
 
-    setSelection(text);
+    setSelection(messageGenerator(prompt, text));
     setChatResponse(null);
     if (autoAsking) {
-      handleChat(messageGenerator(selectedPrompt, text));
+      handleChat(messageGenerator(prompt, text));
     }
   };
 
@@ -183,11 +183,12 @@ const App = () => {
     for (const prompt of promptList) {
       if (selection.startsWith(prompt.value)) {
         const newSelection = selection.slice(prompt.value.length);
-        setSelection(`${value}${newSelection}`);
+        setSelection(messageGenerator(value, newSelection));
+
         return;
       }
     }
-    setSelection(`${value}${selection}`);
+    setSelection(messageGenerator(value, selection));
   };
 
   const dropdownRenderElement = (menu) => {
@@ -262,6 +263,14 @@ const App = () => {
     <>
       {contextHolder}
       <Spin spinning={isLoading}>
+        {/* <Button
+          type="primary"
+          onClick={() => {
+            EventsEmit("test", JSON.stringify(promptList));
+          }}
+        >
+          test
+        </Button> */}
         {/* {selection && <h1>selection:{selection}</h1>} */}
         {/* {chatResponse && <h2>chatResponse:{chatResponse}</h2>} */}
         <div

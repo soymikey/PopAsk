@@ -1,7 +1,6 @@
 
 export const messageGenerator = (prompt, text) => {
-    return `${prompt}
-    ${text}`;
+    return `${prompt}${text}`;
 };
 
 export const newPromptGenerator = (text) => {
