@@ -117,19 +117,17 @@ export const OCR_LANGUAGE_OPTIONS = OCR_LANGUAGE.map((item) => ({
 // "What's wrong with this code? [code snippet]"
 // "Convert this code from [language] to [language]: [code snippet]"\
 
-export const PROMPT_OPTIONS = [
-    { label: "帮我翻译成中文:\n", value: "帮我翻译成中文:\n", shortcut: "" },
-    { label: "帮我翻译成英文:\n", value: "帮我翻译成英文:\n", shortcut: "" },
-    { label: "这个是什么意思?:\n", value: "这个是什么意思?:\n", shortcut: "" },
-    { label: "帮我总结一下:\n", value: "帮我总结一下:\n", shortcut: "" },
-    { label: "帮我解释一下:\n", value: "帮我解释一下:\n", shortcut: "" },
-    { label: "帮我优化一下:\n", value: "帮我优化一下:\n", shortcut: "" },
-    { label: "帮我检查一下:\n", value: "帮我检查一下:\n", shortcut: "" },
-    { label: "帮我改写一下:\n", value: "帮我改写一下:\n", shortcut: "" },
-    { label: "帮我分析一下:\n", value: "帮我分析一下:\n", shortcut: "" },
-    { label: "帮我对比一下:\n", value: "帮我对比一下:\n", shortcut: "" },
-    { label: "帮我推荐一下:\n", value: "帮我推荐一下:\n", shortcut: "" },
-    { label: "帮我生成一下:\n", value: "帮我生成一下:\n", shortcut: "" },
+export const DEFAULT_PROMPT_OPTIONS = [
+    { label: "Translate to Chinese", value: "Please translate the following text to Chinese, maintaining the original tone and style:\n", shortcut: "" },
+    { label: "Grammar Check & Polish", value: "Please check and improve the grammar, word choice, and expression of the following text to make it clearer and more fluent:\n", shortcut: "" },
+    { label: "Explain Code", value: "Please explain the functionality and logic of the following code in detail, including the purpose of each important part:\n", shortcut: "" },
+    { label: "Email Reply", value: "Please help me write a professional email reply with a polite and appropriate tone:\n", shortcut: "" },
+    { label: "Summarize", value: "Please provide a concise summary of the following content, extracting key information:\n", shortcut: "" },
+    { label: "Answer Question", value: "Please answer the following question with a detailed and accurate explanation:\n", shortcut: "" },
+    { label: "Creative Writing", value: "Please create creative content based on the following topic or material:\n", shortcut: "" },
+    { label: "Data Analysis", value: "Please analyze the following data and provide insights and recommendations:\n", shortcut: "" },
+    { label: "Learning Guide", value: "Please provide detailed learning guidance and key point summaries for the following learning content:\n", shortcut: "" },
+    { label: "Format Convert", value: "Please convert the following content to the requested format while maintaining the integrity of the information:\n", shortcut: "" }
 ]
 
 export const TAG_COLORS = [

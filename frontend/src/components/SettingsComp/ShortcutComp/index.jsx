@@ -75,7 +75,10 @@ function ShortcutComp({ localPrompt, setLocalPromptList, localPromptList }) {
           whiteSpace: "nowrap",
         }}
       >
-        {localPrompt.value}
+        <div>{localPrompt.label}</div>
+        <div style={{ fontSize: 12, color: "#999", whiteSpace: "wrap" }}>
+          {localPrompt.value}
+        </div>
       </div>
       <Input
         style={{ width: "200px" }}

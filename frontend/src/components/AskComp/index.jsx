@@ -10,11 +10,7 @@ import {
   Divider,
   Space,
 } from "antd";
-import {
-  PlusOutlined,
-  DeleteOutlined,
-  InfoCircleOutlined,
-} from "@ant-design/icons";
+import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 
 import { useEffect, useState, useRef } from "react";
 import {
@@ -24,15 +20,12 @@ import {
 } from "../../../wailsjs/runtime/runtime";
 import Tesseract from "tesseract.js";
 import { ChatAPI } from "../../../wailsjs/go/main/App";
-import {
-  OCR_LANGUAGE_OPTIONS,
-  PROMPT_OPTIONS,
-  TAG_COLORS,
-} from "../../data/language";
+import { DEFAULT_PROMPT_OPTIONS, TAG_COLORS } from "../../data/language";
 import {
   messageGenerator,
   newPromptGenerator,
   languageFormate,
+  getLocalStorage,
 } from "../../utils";
 import useLocalStorage from "../../hooks/useLocalStorage";
 import "./index.css";
@@ -45,12 +38,11 @@ import {
 } from "../../constant";
 const { TextArea } = Input;
 
-const App = ({ setActiveKey }) => {
+const AskComp = ({ setActiveKey }) => {
   const [messageApi, contextHolder] = message.useMessage();
 
   const [screenshot, setScreenshot] = useState(null);
   const [selection, setSelection] = useState("");
-  const [ORCLang, setORCLang] = useLocalStorage(ORC_LANG_KEY, DEFAULT_ORC_LANG);
   const [chatResponse, setChatResponse] = useState(null);
   const [selectedPrompt, setSelectedPrompt] = useLocalStorage(
     SELECTED_PROMPT_KEY,
@@ -65,21 +57,39 @@ const App = ({ setActiveKey }) => {
   );
   const askRef = useRef(null);
 
-  const [promptList, setPromptList] = useLocalStorage(PROMPT_LIST_KEY, []);
+  const [promptList, setPromptList] = useLocalStorage(
+    PROMPT_LIST_KEY,
+    DEFAULT_PROMPT_OPTIONS
+  );
   const [newPrompt, setNewPrompt] = useState("");
-  const inputRef = useRef(null);
+  const [newPromptTitle, setNewPromptTitle] = useState("");
 
   const onNewPromptChange = (event) => {
     setNewPrompt(event.target.value);
   };
 
+  const onNewPromptTitleChange = (event) => {
+    setNewPromptTitle(event.target.value);
+  };
+
   const addPrompt = (e) => {
     e.preventDefault();
-    setPromptList([...promptList, `${newPromptGenerator(newPrompt)}`]);
+    const newPrompt_ = newPromptGenerator(newPromptTitle, newPrompt);
+    if (!newPrompt_) {
+      messageApi.open({
+        type: "error",
+        content: "Please enter prompt title and prompt",
+      });
+      return;
+    }
+    setPromptList([...promptList, newPrompt_]);
+
     setNewPrompt("");
-    setTimeout(() => {
-      inputRef.current?.focus();
-    }, 0);
+    setNewPromptTitle("");
+    messageApi.open({
+      type: "success",
+      content: "Prompt added successfully",
+    });
   };
 
   const handleChat = async (message) => {
@@ -91,8 +101,11 @@ const App = ({ setActiveKey }) => {
     console.log("response", response);
     if (response.code === 200) {
       setChatResponse(response.data);
+      const prompt = promptList.find((p) => p.value === selectedPrompt);
+      if (!prompt) return;
       setRecentPrompts((prev) => {
-        const newPrompts = [...new Set([selectedPrompt, ...prev])];
+        const filteredPrompts = prev.filter((p) => p.label !== prompt.label);
+        const newPrompts = [prompt, ...filteredPrompts];
         return newPrompts.slice(0, 12);
       });
     } else {
@@ -102,18 +115,6 @@ const App = ({ setActiveKey }) => {
       });
     }
   };
-
-  const onChangeLangHandler = (value) => {
-    if (value.length > 5) {
-      messageApi.open({
-        type: "error",
-        content: "can't select more than 5 languages",
-      });
-      return;
-    }
-    setORCLang(value);
-  };
-
   const onSelectionHandler = async (selection) => {
     try {
       const {
@@ -131,6 +132,7 @@ const App = ({ setActiveKey }) => {
 
       setIsLoading(true);
       if (isOCR) {
+        const ORCLang = getLocalStorage(ORC_LANG_KEY, DEFAULT_ORC_LANG);
         const lang = ORCLang.length > 1 ? ORCLang.join("+") : ORCLang[0];
         const result = await Tesseract.recognize(text, lang);
         text = languageFormate(result?.data?.text || "");
@@ -179,19 +181,13 @@ const App = ({ setActiveKey }) => {
     return () => {
       EventsOff("GET_SELECTION");
     };
-  }, [ORCLang, selectedPrompt]);
-
-  useEffect(() => {
-    window.addEventListener("blur", () => {
-      // WindowHide();
-    });
-  }, []);
+  }, [selectedPrompt]);
 
   useEffect(() => {
     // cmd+enter 的是 触发点击按钮
     window.addEventListener("keydown", (e) => {
       if (e.metaKey && e.key === "Enter") {
-        askRef.current.click();
+        askRef.current?.click();
       }
     });
   }, [askRef]);
@@ -213,14 +209,28 @@ const App = ({ setActiveKey }) => {
     const customMenuItem = (
       <>
         <Divider style={{ margin: "8px 0" }} />
-        <Space style={{ padding: "0 8px 4px" }}>
-          <Input
-            placeholder="Please enter prompt"
-            ref={inputRef}
-            value={newPrompt}
-            onChange={onNewPromptChange}
-            onKeyDown={(e) => e.stopPropagation()}
-          />
+        <div
+          style={{
+            padding: "0 8px 4px",
+            display: "flex",
+            flexDirection: "row",
+            gap: 8,
+          }}
+        >
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <Input
+              placeholder="Please enter prompt title"
+              value={newPromptTitle}
+              onChange={onNewPromptTitleChange}
+              onKeyDown={(e) => e.stopPropagation()}
+            />
+            <Input
+              placeholder="Please enter prompt"
+              value={newPrompt}
+              onChange={onNewPromptChange}
+              onKeyDown={(e) => e.stopPropagation()}
+            />
+          </div>
           <Button
             size="small"
             type="text"
@@ -229,7 +239,7 @@ const App = ({ setActiveKey }) => {
           >
             Add Prompt
           </Button>
-        </Space>
+        </div>
       </>
     );
     return (
@@ -252,7 +262,10 @@ const App = ({ setActiveKey }) => {
           title={`${item.value}`}
         >
           <div style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
-            {`${item.value}`}
+            <div>{`${item.label}`}</div>
+            <div style={{ fontSize: 12, color: "#999", whiteSpace: "wrap" }}>
+              {`${item.value}`}
+            </div>
           </div>
           <div>
             <span>{`${item?.shortcut}`}</span>
@@ -278,7 +291,7 @@ const App = ({ setActiveKey }) => {
     console.log("AskComp");
   }, []);
   return (
-    <>
+    <div style={{ marginTop: 8 }}>
       {contextHolder}
       <Spin spinning={isLoading}>
         {/* <Button
@@ -310,25 +323,6 @@ const App = ({ setActiveKey }) => {
               options={renderPromptOptions(promptList)}
               value={selectedPrompt}
             />
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <span>ORC:</span>
-
-            <Select
-              mode="multiple"
-              style={{ width: 300 }}
-              options={OCR_LANGUAGE_OPTIONS}
-              value={ORCLang}
-              onChange={onChangeLangHandler}
-              placeholder="选择识别语言"
-            />
-            {/* 添加一个InfoIcon */}
-            <Tooltip
-              title={<>Select multiple languages to OCR</>}
-              placement="top"
-            >
-              <InfoCircleOutlined />
-            </Tooltip>
           </div>
         </div>
         <div className="content-container" style={{ marginTop: 16 }}>
@@ -374,7 +368,7 @@ const App = ({ setActiveKey }) => {
                       whiteSpace: "nowrap",
                     }}
                   >
-                    {prompt}
+                    {prompt?.label || prompt?.value}
                   </div>
                 </Tag>
               </div>
@@ -436,8 +430,8 @@ const App = ({ setActiveKey }) => {
           </Content>
         </Layout> */}
       </Spin>
-    </>
+    </div>
   );
 };
 
-export default App;
+export default AskComp;

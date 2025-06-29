@@ -1,22 +1,46 @@
 import React, { useEffect, useState } from "react";
 import ShortcutComp from "./ShortcutComp";
-import { Button, message } from "antd";
+import { Button, Divider, message, Select, Tooltip } from "antd";
 import {
+  DEFAULT_ORC_LANG,
   DEFAULT_SHORTCUT_LIST,
+  ORC_LANG_KEY,
   PROMPT_LIST_KEY,
   SYSTEM_SHORTCUT_KEY,
 } from "../../constant";
 import useLocalStorage from "../../hooks/useLocalStorage";
 import { EventsEmit } from "../../../wailsjs/runtime/runtime";
+import {
+  DEFAULT_PROMPT_OPTIONS,
+  OCR_LANGUAGE_OPTIONS,
+} from "../../data/language";
+import { InfoCircleOutlined } from "@ant-design/icons";
 
 function SettingsComp() {
+  const [ORCLang, setORCLang] = useLocalStorage(ORC_LANG_KEY, DEFAULT_ORC_LANG);
   const [localPromptList, setLocalPromptList] = useState([]);
-  const [promptList, setPromptList] = useLocalStorage(PROMPT_LIST_KEY, []);
+  const [promptList, setPromptList] = useLocalStorage(
+    PROMPT_LIST_KEY,
+    DEFAULT_PROMPT_OPTIONS
+  );
   const [systemShortcutsLocal, setSystemShortcutsLocal] = useState([]);
   const [systemShortcuts, setSystemShortcuts] = useLocalStorage(
     SYSTEM_SHORTCUT_KEY,
     DEFAULT_SHORTCUT_LIST
   );
+
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const onChangeORCHandler = (value) => {
+    if (value.length > 5) {
+      messageApi.open({
+        type: "error",
+        content: "can't select more than 5 languages",
+      });
+      return;
+    }
+    setORCLang(value);
+  };
 
   const validateShortcut = () => {
     const list = [...localPromptList, ...systemShortcutsLocal];
@@ -62,6 +86,25 @@ function SettingsComp() {
 
   return (
     <div>
+      {contextHolder}
+      <h2>ORC</h2>
+
+      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <Select
+          mode="multiple"
+          style={{ width: 300 }}
+          options={OCR_LANGUAGE_OPTIONS}
+          value={ORCLang}
+          onChange={onChangeORCHandler}
+          placeholder="select recognition languages"
+        />
+        {/* 添加一个InfoIcon */}
+        <Tooltip title={<>Select multiple languages to OCR</>} placement="top">
+          <InfoCircleOutlined />
+        </Tooltip>
+      </div>
+      <Divider style={{ margin: "8px 0" }} />
+
       <h2>System Shortcuts</h2>
       {systemShortcutsLocal.map((item, index) => (
         <ShortcutComp
@@ -71,6 +114,8 @@ function SettingsComp() {
           key={index}
         />
       ))}
+      <Divider style={{ margin: "8px 0" }} />
+
       <h2>Prompt Shortcuts</h2>
       {localPromptList.map((prompt, index) => (
         <ShortcutComp

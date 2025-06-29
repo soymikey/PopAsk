@@ -3,12 +3,12 @@ export const messageGenerator = (prompt, text) => {
     return `${prompt}${text}`;
 };
 
-export const newPromptGenerator = (text) => {
-    if (text.length === 0) {
-        return text;
+export const newPromptGenerator = (title, text) => {
+    if (title.trim().length === 0 || text.trim().length === 0) {
+        return null;
     }
     return {
-        label: `${text}\n`,
+        label: `${title}`,
         value: `${text}\n`,
         shortcut: "",
     };
@@ -25,4 +25,13 @@ export const languageFormate = (text) => {
     );
 
     return formatResult;
+};
+
+export const getLocalStorage = (key, defaultValue) => {
+    try {
+        const item = localStorage.getItem(key);
+        return item ? JSON.parse(item) : defaultValue;
+    } catch (error) {
+        return DEFAULT_ORC_LANG;
+    }
 };

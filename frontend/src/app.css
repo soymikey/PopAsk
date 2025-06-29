@@ -1,0 +1,13 @@
+.ant-tabs-nav {
+  margin-bottom: 0px !important;
+}
+.ant-tabs-content-holder {
+  height: calc(100vh - 46px) !important;
+  overflow-y: scroll;
+  /* hide scrollbar */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

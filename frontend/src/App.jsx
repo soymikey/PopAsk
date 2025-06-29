@@ -9,7 +9,7 @@ import {
 } from "./constant";
 import { useEffect, useState } from "react";
 import { EventsEmit } from "../wailsjs/runtime/runtime";
-
+import "./app.css";
 const App = () => {
   const [promptList] = useLocalStorage(PROMPT_LIST_KEY, []);
   const [systemShortcuts] = useLocalStorage(
@@ -42,9 +42,11 @@ const App = () => {
   return (
     <Layout
       style={{
-        minHeight: "100vh",
+        height: "100vh",
+        overflow: "hidden",
         paddingLeft: 8,
         paddingRight: 8,
+        paddingBottom: 8,
       }}
     >
       <Tabs
