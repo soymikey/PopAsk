@@ -46,7 +46,7 @@ const AskComp = ({ setActiveKey }) => {
   const [chatResponse, setChatResponse] = useState(null);
   const [selectedPrompt, setSelectedPrompt] = useLocalStorage(
     SELECTED_PROMPT_KEY,
-    ""
+    DEFAULT_PROMPT_OPTIONS[0].value
   );
   const [isLoading, setIsLoading] = useState(false);
   const [isAskLoading, setIsAskLoading] = useState(false);
@@ -163,6 +163,10 @@ const AskComp = ({ setActiveKey }) => {
     }
   };
 
+  const onSelectPromptHandler = (value) => {
+    setSelectedPrompt(value);
+  };
+
   const onChangeSelectionHandler = (event) => {
     if (event.target.value.length < selectedPrompt.length - 1) {
       setSelectedPrompt("");
@@ -192,18 +196,19 @@ const AskComp = ({ setActiveKey }) => {
     });
   }, [askRef]);
 
-  const onSelectPromptHandler = (value) => {
-    setSelectedPrompt(value);
+  useEffect(() => {
+    if (selectedPrompt.length === 0) {
+      return;
+    }
     for (const prompt of promptList) {
       if (selection.startsWith(prompt.value)) {
         const newSelection = selection.slice(prompt.value.length);
-        setSelection(messageGenerator(value, newSelection));
-
+        setSelection(messageGenerator(selectedPrompt, newSelection));
         return;
       }
     }
-    setSelection(messageGenerator(value, selection));
-  };
+    setSelection(messageGenerator(selectedPrompt, selection));
+  }, [selectedPrompt]);
 
   const dropdownRenderElement = (menu) => {
     const customMenuItem = (
@@ -219,7 +224,7 @@ const AskComp = ({ setActiveKey }) => {
         >
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             <Input
-              placeholder="Please enter prompt title"
+              placeholder="Prompt title"
               value={newPromptTitle}
               onChange={onNewPromptTitleChange}
               onKeyDown={(e) => e.stopPropagation()}
@@ -266,9 +271,18 @@ const AskComp = ({ setActiveKey }) => {
             <div style={{ fontSize: 12, color: "#999", whiteSpace: "wrap" }}>
               {`${item.value}`}
             </div>
+            <div
+              style={{
+                fontSize: 12,
+                color: "#999",
+                whiteSpace: "wrap",
+                textAlign: "right",
+              }}
+            >
+              {item?.shortcut && <span>{`${item?.shortcut}`}</span>}
+            </div>
           </div>
           <div>
-            <span>{`${item?.shortcut}`}</span>
             <Button
               type="text"
               icon={<DeleteOutlined />}
@@ -337,15 +351,15 @@ const AskComp = ({ setActiveKey }) => {
           >
             {recentPrompts?.map((prompt, index) => (
               <div
-                key={prompt}
+                key={prompt?.value}
                 onClick={(e) => {
-                  onSelectPromptHandler(prompt);
+                  onSelectPromptHandler(prompt?.value);
                 }}
                 className="recent-prompt-item"
-                title={prompt}
+                title={prompt?.value}
               >
                 <Tag
-                  key={prompt}
+                  key={prompt?.label}
                   closable
                   onClose={(e) => {
                     e.stopPropagation();
