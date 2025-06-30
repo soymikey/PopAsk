@@ -18,6 +18,4 @@ to this in your browser, and you can call your Go code from devtools.
 
 To build a redistributable, production mode package, use `wails build`.
 
-<!-- 打包给widnows -->
-
-wails build -platform windows/amd64
+wails build -debug -devtools -clean

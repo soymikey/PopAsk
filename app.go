@@ -66,11 +66,11 @@ func (a *App) domReady(ctx context.Context) {
 }
 
 func (a *App) RegisterKeyboardShortcut(ctx context.Context) {
-
 	// Clear existing hooks if any
 	if a.hookChan != nil {
 		hook.End()
 		close(a.hookChan)
+		a.hookChan = nil
 	}
 
 	// Start new hook listener
@@ -128,7 +128,6 @@ func (a *App) RegisterKeyboardShortcut(ctx context.Context) {
 
 		})
 	}
-
 	// // Ctrl/Cmd + Shift + O
 	// hook.Register(hook.KeyDown, []string{"ctrl", "shift", "o"}, func(e hook.Event) {
 	// 	println("Ctrl/Cmd + Shift + O")
@@ -178,8 +177,11 @@ func (a *App) RegisterKeyboardShortcut(ctx context.Context) {
 
 	// })
 
-	s := hook.Start()
-	<-hook.Process(s)
+	// Start processing in a goroutine to avoid blocking
+	go func() {
+		s := hook.Start()
+		<-hook.Process(s)
+	}()
 }
 
 func (a *App) GetSelection(ctx context.Context) (string, error) {
