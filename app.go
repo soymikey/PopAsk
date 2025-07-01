@@ -243,7 +243,7 @@ func (a *App) CreateScreenshot(ctx context.Context) (string, error) {
 	base64WithPrefix := "data:image/png;base64," + base64Str
 
 	// 清理临时文件
-	// os.Remove(filename)
+	os.Remove(filename)
 
 	return base64WithPrefix, nil
 }
