@@ -28,5 +28,9 @@
             <key>NSAllowsLocalNetworking</key>
             <true/>
         </dict>
+        <key>NSSystemAdministrationUsageDescription</key>
+        <string>This app needs screen recording permission to capture screenshots.</string>
+        <key>NSScreenCaptureUsageDescription</key>
+        <string>This app needs screen recording permission to capture screenshots.</string>
     </dict>
 </plist>

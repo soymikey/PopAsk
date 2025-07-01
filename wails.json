@@ -11,5 +11,15 @@
     "email": "joseph.udonsak@live.co.uk"
   },
   "allowSystemDialogs": true,
-  "allowSystemAccess": true
+  "allowSystemAccess": true,
+  "info": {
+    "productName": "GitHub Client",
+    "productVersion": "1.0.0",
+    "copyright": "Copyright © 2024",
+    "comments": "A GitHub client application"
+  },
+  "mac": {
+    "entitlements": "build/darwin/entitlements.plist",
+    "entitlementsInherit": "build/darwin/entitlements.plist"
+  }
 }

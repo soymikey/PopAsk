@@ -23,5 +23,9 @@
         <string>true</string>
         <key>NSHumanReadableCopyright</key>
         <string>{{.Info.Copyright}}</string>
+        <key>NSSystemAdministrationUsageDescription</key>
+        <string>This app needs screen recording permission to capture screenshots.</string>
+        <key>NSScreenCaptureUsageDescription</key>
+        <string>This app needs screen recording permission to capture screenshots.</string>
     </dict>
 </plist>
