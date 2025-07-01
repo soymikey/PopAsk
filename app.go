@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -220,8 +221,9 @@ func (a *App) GetSelection(ctx context.Context) (string, error) {
 func (a *App) CreateScreenshot(ctx context.Context) (string, error) {
 	// 生成带时间戳的文件名
 	timestamp := time.Now().Format("20060102_150405")
-	filename := fmt.Sprintf("screenshot_%s.png", timestamp)
-
+	homeDir, _ := os.UserHomeDir()
+	filename := filepath.Join(homeDir, fmt.Sprintf("screenshot_%s.png", timestamp))
+	println("filename", filename)
 	cmd := exec.Command("screencapture", "-i", filename)
 
 	if err := cmd.Run(); err != nil {
@@ -241,7 +243,7 @@ func (a *App) CreateScreenshot(ctx context.Context) (string, error) {
 	base64WithPrefix := "data:image/png;base64," + base64Str
 
 	// 清理临时文件
-	os.Remove(filename)
+	// os.Remove(filename)
 
 	return base64WithPrefix, nil
 }
