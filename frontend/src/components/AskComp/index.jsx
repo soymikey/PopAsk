@@ -84,20 +84,10 @@ const AskComp = ({ setActiveKey }) => {
     IS_OPEN_RECENT_PROMPTS_KEY,
     IS_OPEN_RECENT_PROMPTS_VALUE
   );
-  const [newPrompt, setNewPrompt] = useState("");
-  const [newPromptTitle, setNewPromptTitle] = useState("");
+
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const onNewPromptChange = (event) => {
-    setNewPrompt(event.target.value);
-  };
-
-  const onNewPromptTitleChange = (event) => {
-    setNewPromptTitle(event.target.value);
-  };
-
-  const addPrompt = (e) => {
-    e.preventDefault();
+  const addPrompt = (newPrompt, newPromptTitle) => {
     const newPrompt_ = newPromptGenerator(newPromptTitle, newPrompt);
     if (!newPrompt_) {
       messageApi.open({
@@ -108,8 +98,6 @@ const AskComp = ({ setActiveKey }) => {
     }
     setPromptList([...promptList, newPrompt_]);
 
-    setNewPrompt("");
-    setNewPromptTitle("");
     setIsModalVisible(false);
     form.resetFields();
     messageApi.open({
@@ -124,16 +112,12 @@ const AskComp = ({ setActiveKey }) => {
 
   const handleModalCancel = () => {
     setIsModalVisible(false);
-    setNewPrompt("");
-    setNewPromptTitle("");
     form.resetFields();
   };
 
   const handleModalOk = () => {
     form.validateFields().then((values) => {
-      setNewPromptTitle(values.title);
-      setNewPrompt(values.prompt);
-      addPrompt({ preventDefault: () => {} });
+      addPrompt(values.prompt, values.title);
     });
   };
 
