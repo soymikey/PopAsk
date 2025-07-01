@@ -349,7 +349,7 @@ const AskComp = ({ setActiveKey }) => {
   }, []);
 
   return (
-    <div>
+    <div style={{ paddingTop: "12px", paddingBottom: "12px" }}>
       {contextHolder}
       <Spin spinning={isLoading}>
         <Space direction="vertical" size="small" style={{ width: "100%" }}>
