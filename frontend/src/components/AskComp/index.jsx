@@ -9,8 +9,19 @@ import {
   Tooltip,
   Divider,
   Space,
+  Modal,
+  Form,
+  Card,
+  Typography,
+  Collapse,
 } from "antd";
-import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
+const { Panel } = Collapse;
+import {
+  PlusOutlined,
+  DeleteOutlined,
+  SendOutlined,
+  HistoryOutlined,
+} from "@ant-design/icons";
 import { useEffect, useState, useRef } from "react";
 import {
   EventsOn,
@@ -19,7 +30,12 @@ import {
 } from "../../../wailsjs/runtime/runtime";
 import Tesseract from "tesseract.js";
 import { ChatAPI } from "../../../wailsjs/go/main/App";
-import { DEFAULT_PROMPT_OPTIONS, TAG_COLORS } from "../../data/language";
+import {
+  IS_OPEN_RECENT_PROMPTS_KEY,
+  DEFAULT_PROMPT_OPTIONS,
+  TAG_COLORS,
+  IS_OPEN_RECENT_PROMPTS_VALUE,
+} from "../../data/language";
 import {
   messageGenerator,
   newPromptGenerator,
@@ -37,9 +53,11 @@ import {
 } from "../../constant";
 import { MarkDownComp } from "../MarkDownComp";
 const { TextArea } = Input;
+const { Title, Text } = Typography;
 
 const AskComp = ({ setActiveKey }) => {
   const [messageApi, contextHolder] = message.useMessage();
+  const [form] = Form.useForm();
 
   const [screenshot, setScreenshot] = useState(null);
   const [selection, setSelection] = useState("");
@@ -61,8 +79,14 @@ const AskComp = ({ setActiveKey }) => {
     PROMPT_LIST_KEY,
     DEFAULT_PROMPT_OPTIONS
   );
+
+  const [recentPromptsActiveKey, setRecentPromptsActiveKey] = useLocalStorage(
+    IS_OPEN_RECENT_PROMPTS_KEY,
+    IS_OPEN_RECENT_PROMPTS_VALUE
+  );
   const [newPrompt, setNewPrompt] = useState("");
   const [newPromptTitle, setNewPromptTitle] = useState("");
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const onNewPromptChange = (event) => {
     setNewPrompt(event.target.value);
@@ -86,9 +110,30 @@ const AskComp = ({ setActiveKey }) => {
 
     setNewPrompt("");
     setNewPromptTitle("");
+    setIsModalVisible(false);
+    form.resetFields();
     messageApi.open({
       type: "success",
       content: "Prompt added successfully",
+    });
+  };
+
+  const handleAddPromptClick = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleModalCancel = () => {
+    setIsModalVisible(false);
+    setNewPrompt("");
+    setNewPromptTitle("");
+    form.resetFields();
+  };
+
+  const handleModalOk = () => {
+    form.validateFields().then((values) => {
+      setNewPromptTitle(values.title);
+      setNewPrompt(values.prompt);
+      addPrompt({ preventDefault: () => {} });
     });
   };
 
@@ -218,29 +263,13 @@ const AskComp = ({ setActiveKey }) => {
           style={{
             padding: "0 8px 4px",
             display: "flex",
-            flexDirection: "row",
-            gap: 8,
+            justifyContent: "center",
           }}
         >
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            <Input
-              placeholder="Prompt title"
-              value={newPromptTitle}
-              onChange={onNewPromptTitleChange}
-              onKeyDown={(e) => e.stopPropagation()}
-            />
-            <Input
-              placeholder="Please enter prompt"
-              value={newPrompt}
-              onChange={onNewPromptChange}
-              onKeyDown={(e) => e.stopPropagation()}
-            />
-          </div>
           <Button
-            size="small"
-            type="text"
+            type="primary"
             icon={<PlusOutlined />}
-            onClick={addPrompt}
+            onClick={handleAddPromptClick}
           >
             Add Prompt
           </Button>
@@ -266,25 +295,39 @@ const AskComp = ({ setActiveKey }) => {
           }}
           title={`${item.value}`}
         >
-          <div style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
-            <div>{`${item.label}`}</div>
-            <div style={{ fontSize: 12, color: "#999", whiteSpace: "wrap" }}>
-              {`${item.value}`}
-            </div>
+          <div
+            style={{ overflow: "hidden", textOverflow: "ellipsis", flex: 1 }}
+          >
+            <div
+              style={{ fontWeight: 500, fontSize: "14px" }}
+            >{`${item.label}`}</div>
             <div
               style={{
                 fontSize: 12,
                 color: "#999",
                 whiteSpace: "wrap",
-                textAlign: "right",
+                marginTop: "2px",
               }}
             >
-              {item?.shortcut && <span>{`${item?.shortcut}`}</span>}
+              {`${item.value}`}
             </div>
+            {item?.shortcut && (
+              <div
+                style={{
+                  fontSize: 11,
+                  color: "#1890ff",
+                  whiteSpace: "wrap",
+                  marginTop: "2px",
+                }}
+              >
+                <Tag size="small" color="blue">{`${item?.shortcut}`}</Tag>
+              </div>
+            )}
           </div>
-          <div>
+          <div style={{ marginLeft: "8px" }}>
             <Button
               type="text"
+              size="small"
               icon={<DeleteOutlined />}
               onClick={(e) => {
                 e.preventDefault();
@@ -304,142 +347,195 @@ const AskComp = ({ setActiveKey }) => {
   useEffect(() => {
     console.log("AskComp");
   }, []);
+
   return (
-    <div style={{ marginTop: 8 }}>
+    <div>
       {contextHolder}
       <Spin spinning={isLoading}>
-        {/* <Button
-          type="primary"
-          onClick={() => {
-            EventsEmit("test", JSON.stringify(promptList));
-          }}
-        >
-          test
-        </Button> */}
-        {/* {selection && <h1>selection:{selection}</h1>} */}
-        {/* {chatResponse && <h2>chatResponse:{chatResponse}</h2>} */}
-        <div
-          className="setting-container"
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 8,
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <span>Prompts:</span>
-
-            <Select
-              style={{ width: 350 }}
-              placeholder="Select Prompt"
-              dropdownRender={dropdownRenderElement}
-              onSelect={onSelectPromptHandler}
-              options={renderPromptOptions(promptList)}
-              value={selectedPrompt}
-            />
-          </div>
-        </div>
-        <div className="content-container" style={{ marginTop: 16 }}>
-          <div
-            style={{
-              marginBottom: 16,
-              display: "flex",
-              gap: 4,
-              flexWrap: "wrap",
-            }}
-            className="recent-prompts"
-          >
-            {recentPrompts?.map((prompt, index) => (
-              <div
-                key={prompt?.value}
-                onClick={(e) => {
-                  onSelectPromptHandler(prompt?.value);
-                }}
-                className="recent-prompt-item"
-                title={prompt?.value}
-              >
-                <Tag
-                  key={prompt?.label}
-                  closable
-                  onClose={(e) => {
-                    e.stopPropagation();
-                    setRecentPrompts(
-                      recentPrompts.filter((_, i) => i !== index)
-                    );
-                  }}
-                  color={TAG_COLORS[index % TAG_COLORS.length]}
+        <Space direction="vertical" size="small" style={{ width: "100%" }}>
+          {/* Prompt Selection */}
+          <Card size="small" title={null}>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+              <Text strong style={{ minWidth: "80px" }}>
+                Prompt:
+              </Text>
+              <Select
+                style={{ flex: 1 }}
+                placeholder="Select a prompt template"
+                dropdownRender={dropdownRenderElement}
+                onSelect={onSelectPromptHandler}
+                options={renderPromptOptions(promptList)}
+                value={selectedPrompt}
+                showSearch
+                filterOption={(input, option) =>
+                  option.label.props.children[0].props.children[0].props.children
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+              />
+            </div>
+            <Collapse
+              accordion
+              bordered={false}
+              size="small"
+              style={{ marginTop: "12px" }}
+              activeKey={recentPromptsActiveKey}
+              onChange={(key) => {
+                setRecentPromptsActiveKey(
+                  key === IS_OPEN_RECENT_PROMPTS_VALUE
+                    ? IS_OPEN_RECENT_PROMPTS_VALUE
+                    : ""
+                );
+              }}
+            >
+              <Panel header="Recent Prompts" key={IS_OPEN_RECENT_PROMPTS_VALUE}>
+                <div
                   style={{
-                    maxWidth: 134,
                     display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
+                    gap: "8px",
+                    flexWrap: "wrap",
                   }}
+                  className="recent-prompts"
                 >
-                  <div
-                    style={{
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {prompt?.label || prompt?.value}
-                  </div>
-                </Tag>
+                  {recentPrompts?.map((prompt, index) => (
+                    <div
+                      key={prompt?.value}
+                      onClick={(e) => {
+                        onSelectPromptHandler(prompt?.value);
+                      }}
+                      className="recent-prompt-item"
+                      title={prompt?.value}
+                    >
+                      <Tag
+                        key={prompt?.label}
+                        closable
+                        onClose={(e) => {
+                          e.stopPropagation();
+                          setRecentPrompts(
+                            recentPrompts.filter((_, i) => i !== index)
+                          );
+                        }}
+                        color={TAG_COLORS[index % TAG_COLORS.length]}
+                        style={{
+                          maxWidth: "200px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          cursor: "pointer",
+                        }}
+                      >
+                        <div
+                          style={{
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                            flex: 1,
+                          }}
+                        >
+                          {prompt?.label || prompt?.value}
+                        </div>
+                      </Tag>
+                    </div>
+                  ))}
+                </div>
+              </Panel>
+            </Collapse>
+          </Card>
+
+          {/* Input Area */}
+          <Card
+            size="small"
+            title={
+              <Title level={4} style={{ margin: 0 }}>
+                Ask Question
+              </Title>
+            }
+          >
+            <Space direction="vertical" style={{ width: "100%" }} size="middle">
+              <TextArea
+                autoSize={{ minRows: 4, maxRows: 12 }}
+                placeholder="Enter your question or paste text here..."
+                value={`${selection}`}
+                onChange={onChangeSelectionHandler}
+                allowClear
+                style={{ fontSize: "14px" }}
+              />
+              <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                <Button
+                  title="Cmd+Enter to send"
+                  ref={askRef}
+                  type="primary"
+                  loading={isAskLoading}
+                  icon={<SendOutlined />}
+                  onClick={() => {
+                    handleChat(messageGenerator(selectedPrompt, selection));
+                  }}
+                  style={{ minWidth: "100px" }}
+                >
+                  {isAskLoading ? "Thinking..." : "Send"}
+                </Button>
               </div>
-            ))}
-          </div>
-          <TextArea
-            autoSize={{ minRows: 3, maxRows: 10 }}
-            placeholder="Quickly input your question"
-            value={`${selection}`}
-            onChange={onChangeSelectionHandler}
-            allowClear
-          />
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              marginTop: 16,
-            }}
-          >
-            <Button
-              title="cmd+enter"
-              ref={askRef}
-              type="primary"
-              loading={isAskLoading}
-              onClick={() => {
-                handleChat(messageGenerator(selectedPrompt, selection));
-              }}
-            >
-              {isAskLoading ? "Thinking..." : "Ask"}
-            </Button>
-          </div>
+            </Space>
+          </Card>
 
+          {/* Response */}
           {chatResponse && (
-            <div style={{ marginTop: 16 }}>
-              <MarkDownComp>{chatResponse}</MarkDownComp>
-            </div>
-          )}
-        </div>
-
-        {/* <NavBar />
-        <Layout className="site-layout">
-          <Content
-            style={{
-              background: "white",
-              padding: "0 50px",
-            }}
-          >
-            <div
-              style={{
-                padding: 24,
-              }}
+            <Card
+              size="small"
+              title={
+                <Title level={4} style={{ margin: 0 }}>
+                  Response
+                </Title>
+              }
+              style={{ borderColor: "#d9d9d9" }}
             >
-              <Outlet />
-              <FloatButton.BackTop />
-            </div>
-          </Content>
-        </Layout> */}
+              <div style={{ maxHeight: "500px", overflowY: "auto" }}>
+                <MarkDownComp>{chatResponse}</MarkDownComp>
+              </div>
+            </Card>
+          )}
+        </Space>
+
+        <Modal
+          title="Add New Prompt"
+          open={isModalVisible}
+          onOk={handleModalOk}
+          onCancel={handleModalCancel}
+          okText="Add"
+          cancelText="Cancel"
+          destroyOnClose
+          width={600}
+        >
+          <Form form={form} layout="vertical" onFinish={handleModalOk}>
+            <Form.Item
+              name="title"
+              label="Prompt Title"
+              rules={[
+                {
+                  required: true,
+                  message: "Please enter prompt title",
+                },
+              ]}
+            >
+              <Input placeholder="Enter a descriptive title for this prompt" />
+            </Form.Item>
+            <Form.Item
+              name="prompt"
+              label="Prompt Template"
+              rules={[
+                {
+                  required: true,
+                  message: "Please enter prompt",
+                },
+              ]}
+            >
+              <TextArea
+                placeholder="Enter your prompt template. Use {text} as placeholder for the input text."
+                autoSize={{ minRows: 4, maxRows: 8 }}
+              />
+            </Form.Item>
+          </Form>
+        </Modal>
       </Spin>
     </div>
   );

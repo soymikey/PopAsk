@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from "react";
 import ShortcutComp from "./ShortcutComp";
-import { Button, Divider, message, Select, Tooltip } from "antd";
+import {
+  Button,
+  Divider,
+  message,
+  Select,
+  Tooltip,
+  Card,
+  Space,
+  Typography,
+} from "antd";
 import {
   DEFAULT_ORC_LANG,
   DEFAULT_SHORTCUT_LIST,
@@ -14,7 +23,9 @@ import {
   DEFAULT_PROMPT_OPTIONS,
   OCR_LANGUAGE_OPTIONS,
 } from "../../data/language";
-import { InfoCircleOutlined } from "@ant-design/icons";
+import { InfoCircleOutlined, SaveOutlined } from "@ant-design/icons";
+
+const { Title, Text } = Typography;
 
 function SettingsComp() {
   const [ORCLang, setORCLang] = useLocalStorage(ORC_LANG_KEY, DEFAULT_ORC_LANG);
@@ -73,6 +84,10 @@ function SettingsComp() {
       "syncShortcutList",
       JSON.stringify([...localPromptList, ...systemShortcutsLocal])
     );
+    messageApi.open({
+      type: "success",
+      content: "Settings saved successfully",
+    });
   };
 
   useEffect(() => {
@@ -85,51 +100,115 @@ function SettingsComp() {
   }, []);
 
   return (
-    <div>
+    <div style={{ paddingBottom: "12px" }}>
       {contextHolder}
-      <h2>ORC</h2>
 
-      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        <Select
-          mode="multiple"
-          style={{ width: 300 }}
-          options={OCR_LANGUAGE_OPTIONS}
-          value={ORCLang}
-          onChange={onChangeORCHandler}
-          placeholder="select recognition languages"
-        />
-        {/* 添加一个InfoIcon */}
-        <Tooltip title={<>Select multiple languages to OCR</>} placement="top">
-          <InfoCircleOutlined />
-        </Tooltip>
-      </div>
-      <Divider style={{ margin: "8px 0" }} />
+      <Space direction="vertical" size="large" style={{ width: "100%" }}>
+        {/* OCR Settings */}
+        <Card
+          title={
+            <Space>
+              <Title level={4} style={{ margin: 0 }}>
+                OCR Settings
+              </Title>
+              <Tooltip
+                title="Select multiple languages for text recognition"
+                placement="top"
+              >
+                <InfoCircleOutlined style={{ color: "#1890ff" }} />
+              </Tooltip>
+            </Space>
+          }
+          size="small"
+        >
+          <Select
+            mode="multiple"
+            style={{ width: "100%" }}
+            options={OCR_LANGUAGE_OPTIONS}
+            value={ORCLang}
+            onChange={onChangeORCHandler}
+            placeholder="Select recognition languages (max 5)"
+            maxTagCount={3}
+            showSearch
+          />
+          <Text
+            type="secondary"
+            style={{ fontSize: "12px", display: "block", marginTop: "8px" }}
+          >
+            Select up to 5 languages for optimal OCR performance
+          </Text>
+        </Card>
 
-      <h2>System Shortcuts</h2>
-      {systemShortcutsLocal.map((item, index) => (
-        <ShortcutComp
-          localPrompt={item}
-          setLocalPromptList={setSystemShortcutsLocal}
-          localPromptList={systemShortcutsLocal}
-          key={index}
-        />
-      ))}
-      <Divider style={{ margin: "8px 0" }} />
+        {/* System Shortcuts */}
+        <Card
+          title={
+            <Title level={4} style={{ margin: 0 }}>
+              System Shortcuts
+            </Title>
+          }
+          size="small"
+        >
+          <Space direction="vertical" style={{ width: "100%" }} size="middle">
+            {systemShortcutsLocal.map((item, index) => (
+              <ShortcutComp
+                localPrompt={item}
+                setLocalPromptList={setSystemShortcutsLocal}
+                localPromptList={systemShortcutsLocal}
+                key={index}
+              />
+            ))}
+            {systemShortcutsLocal.length === 0 && (
+              <Text
+                type="secondary"
+                style={{ textAlign: "center", display: "block" }}
+              >
+                No system shortcuts configured
+              </Text>
+            )}
+          </Space>
+        </Card>
 
-      <h2>Prompt Shortcuts</h2>
-      {localPromptList.map((prompt, index) => (
-        <ShortcutComp
-          localPrompt={prompt}
-          setLocalPromptList={setLocalPromptList}
-          localPromptList={localPromptList}
-          key={index}
-        />
-      ))}
-      <div style={{ display: "flex", justifyContent: "center", marginTop: 20 }}>
-        <Button type="primary" onClick={handleSave}>
-          Save
-        </Button>
-      </div>
+        {/* Prompt Shortcuts */}
+        <Card
+          title={
+            <Title level={4} style={{ margin: 0 }}>
+              Prompt Shortcuts
+            </Title>
+          }
+          size="small"
+        >
+          <Space direction="vertical" style={{ width: "100%" }} size="middle">
+            {localPromptList.map((prompt, index) => (
+              <ShortcutComp
+                localPrompt={prompt}
+                setLocalPromptList={setLocalPromptList}
+                localPromptList={localPromptList}
+                key={index}
+              />
+            ))}
+            {localPromptList.length === 0 && (
+              <Text
+                type="secondary"
+                style={{ textAlign: "center", display: "block" }}
+              >
+                No prompt shortcuts configured
+              </Text>
+            )}
+          </Space>
+        </Card>
+
+        {/* Save Button */}
+        <div style={{ textAlign: "center" }}>
+          <Button
+            type="primary"
+            icon={<SaveOutlined />}
+            onClick={handleSave}
+            style={{ minWidth: "120px" }}
+          >
+            Save Settings
+          </Button>
+        </div>
+      </Space>
     </div>
   );
 }

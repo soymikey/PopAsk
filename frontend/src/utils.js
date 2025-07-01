@@ -4,8 +4,15 @@ export const messageGenerator = (prompt, text) => {
 };
 
 export const newPromptGenerator = (title, text) => {
-    if (title.trim().length === 0 || text.trim().length === 0) {
+    if (title.trim().length === 0) {
         return null;
+    }
+    if (text.trim().length === 0) {
+        return {
+            label: `${title}`,
+            value: `${title}\n`,
+            shortcut: "",
+        };;
     }
     return {
         label: `${title}`,

@@ -1,6 +1,8 @@
-import { Input, Select } from "antd";
+import { Input, Select, Card, Space, Typography, Tag } from "antd";
 const { Option } = Select;
 import React, { useEffect, useState } from "react";
+
+const { Text } = Typography;
 
 function ShortcutComp({ localPrompt, setLocalPromptList, localPromptList }) {
   const [defaultP1, setDefaultP1] = useState("ctrl+shift");
@@ -52,41 +54,62 @@ function ShortcutComp({ localPrompt, setLocalPromptList, localPromptList }) {
     <Select
       value={defaultP1}
       onChange={handleP1Change}
-      style={{ width: "110px" }}
+      style={{ width: "120px" }}
+      size="middle"
     >
       <Option value="ctrl+shift">Ctrl+Shift</Option>
       <Option value="ctrl">Ctrl</Option>
     </Select>
   );
+
   return (
-    <div
+    <Card
+      size="small"
       style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        marginTop: 10,
+        border: "1px solid #f0f0f0",
+        borderRadius: "8px",
+        boxShadow: "0 1px 2px rgba(0,0,0,0.03)",
       }}
+      bodyStyle={{ padding: "16px" }}
     >
-      <div
-        style={{
-          width: "90%",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-          whiteSpace: "nowrap",
-        }}
-      >
-        <div>{localPrompt.label}</div>
-        <div style={{ fontSize: 12, color: "#999", whiteSpace: "wrap" }}>
-          {localPrompt.value}
+      <Space direction="vertical" style={{ width: "100%" }} size="small">
+        {/* Title and Description */}
+        <div>
+          <Text
+            strong
+            style={{ fontSize: "14px", display: "block", marginBottom: "4px" }}
+          >
+            {localPrompt.label}
+          </Text>
+          <Text
+            type="secondary"
+            style={{ fontSize: "12px", lineHeight: "1.4" }}
+          >
+            {localPrompt.value}
+          </Text>
         </div>
-      </div>
-      <Input
-        style={{ width: "200px" }}
-        addonBefore={selectBefore}
-        value={defaultP2}
-        onChange={handleChange}
-      />
-    </div>
+
+        {/* Shortcut Input */}
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <Text type="secondary" style={{ fontSize: "12px", minWidth: "60px" }}>
+            Shortcut:
+          </Text>
+          <Input
+            style={{ width: "200px" }}
+            addonBefore={selectBefore}
+            value={defaultP2}
+            onChange={handleChange}
+            placeholder="Press a key"
+            size="middle"
+          />
+          {defaultP2 && (
+            <Tag color="blue" style={{ margin: 0 }}>
+              {`${defaultP1}+${defaultP2}`}
+            </Tag>
+          )}
+        </div>
+      </Space>
+    </Card>
   );
 }
 
