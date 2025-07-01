@@ -11,7 +11,6 @@ import {
   Space,
 } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
-
 import { useEffect, useState, useRef } from "react";
 import {
   EventsOn,
@@ -36,6 +35,7 @@ import {
   SELECTED_PROMPT_KEY,
   ORC_LANG_KEY,
 } from "../../constant";
+import { MarkDownComp } from "../MarkDownComp";
 const { TextArea } = Input;
 
 const AskComp = ({ setActiveKey }) => {
@@ -416,12 +416,9 @@ const AskComp = ({ setActiveKey }) => {
           </div>
 
           {chatResponse && (
-            <TextArea
-              autoSize={{ minRows: 1, maxRows: 20 }}
-              value={chatResponse || ""}
-              onChange={() => {}}
-              style={{ marginTop: 16 }}
-            />
+            <div style={{ marginTop: 16 }}>
+              <MarkDownComp>{chatResponse}</MarkDownComp>
+            </div>
           )}
         </div>
 
