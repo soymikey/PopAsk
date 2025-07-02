@@ -252,7 +252,9 @@ func (a *App) CreateScreenshot(ctx context.Context) (string, error) {
 // either by clicking the window close button or calling runtime.Quit.
 // Returning true will cause the application to continue, false will continue shutdown as normal.
 func (a *App) beforeClose(ctx context.Context) (prevent bool) {
-	return false
+	// 隐藏窗口而不是关闭应用
+	runtime.WindowHide(ctx)
+	return true // 阻止窗口关闭
 }
 
 // shutdown is called at application termination

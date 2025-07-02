@@ -40,7 +40,7 @@ func main() {
 		Fullscreen:        false,
 		Frameless:         false,
 		StartHidden:       false,
-		HideWindowOnClose: false,
+		HideWindowOnClose: true,
 		BackgroundColour:  &options.RGBA{R: 255, G: 255, B: 255, A: 255},
 		AssetServer: &assetserver.Options{
 			Assets: assets,
