@@ -1,6 +1,7 @@
 import { Layout, Tabs } from "antd";
 import AskComp from "./components/AskComp";
 import SettingsComp from "./components/SettingsComp";
+import HistoryComp from "./components/HistoryComp";
 import useLocalStorage from "./hooks/useLocalStorage";
 import {
   PROMPT_LIST_KEY,
@@ -52,6 +53,16 @@ const App = () => {
           setPromptList={setPromptList}
           systemShortcuts={systemShortcuts}
           syncShortcutList={syncShortcutList}
+          historyList={historyList}
+          setHistoryList={setHistoryList}
+        />
+      ),
+    },
+    {
+      key: "history",
+      label: "History",
+      children: (
+        <HistoryComp
           historyList={historyList}
           setHistoryList={setHistoryList}
         />
