@@ -36,6 +36,7 @@ import {
   newPromptGenerator,
   languageFormate,
   getLocalStorage,
+  historyGenerator,
 } from "../../utils";
 import useLocalStorage from "../../hooks/useLocalStorage";
 import "./index.css";
@@ -55,6 +56,8 @@ const AskComp = ({
   setPromptList,
   systemShortcuts,
   syncShortcutList,
+  historyList,
+  setHistoryList,
 }) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [form] = Form.useForm();
@@ -124,6 +127,10 @@ const AskComp = ({
     console.log("response", response);
     if (response.code === 200) {
       setChatResponse(response.data);
+      setHistoryList([
+        historyGenerator(message, response.data),
+        ...historyList,
+      ]);
       const prompt = promptList.find((p) => p.value === selectedPrompt);
       if (!prompt) return;
       setRecentPrompts((prev) => {

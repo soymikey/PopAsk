@@ -99,7 +99,7 @@ function ShortcutComp({ localPrompt, setLocalPromptList, localPromptList }) {
             addonBefore={selectBefore}
             value={defaultP2}
             onChange={handleChange}
-            placeholder="Press a key"
+            placeholder="key"
             size="middle"
           />
           {defaultP2 && (

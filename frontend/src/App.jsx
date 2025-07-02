@@ -6,6 +6,8 @@ import {
   PROMPT_LIST_KEY,
   SYSTEM_SHORTCUT_KEY,
   DEFAULT_SHORTCUT_LIST,
+  HISTORY_LIST_KEY,
+  DEFAULT_HISTORY_LIST,
 } from "./constant";
 import { useEffect, useState } from "react";
 import { EventsEmit } from "../wailsjs/runtime/runtime";
@@ -20,6 +22,13 @@ const App = () => {
     SYSTEM_SHORTCUT_KEY,
     DEFAULT_SHORTCUT_LIST
   );
+
+  // history
+  const [historyList, setHistoryList] = useLocalStorage(
+    HISTORY_LIST_KEY,
+    DEFAULT_HISTORY_LIST
+  );
+
   const [activeKey, setActiveKey] = useState("ask");
   const onChange = (key) => {
     setActiveKey(key);
@@ -43,6 +52,8 @@ const App = () => {
           setPromptList={setPromptList}
           systemShortcuts={systemShortcuts}
           syncShortcutList={syncShortcutList}
+          historyList={historyList}
+          setHistoryList={setHistoryList}
         />
       ),
     },

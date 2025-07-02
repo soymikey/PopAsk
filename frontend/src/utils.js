@@ -42,3 +42,12 @@ export const getLocalStorage = (key, defaultValue) => {
         return DEFAULT_ORC_LANG;
     }
 };
+
+export const historyGenerator = (message, response) => {
+    return {
+        message: message,
+        response: response,
+        timestamp: new Date().toLocaleString(),
+    };
+};
+

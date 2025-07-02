@@ -18,3 +18,6 @@ export const DEFAULT_SHORTCUT_LIST = [
     },
 
 ];
+
+export const HISTORY_LIST_KEY = "historyList";
+export const DEFAULT_HISTORY_LIST = [];
