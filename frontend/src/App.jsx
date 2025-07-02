@@ -10,9 +10,13 @@ import {
 import { useEffect, useState } from "react";
 import { EventsEmit } from "../wailsjs/runtime/runtime";
 import "./app.css";
+import { DEFAULT_PROMPT_OPTIONS } from "./data/language";
 const App = () => {
-  const [promptList] = useLocalStorage(PROMPT_LIST_KEY, []);
-  const [systemShortcuts] = useLocalStorage(
+  const [promptList, setPromptList] = useLocalStorage(
+    PROMPT_LIST_KEY,
+    DEFAULT_PROMPT_OPTIONS
+  );
+  const [systemShortcuts, setSystemShortcuts] = useLocalStorage(
     SYSTEM_SHORTCUT_KEY,
     DEFAULT_SHORTCUT_LIST
   );
@@ -21,23 +25,43 @@ const App = () => {
     setActiveKey(key);
   };
 
-  const items = [
-    {
-      key: "ask",
-      label: "Ask",
-      children: <AskComp setActiveKey={setActiveKey} />,
-    },
-    {
-      key: "settings",
-      label: "Settings",
-      children: <SettingsComp />,
-    },
-  ];
-  useEffect(() => {
+  const syncShortcutList = (promptList, systemShortcuts) => {
     EventsEmit(
       "syncShortcutList",
       JSON.stringify([...promptList, ...systemShortcuts])
     );
+  };
+
+  const items = [
+    {
+      key: "ask",
+      label: "Ask",
+      children: (
+        <AskComp
+          setActiveKey={setActiveKey}
+          promptList={promptList}
+          setPromptList={setPromptList}
+          systemShortcuts={systemShortcuts}
+          syncShortcutList={syncShortcutList}
+        />
+      ),
+    },
+    {
+      key: "settings",
+      label: "Settings",
+      children: (
+        <SettingsComp
+          promptList={promptList}
+          setPromptList={setPromptList}
+          systemShortcuts={systemShortcuts}
+          setSystemShortcuts={setSystemShortcuts}
+          syncShortcutList={syncShortcutList}
+        />
+      ),
+    },
+  ];
+  useEffect(() => {
+    syncShortcutList(promptList, systemShortcuts);
   }, []);
   return (
     <Layout

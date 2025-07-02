@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import ShortcutComp from "./ShortcutComp";
 import {
   Button,
-  Divider,
   message,
   Select,
   Tooltip,
@@ -10,35 +9,23 @@ import {
   Space,
   Typography,
 } from "antd";
-import {
-  DEFAULT_ORC_LANG,
-  DEFAULT_SHORTCUT_LIST,
-  ORC_LANG_KEY,
-  PROMPT_LIST_KEY,
-  SYSTEM_SHORTCUT_KEY,
-} from "../../constant";
+import { DEFAULT_ORC_LANG, ORC_LANG_KEY } from "../../constant";
 import useLocalStorage from "../../hooks/useLocalStorage";
-import { EventsEmit } from "../../../wailsjs/runtime/runtime";
-import {
-  DEFAULT_PROMPT_OPTIONS,
-  OCR_LANGUAGE_OPTIONS,
-} from "../../data/language";
+import { OCR_LANGUAGE_OPTIONS } from "../../data/language";
 import { InfoCircleOutlined, SaveOutlined } from "@ant-design/icons";
 
 const { Title, Text } = Typography;
 
-function SettingsComp() {
+function SettingsComp({
+  promptList,
+  setPromptList,
+  systemShortcuts,
+  setSystemShortcuts,
+  syncShortcutList,
+}) {
   const [ORCLang, setORCLang] = useLocalStorage(ORC_LANG_KEY, DEFAULT_ORC_LANG);
   const [localPromptList, setLocalPromptList] = useState([]);
-  const [promptList, setPromptList] = useLocalStorage(
-    PROMPT_LIST_KEY,
-    DEFAULT_PROMPT_OPTIONS
-  );
   const [systemShortcutsLocal, setSystemShortcutsLocal] = useState([]);
-  const [systemShortcuts, setSystemShortcuts] = useLocalStorage(
-    SYSTEM_SHORTCUT_KEY,
-    DEFAULT_SHORTCUT_LIST
-  );
 
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -80,10 +67,7 @@ function SettingsComp() {
     }
     setPromptList(localPromptList);
     setSystemShortcuts(systemShortcutsLocal);
-    EventsEmit(
-      "syncShortcutList",
-      JSON.stringify([...localPromptList, ...systemShortcutsLocal])
-    );
+    syncShortcutList(localPromptList, systemShortcutsLocal);
     messageApi.open({
       type: "success",
       content: "Settings saved successfully",
@@ -93,7 +77,7 @@ function SettingsComp() {
   useEffect(() => {
     setLocalPromptList(promptList);
     setSystemShortcutsLocal(systemShortcuts);
-  }, []);
+  }, [promptList, systemShortcuts]);
 
   useEffect(() => {
     console.log("SettingsComp");

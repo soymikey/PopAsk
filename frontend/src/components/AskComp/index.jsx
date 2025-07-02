@@ -16,12 +16,7 @@ import {
   Collapse,
 } from "antd";
 const { Panel } = Collapse;
-import {
-  PlusOutlined,
-  DeleteOutlined,
-  SendOutlined,
-  HistoryOutlined,
-} from "@ant-design/icons";
+import { PlusOutlined, DeleteOutlined, SendOutlined } from "@ant-design/icons";
 import { useEffect, useState, useRef } from "react";
 import {
   EventsOn,
@@ -47,7 +42,6 @@ import "./index.css";
 import {
   DEFAULT_ORC_LANG,
   RECENT_PROMPTS_KEY,
-  PROMPT_LIST_KEY,
   SELECTED_PROMPT_KEY,
   ORC_LANG_KEY,
 } from "../../constant";
@@ -55,11 +49,16 @@ import { MarkDownComp } from "../MarkDownComp";
 const { TextArea } = Input;
 const { Title, Text } = Typography;
 
-const AskComp = ({ setActiveKey }) => {
+const AskComp = ({
+  setActiveKey,
+  promptList,
+  setPromptList,
+  systemShortcuts,
+  syncShortcutList,
+}) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [form] = Form.useForm();
 
-  const [screenshot, setScreenshot] = useState(null);
   const [selection, setSelection] = useState("");
   const [chatResponse, setChatResponse] = useState(null);
   const [selectedPrompt, setSelectedPrompt] = useLocalStorage(
@@ -74,11 +73,6 @@ const AskComp = ({ setActiveKey }) => {
     []
   );
   const askRef = useRef(null);
-
-  const [promptList, setPromptList] = useLocalStorage(
-    PROMPT_LIST_KEY,
-    DEFAULT_PROMPT_OPTIONS
-  );
 
   const [recentPromptsActiveKey, setRecentPromptsActiveKey] = useLocalStorage(
     IS_OPEN_RECENT_PROMPTS_KEY,
@@ -316,7 +310,16 @@ const AskComp = ({ setActiveKey }) => {
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                setPromptList(items.filter((i) => i.value !== item.value));
+
+                const newPromptList = items.filter(
+                  (i) => i.value !== item.value
+                );
+                setPromptList(newPromptList);
+                syncShortcutList(newPromptList, systemShortcuts);
+                messageApi.open({
+                  type: "success",
+                  content: "Prompt deleted successfully",
+                });
               }}
             />
           </div>
@@ -340,11 +343,11 @@ const AskComp = ({ setActiveKey }) => {
           {/* Prompt Selection */}
           <Card size="small" title={null}>
             <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-              <Text strong style={{ minWidth: "80px" }}>
+              <Text strong style={{ minWidth: "55px" }}>
                 Prompt:
               </Text>
               <Select
-                style={{ flex: 1 }}
+                style={{ minWidth: 350 }}
                 placeholder="Select a prompt template"
                 dropdownRender={dropdownRenderElement}
                 onSelect={onSelectPromptHandler}
