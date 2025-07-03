@@ -25,12 +25,7 @@ import {
 } from "../../../wailsjs/runtime/runtime";
 import Tesseract from "tesseract.js";
 import { ChatAPI } from "../../../wailsjs/go/main/App";
-import {
-  IS_OPEN_RECENT_PROMPTS_KEY,
-  DEFAULT_PROMPT_OPTIONS,
-  TAG_COLORS,
-  IS_OPEN_RECENT_PROMPTS_VALUE,
-} from "../../data/language";
+import { DEFAULT_PROMPT_OPTIONS, TAG_COLORS } from "../../data/language";
 import {
   messageGenerator,
   newPromptGenerator,
@@ -45,6 +40,8 @@ import {
   RECENT_PROMPTS_KEY,
   SELECTED_PROMPT_KEY,
   ORC_LANG_KEY,
+  IS_OPEN_RECENT_PROMPTS_KEY,
+  IS_OPEN_RECENT_PROMPTS_VALUE,
 } from "../../constant";
 import { MarkDownComp } from "../MarkDownComp";
 const { TextArea } = Input;
@@ -217,14 +214,14 @@ const AskComp = ({
     };
   }, [selectedPrompt]);
 
-  useEffect(() => {
-    // cmd+enter 的是 触发点击按钮
-    window.addEventListener("keydown", (e) => {
-      if (e.metaKey && e.key === "Enter") {
-        askRef.current?.click();
-      }
-    });
-  }, [askRef]);
+  // useEffect(() => {
+  //   // cmd+enter 的是 触发点击按钮
+  //   window.addEventListener("keydown", (e) => {
+  //     if (e.metaKey && e.key === "Enter") {
+  //       askRef.current?.click();
+  //     }
+  //   });
+  // }, [askRef]);
 
   useEffect(() => {
     if (selectedPrompt.length === 0) {
@@ -453,6 +450,12 @@ const AskComp = ({
                 onChange={onChangeSelectionHandler}
                 allowClear
                 style={{ fontSize: "14px" }}
+                onPressEnter={(e) => {
+                  if (e.metaKey) {
+                    e.preventDefault();
+                    askRef.current?.click();
+                  }
+                }}
               />
               <div style={{ display: "flex", justifyContent: "flex-end" }}>
                 <Button

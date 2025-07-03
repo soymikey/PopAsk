@@ -5,6 +5,8 @@ import {context} from '../models';
 
 export function ChatAPI(arg1:string):Promise<main.ChatResponse>;
 
+export function ChatAPIV2(arg1:string):Promise<main.ChatResponse>;
+
 export function CreateNewGist(arg1:main.Gist,arg2:string):Promise<any>;
 
 export function CreateScreenshot(arg1:context.Context):Promise<string>;

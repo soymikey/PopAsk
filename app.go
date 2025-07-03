@@ -284,7 +284,10 @@ type Gist struct {
 }
 
 const BASE_URL = "https://api.github.com"
+
 const SERVER_URL = "https://extension.migaox.com"
+
+// const SERVER_URL = "http://localhost:4000"
 
 var githubResponse APIResponse
 
@@ -389,6 +392,10 @@ type ChatRequest struct {
 	Message string `json:"message"`
 }
 
+type ChatRequestV2 struct {
+	Messages string `json:"messages"`
+}
+
 type ChatResponse struct {
 	Code int         `json:"code"`
 	Data interface{} `json:"data"`
@@ -399,6 +406,21 @@ func (a *App) ChatAPI(message string) (ChatResponse, error) {
 
 	requestBody, _ := json.Marshal(ChatRequest{Message: message})
 	url := fmt.Sprintf("%s/ai-translator/openai", SERVER_URL)
+	response, err := MakePostRequest(url, "", requestBody)
+
+	if err != nil {
+		return ChatResponse{}, err
+	}
+
+	json.Unmarshal(response, &chatResponse)
+
+	return chatResponse, nil
+}
+func (a *App) ChatAPIV2(messages string) (ChatResponse, error) {
+	var chatResponse ChatResponse
+
+	requestBody, _ := json.Marshal(ChatRequestV2{Messages: messages})
+	url := fmt.Sprintf("%s/ai-translator/openai/chat", SERVER_URL)
 	response, err := MakePostRequest(url, "", requestBody)
 
 	if err != nil {

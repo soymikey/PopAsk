@@ -6,6 +6,10 @@ export function ChatAPI(arg1) {
   return window['go']['main']['App']['ChatAPI'](arg1);
 }
 
+export function ChatAPIV2(arg1) {
+  return window['go']['main']['App']['ChatAPIV2'](arg1);
+}
+
 export function CreateNewGist(arg1, arg2) {
   return window['go']['main']['App']['CreateNewGist'](arg1, arg2);
 }

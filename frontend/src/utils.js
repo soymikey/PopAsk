@@ -3,6 +3,8 @@ export const messageGenerator = (prompt, text) => {
     return `${prompt}${text}`;
 };
 
+
+
 export const newPromptGenerator = (title, text) => {
     if (title.trim().length === 0) {
         return null;
@@ -51,3 +53,22 @@ export const historyGenerator = (message, response) => {
     };
 };
 
+
+
+export const userMessageGenerator = (message) => {
+    return {
+        id: Date.now(),
+        type: "user",
+        content: message,
+        timestamp: new Date().toLocaleTimeString(),
+    };
+};
+
+export const assistantMessageGenerator = (message) => {
+    return {
+        id: Date.now() + 1,
+        type: "assistant",
+        content: message,
+        timestamp: new Date().toLocaleTimeString(),
+    };
+};

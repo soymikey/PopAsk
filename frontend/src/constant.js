@@ -21,3 +21,11 @@ export const DEFAULT_SHORTCUT_LIST = [
 
 export const HISTORY_LIST_KEY = "historyList";
 export const DEFAULT_HISTORY_LIST = [];
+
+
+
+export const IS_OPEN_RECENT_PROMPTS_KEY = 'isOpenRecentPrompts'
+export const IS_OPEN_RECENT_PROMPTS_VALUE = 'open'
+
+export const IS_SHOW_PROMPT_AREA_KEY = 'isShowPromptArea'
+export const IS_SHOW_PROMPT_AREA_VALUE = true

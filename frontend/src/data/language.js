@@ -148,5 +148,6 @@ export const TAG_COLORS = [
     "purple",
 ]
 
-export const IS_OPEN_RECENT_PROMPTS_KEY = 'isOpenRecentPrompts'
-export const IS_OPEN_RECENT_PROMPTS_VALUE = 'open'
+
+
+
