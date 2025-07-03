@@ -1,5 +1,6 @@
 import { Layout, Tabs } from "antd";
 import AskComp from "./components/AskComp";
+import ChatComp from "./components/ChatComp";
 import SettingsComp from "./components/SettingsComp";
 import HistoryComp from "./components/HistoryComp";
 import useLocalStorage from "./hooks/useLocalStorage";
@@ -48,6 +49,21 @@ const App = () => {
       label: "Ask",
       children: (
         <AskComp
+          setActiveKey={setActiveKey}
+          promptList={promptList}
+          setPromptList={setPromptList}
+          systemShortcuts={systemShortcuts}
+          syncShortcutList={syncShortcutList}
+          historyList={historyList}
+          setHistoryList={setHistoryList}
+        />
+      ),
+    },
+    {
+      key: "chat",
+      label: "Chat",
+      children: (
+        <ChatComp
           setActiveKey={setActiveKey}
           promptList={promptList}
           setPromptList={setPromptList}
