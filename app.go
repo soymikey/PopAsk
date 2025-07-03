@@ -72,6 +72,8 @@ func (a *App) RegisterKeyboardShortcut(ctx context.Context) {
 		hook.End()
 		close(a.hookChan)
 		a.hookChan = nil
+		time.Sleep(100 * time.Millisecond) // 给一点时间让之前的hook完全清理
+
 	}
 
 	// Start new hook listener
@@ -82,13 +84,16 @@ func (a *App) RegisterKeyboardShortcut(ctx context.Context) {
 		}
 		shortcut := strings.Split(prompt["shortcut"].(string), "+")
 		println("RegisterKeyboardShortcut", prompt["shortcut"].(string))
+
+		// 创建局部变量避免闭包问题
+		currentPrompt := prompt
 		hook.Register(hook.KeyDown, shortcut, func(e hook.Event) {
-			println("Shortcut triggered:", prompt["shortcut"].(string))
+			println("Shortcut triggered:", currentPrompt["shortcut"].(string))
 			autoAsking := true
 			text := ""
 			err := error(nil)
-			isOpenWindowShortcut := prompt["value"].(string) == "Open Window"
-			isOrcShortcut := prompt["value"].(string) == "ORC"
+			isOpenWindowShortcut := currentPrompt["value"].(string) == "Open Window"
+			isOrcShortcut := currentPrompt["value"].(string) == "ORC"
 
 			if isOpenWindowShortcut || isOrcShortcut {
 				autoAsking = false
@@ -118,8 +123,8 @@ func (a *App) RegisterKeyboardShortcut(ctx context.Context) {
 
 			runtime.EventsEmit(ctx, "GET_SELECTION", map[string]interface{}{
 				"text":         text,
-				"shortcut":     prompt["shortcut"].(string),
-				"prompt":       prompt["value"].(string),
+				"shortcut":     currentPrompt["shortcut"].(string),
+				"prompt":       currentPrompt["value"].(string),
 				"autoAsking":   autoAsking,
 				"isOCR":        isOrcShortcut,
 				"isOpenWindow": isOpenWindowShortcut,
@@ -127,6 +132,8 @@ func (a *App) RegisterKeyboardShortcut(ctx context.Context) {
 			println("Selected text:", text)
 			fmt.Printf("Error: %v\n", err)
 
+			// 阻止事件继续传播，防止无限触发
+			e.Rawcode = 0
 		})
 	}
 	// // Ctrl/Cmd + Shift + O
