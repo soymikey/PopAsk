@@ -3,6 +3,7 @@ import AskComp from "./components/AskComp";
 import ChatComp from "./components/ChatComp";
 import SettingsComp from "./components/SettingsComp";
 import HistoryComp from "./components/HistoryComp";
+import ChatHistoryComp from "./components/ChatHistoryComp";
 import useLocalStorage from "./hooks/useLocalStorage";
 import {
   PROMPT_LIST_KEY,
@@ -38,6 +39,9 @@ const App = () => {
     CHAT_HISTORY_LIST_KEY,
     DEFAULT_CHAT_HISTORY_LIST
   );
+
+  // current chat messages
+  const [chatMessages, setChatMessages] = useState([]);
 
   const [activeKey, setActiveKey] = useState("chat");
   const onChange = (key) => {
@@ -79,6 +83,8 @@ const App = () => {
           syncShortcutList={syncShortcutList}
           chatHistoryList={chatHistoryList}
           setChatHistoryList={setChatHistoryList}
+          chatMessages={chatMessages}
+          setChatMessages={setChatMessages}
         />
       ),
     },
@@ -89,6 +95,18 @@ const App = () => {
         <HistoryComp
           historyList={historyList}
           setHistoryList={setHistoryList}
+        />
+      ),
+    },
+    {
+      key: "chatHistory",
+      label: "Chat History",
+      children: (
+        <ChatHistoryComp
+          chatHistoryList={chatHistoryList}
+          setChatHistoryList={setChatHistoryList}
+          setActiveKey={setActiveKey}
+          setChatMessages={setChatMessages}
         />
       ),
     },

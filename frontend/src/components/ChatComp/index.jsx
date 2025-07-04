@@ -66,12 +66,13 @@ const ChatComp = ({
   syncShortcutList,
   chatHistoryList,
   setChatHistoryList,
+  chatMessages,
+  setChatMessages,
 }) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [form] = Form.useForm();
 
   const [selection, setSelection] = useState("");
-  const [chatMessages, setChatMessages] = useState([]);
   const [selectedPrompt, setSelectedPrompt] = useLocalStorage(
     SELECTED_PROMPT_KEY,
     DEFAULT_PROMPT_OPTIONS[0].value
