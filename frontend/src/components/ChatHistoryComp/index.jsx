@@ -20,8 +20,11 @@ import {
   SearchOutlined,
 } from "@ant-design/icons";
 import { useState, useMemo } from "react";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
 import { MarkDownComp } from "../MarkDownComp";
 import "./index.css";
+dayjs.extend(relativeTime);
 
 const { Text, Title } = Typography;
 const { Panel } = Collapse;
@@ -166,6 +169,10 @@ const ChatHistoryComp = ({
     const firstUserMessage = userMessages[0];
     const lastMessage = history[history.length - 1];
 
+    const formatTime = (timestamp) => {
+      return dayjs(timestamp).fromNow();
+    };
+
     return (
       <Card
         key={index}
@@ -208,7 +215,7 @@ const ChatHistoryComp = ({
             <div style={{ marginBottom: "8px" }}>
               <Text type="secondary" style={{ fontSize: "12px" }}>
                 <ClockCircleOutlined style={{ marginRight: "4px" }} />
-                {lastMessage?.timestamp}
+                {formatTime(lastMessage?.timestamp)}
               </Text>
             </div>
 
@@ -218,15 +225,6 @@ const ChatHistoryComp = ({
                   ? `${firstUserMessage.content.substring(0, 80)}...`
                   : firstUserMessage?.content || "Empty chat"}
               </Text>
-            </div>
-
-            <div style={{ display: "flex", gap: "4px", flexWrap: "wrap" }}>
-              <Tag size="small" color="green">
-                {userMessages.length} user
-              </Tag>
-              <Tag size="small" color="blue">
-                {assistantMessages.length} assistant
-              </Tag>
             </div>
           </div>
 

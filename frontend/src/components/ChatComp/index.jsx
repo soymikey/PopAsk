@@ -25,15 +25,17 @@ import {
   UserOutlined,
   RobotOutlined,
   SettingOutlined,
+  LinkOutlined,
 } from "@ant-design/icons";
 import { useEffect, useState, useRef } from "react";
 import {
   EventsOn,
   EventsOff,
   WindowShow,
+  BrowserOpenURL,
 } from "../../../wailsjs/runtime/runtime";
 import Tesseract from "tesseract.js";
-import { ChatAPI, ChatAPIV2 } from "../../../wailsjs/go/main/App";
+import { ChatAPIV2 } from "../../../wailsjs/go/main/App";
 import { DEFAULT_PROMPT_OPTIONS, TAG_COLORS } from "../../data/language";
 import {
   messageGenerator,
@@ -253,8 +255,20 @@ const ChatComp = ({
     setSelection(event.target.value);
   };
   const newChatHandler = () => {
-    setChatHistoryList([...chatHistoryList, chatMessages]);
     setChatMessages([]);
+
+    // 如果当前的chatMessages 存在历史记录中，则不添加
+    if (
+      chatHistoryList.length > 0 &&
+      chatHistoryList.some((history) =>
+        history.every(
+          (message, index) => message.content === chatMessages[index].content
+        )
+      )
+    ) {
+      return;
+    }
+    setChatHistoryList([...chatHistoryList, chatMessages]);
   };
 
   const clearChat = () => {
@@ -449,8 +463,14 @@ const ChatComp = ({
           {isUser && (
             <Avatar
               icon={<UserOutlined />}
-              style={{ backgroundColor: "#52c41a", marginTop: "4px" }}
               size="small"
+              style={{
+                backgroundColor: "#52c41a",
+                marginTop: "4px",
+                flexShrink: 0,
+                minWidth: "24px",
+                minHeight: "24px",
+              }}
             />
           )}
         </div>
@@ -496,12 +516,12 @@ const ChatComp = ({
                   <div style={{ display: "flex", gap: "8px" }}>
                     {chatMessages.length > 0 && (
                       <Button type="default" onClick={newChatHandler}>
-                        New Chat
+                        New
                       </Button>
                     )}
                     {chatMessages.length > 0 && (
                       <Button danger onClick={clearChat}>
-                        Clear Chat
+                        Clear
                       </Button>
                     )}
                   </div>
@@ -610,12 +630,32 @@ const ChatComp = ({
                   options={renderPromptOptions(promptList)}
                   value={selectedPrompt}
                   showSearch
-                  filterOption={(input, option) =>
-                    option.label.props.children[0].props.children[0].props.children
-                      .toLowerCase()
-                      .includes(input.toLowerCase())
-                  }
+                  filterOption={(input, option) => {
+                    // 匹配 label 和 value
+                    const label =
+                      option.label?.props?.children?.[0]?.props?.children?.[0]
+                        ?.props?.children || "";
+                    const value = option.value || "";
+                    return (
+                      label.toLowerCase().includes(input.toLowerCase()) ||
+                      value.toLowerCase().includes(input.toLowerCase())
+                    );
+                  }}
                 />
+                {/* https://prompts.chat/ */}
+                <Button
+                  type="link"
+                  style={{
+                    color: "#1890ff",
+                    fontSize: "14px",
+                  }}
+                  onClick={() => {
+                    BrowserOpenURL("https://prompts.chat/");
+                  }}
+                >
+                  <LinkOutlined />
+                  Prompts
+                </Button>
               </div>
 
               <div

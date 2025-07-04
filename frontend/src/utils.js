@@ -56,19 +56,21 @@ export const historyGenerator = (message, response) => {
 
 
 export const userMessageGenerator = (message) => {
+    const timestamp = Date.now();
     return {
-        id: Date.now(),
+        id: timestamp,
         type: "user",
         content: message,
-        timestamp: new Date().toLocaleTimeString(),
+        timestamp: timestamp,
     };
 };
 
 export const assistantMessageGenerator = (message) => {
+    const timestamp = Date.now();
     return {
-        id: Date.now() + 1,
+        id: timestamp,
         type: "assistant",
         content: message,
-        timestamp: new Date().toLocaleTimeString(),
+        timestamp: timestamp,
     };
 };
