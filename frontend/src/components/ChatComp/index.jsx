@@ -64,8 +64,8 @@ const ChatComp = ({
   setPromptList,
   systemShortcuts,
   syncShortcutList,
-  historyList,
-  setHistoryList,
+  chatHistoryList,
+  setChatHistoryList,
 }) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [form] = Form.useForm();
@@ -221,12 +221,13 @@ const ChatComp = ({
       if (isOpenWindow || isOCR) {
         prompt_ = selectedPrompt;
       }
-
+      newChatHandler;
       setSelectedPrompt(prompt_);
       const formattedMessage = messageGenerator(prompt_, text);
       setSelection(formattedMessage);
 
       if (autoAsking) {
+        setSelection("");
         handleChat(formattedMessage);
       }
     } catch (error) {
@@ -250,10 +251,13 @@ const ChatComp = ({
     }
     setSelection(event.target.value);
   };
+  const newChatHandler = () => {
+    setChatHistoryList([...chatHistoryList, chatMessages]);
+    setChatMessages([]);
+  };
 
   const clearChat = () => {
     setChatMessages([]);
-    setSelection("");
     messageApi.open({
       type: "success",
       content: "Chat cleared",
@@ -488,11 +492,18 @@ const ChatComp = ({
                   }}
                 >
                   <span>Chat</span>
-                  {chatMessages.length > 0 && (
-                    <Button type="default" onClick={clearChat}>
-                      Clear Chat
-                    </Button>
-                  )}
+                  <div style={{ display: "flex", gap: "8px" }}>
+                    {chatMessages.length > 0 && (
+                      <Button type="default" onClick={newChatHandler}>
+                        New Chat
+                      </Button>
+                    )}
+                    {chatMessages.length > 0 && (
+                      <Button danger onClick={clearChat}>
+                        Clear Chat
+                      </Button>
+                    )}
+                  </div>
                 </Title>
               }
               style={{

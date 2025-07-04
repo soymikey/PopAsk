@@ -10,6 +10,8 @@ import {
   DEFAULT_SHORTCUT_LIST,
   HISTORY_LIST_KEY,
   DEFAULT_HISTORY_LIST,
+  CHAT_HISTORY_LIST_KEY,
+  DEFAULT_CHAT_HISTORY_LIST,
 } from "./constant";
 import { useEffect, useState } from "react";
 import { EventsEmit } from "../wailsjs/runtime/runtime";
@@ -29,6 +31,12 @@ const App = () => {
   const [historyList, setHistoryList] = useLocalStorage(
     HISTORY_LIST_KEY,
     DEFAULT_HISTORY_LIST
+  );
+
+  // chat history
+  const [chatHistoryList, setChatHistoryList] = useLocalStorage(
+    CHAT_HISTORY_LIST_KEY,
+    DEFAULT_CHAT_HISTORY_LIST
   );
 
   const [activeKey, setActiveKey] = useState("chat");
@@ -69,8 +77,8 @@ const App = () => {
           setPromptList={setPromptList}
           systemShortcuts={systemShortcuts}
           syncShortcutList={syncShortcutList}
-          historyList={historyList}
-          setHistoryList={setHistoryList}
+          chatHistoryList={chatHistoryList}
+          setChatHistoryList={setChatHistoryList}
         />
       ),
     },

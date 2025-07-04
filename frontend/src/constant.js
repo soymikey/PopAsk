@@ -21,6 +21,9 @@ export const DEFAULT_SHORTCUT_LIST = [
 
 export const HISTORY_LIST_KEY = "historyList";
 export const DEFAULT_HISTORY_LIST = [];
+export const CHAT_HISTORY_LIST_KEY = "chatHistoryList";
+export const DEFAULT_CHAT_HISTORY_LIST = [];
+
 
 
 
