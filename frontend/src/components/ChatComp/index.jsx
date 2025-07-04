@@ -377,7 +377,7 @@ const ChatComp = ({
             <Button
               type="text"
               size="small"
-              icon={<DeleteOutlined />}
+              icon={<DeleteOutlined style={{ color: "#ff4d4f" }} />}
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
