@@ -31,7 +31,7 @@ const App = () => {
     DEFAULT_HISTORY_LIST
   );
 
-  const [activeKey, setActiveKey] = useState("ask");
+  const [activeKey, setActiveKey] = useState("chat");
   const onChange = (key) => {
     setActiveKey(key);
   };
@@ -44,21 +44,21 @@ const App = () => {
   };
 
   const items = [
-    {
-      key: "ask",
-      label: "Ask",
-      children: (
-        <AskComp
-          setActiveKey={setActiveKey}
-          promptList={promptList}
-          setPromptList={setPromptList}
-          systemShortcuts={systemShortcuts}
-          syncShortcutList={syncShortcutList}
-          historyList={historyList}
-          setHistoryList={setHistoryList}
-        />
-      ),
-    },
+    // {
+    //   key: "ask",
+    //   label: "Ask",
+    //   children: (
+    //     <AskComp
+    //       setActiveKey={setActiveKey}
+    //       promptList={promptList}
+    //       setPromptList={setPromptList}
+    //       systemShortcuts={systemShortcuts}
+    //       syncShortcutList={syncShortcutList}
+    //       historyList={historyList}
+    //       setHistoryList={setHistoryList}
+    //     />
+    //   ),
+    // },
     {
       key: "chat",
       label: "Chat",
