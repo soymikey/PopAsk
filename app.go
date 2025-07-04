@@ -26,6 +26,7 @@ type App struct {
 	shortcutList    []map[string]interface{}
 	systemShortcuts []map[string]interface{}
 	hookChan        chan hook.Event
+	hardwareInfo    *HardwareInfo
 }
 
 // NewApp creates a new App application struct
@@ -35,6 +36,7 @@ func NewApp() *App {
 
 // startup is called at application startup
 func (a *App) startup(ctx context.Context) {
+	a.hardwareInfo = NewHardwareInfo()
 	// Perform your setup here
 	a.ctx = ctx
 	a.keyRecords = []string{}
@@ -44,6 +46,10 @@ func (a *App) startup(ctx context.Context) {
 			a.RegisterKeyboardShortcut(ctx)
 		}
 	})
+}
+
+func (a *App) GetUniqueHardwareID() (string, error) {
+	return a.hardwareInfo.GetUniqueHardwareID()
 }
 
 // addKeyRecord adds a record to keyRecords, maintaining max 3 records with FIFO behavior

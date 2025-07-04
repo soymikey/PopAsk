@@ -13,11 +13,13 @@ import {
   DEFAULT_HISTORY_LIST,
   CHAT_HISTORY_LIST_KEY,
   DEFAULT_CHAT_HISTORY_LIST,
+  HARDWARE_FINGERPRINT_KEY,
 } from "./constant";
 import { useEffect, useState } from "react";
 import { EventsEmit } from "../wailsjs/runtime/runtime";
 import "./app.css";
 import { DEFAULT_PROMPT_OPTIONS } from "./data/language";
+import { GetUniqueHardwareID } from "../wailsjs/go/main/App";
 const App = () => {
   const [promptList, setPromptList] = useLocalStorage(
     PROMPT_LIST_KEY,
@@ -40,6 +42,10 @@ const App = () => {
     DEFAULT_CHAT_HISTORY_LIST
   );
 
+  const [hardwareFingerprint, setHardwareFingerprint] = useLocalStorage(
+    HARDWARE_FINGERPRINT_KEY,
+    ""
+  );
   // current chat messages
   const [chatMessages, setChatMessages] = useState([]);
 
@@ -127,6 +133,16 @@ const App = () => {
   useEffect(() => {
     syncShortcutList(promptList, systemShortcuts);
   }, []);
+
+  useEffect(() => {
+    if (hardwareFingerprint) {
+      return;
+    }
+    GetUniqueHardwareID().then((res) => {
+      setHardwareFingerprint(res);
+    });
+  }, [hardwareFingerprint]);
+
   return (
     <Layout
       style={{

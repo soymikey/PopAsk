@@ -50,6 +50,10 @@ export function GetSelection(arg1) {
   return window['go']['main']['App']['GetSelection'](arg1);
 }
 
+export function GetUniqueHardwareID() {
+  return window['go']['main']['App']['GetUniqueHardwareID']();
+}
+
 export function Greet(arg1) {
   return window['go']['main']['App']['Greet'](arg1);
 }

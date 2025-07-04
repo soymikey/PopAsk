@@ -32,3 +32,5 @@ export const IS_OPEN_RECENT_PROMPTS_VALUE = 'open'
 
 export const IS_SHOW_PROMPT_AREA_KEY = 'isShowPromptArea'
 export const IS_SHOW_PROMPT_AREA_VALUE = true
+
+export const HARDWARE_FINGERPRINT_KEY = 'hardwareFingerprint'

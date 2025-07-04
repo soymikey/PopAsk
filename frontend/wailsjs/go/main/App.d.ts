@@ -27,6 +27,8 @@ export function GetRepositoriesForAuthenticatedUser(arg1:string):Promise<main.AP
 
 export function GetSelection(arg1:context.Context):Promise<string>;
 
+export function GetUniqueHardwareID():Promise<string>;
+
 export function Greet(arg1:string):Promise<string>;
 
 export function RegisterKeyboardShortcut(arg1:context.Context):Promise<void>;

@@ -7,6 +7,7 @@ toolchain go1.23.10
 require (
 	github.com/go-vgo/robotgo v0.110.8
 	github.com/robotn/gohook v0.42.2
+	github.com/shirou/gopsutil/v3 v3.24.5
 	github.com/wailsapp/wails/v2 v2.9.1
 )
 
@@ -39,6 +40,7 @@ require (
 	github.com/robotn/xgbutil v0.10.0 // indirect
 	github.com/samber/lo v1.38.1 // indirect
 	github.com/shirou/gopsutil/v4 v4.25.4 // indirect
+	github.com/shoenig/go-m1cpu v0.1.6 // indirect
 	github.com/tailscale/win v0.0.0-20250213223159-5992cb43ca35 // indirect
 	github.com/tklauser/go-sysconf v0.3.15 // indirect
 	github.com/tklauser/numcpus v0.10.0 // indirect
