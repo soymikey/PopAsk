@@ -34,3 +34,8 @@ export const IS_SHOW_PROMPT_AREA_KEY = 'isShowPromptArea'
 export const IS_SHOW_PROMPT_AREA_VALUE = true
 
 export const HARDWARE_FINGERPRINT_KEY = 'hardwareFingerprint'
+
+// Daily usage limit constants
+export const DAILY_USAGE_COUNT_KEY = 'dailyUsageCount'
+export const DAILY_USAGE_DATE_KEY = 'dailyUsageDate'
+export const DEFAULT_DAILY_LIMIT = 50

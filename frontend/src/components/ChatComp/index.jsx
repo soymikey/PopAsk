@@ -45,6 +45,8 @@ import {
   historyGenerator,
   userMessageGenerator,
   assistantMessageGenerator,
+  checkDailyUsageLimit,
+  incrementDailyUsageCount,
 } from "../../utils";
 import useLocalStorage from "../../hooks/useLocalStorage";
 import "./index.css";
@@ -55,6 +57,7 @@ import {
   ORC_LANG_KEY,
   IS_SHOW_PROMPT_AREA_KEY,
   IS_SHOW_PROMPT_AREA_VALUE,
+  DEFAULT_DAILY_LIMIT,
 } from "../../constant";
 import { MarkDownComp } from "../MarkDownComp";
 const { TextArea } = Input;
@@ -146,6 +149,16 @@ const ChatComp = ({
       return;
     }
 
+    // Check daily usage limit
+    const usageInfo = checkDailyUsageLimit(DEFAULT_DAILY_LIMIT);
+    if (!usageInfo.canUse) {
+      messageApi.open({
+        type: "warning",
+        content: `Daily usage limit reached (${usageInfo.limit} times), please try again tomorrow`,
+      });
+      return;
+    }
+
     // Add user message to chat
     const newChatMessages = [...chatMessages, userMessageGenerator(messages)];
     setChatMessages(newChatMessages);
@@ -159,6 +172,9 @@ const ChatComp = ({
       const response = await ChatAPIV2(JSON.stringify(params));
       setIsAskLoading(false);
       if (response.code === 200) {
+        // Increment usage count after successful call
+        const newCount = incrementDailyUsageCount();
+
         // Add assistant message to chat
         const assistantMessage = assistantMessageGenerator(response.data);
         setChatMessages((prev) => [...prev, assistantMessage]);
@@ -178,6 +194,15 @@ const ChatComp = ({
             );
             const newPrompts = [prompt, ...filteredPrompts];
             return newPrompts.slice(0, 12);
+          });
+        }
+
+        // Show remaining usage count
+        const remainingCount = DEFAULT_DAILY_LIMIT - newCount;
+        if (remainingCount <= 2) {
+          messageApi.open({
+            type: "info",
+            content: `Remaining daily usage: ${remainingCount} times`,
           });
         }
       } else {

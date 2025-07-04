@@ -1,4 +1,3 @@
-
 export const messageGenerator = (prompt, text) => {
     return `${prompt}${text}`;
 };
@@ -72,5 +71,48 @@ export const assistantMessageGenerator = (message) => {
         type: "assistant",
         content: message,
         timestamp: timestamp,
+    };
+};
+
+// Daily usage management functions
+export const getDailyUsageCount = () => {
+    try {
+        const today = new Date().toDateString();
+        const storedDate = localStorage.getItem('dailyUsageDate');
+        const storedCount = localStorage.getItem('dailyUsageCount');
+
+        // Reset count if it's a new day
+        if (storedDate !== today) {
+            localStorage.setItem('dailyUsageDate', today);
+            localStorage.setItem('dailyUsageCount', '0');
+            return 0;
+        }
+
+        return parseInt(storedCount || '0', 10);
+    } catch (error) {
+        console.error('Error getting daily usage count:', error);
+        return 0;
+    }
+};
+
+export const incrementDailyUsageCount = () => {
+    try {
+        const currentCount = getDailyUsageCount();
+        const newCount = currentCount + 1;
+        localStorage.setItem('dailyUsageCount', newCount.toString());
+        return newCount;
+    } catch (error) {
+        console.error('Error incrementing daily usage count:', error);
+        return 0;
+    }
+};
+
+export const checkDailyUsageLimit = (limit = 5) => {
+    const currentCount = getDailyUsageCount();
+    return {
+        canUse: currentCount < limit,
+        remaining: Math.max(0, limit - currentCount),
+        used: currentCount,
+        limit: limit
     };
 };

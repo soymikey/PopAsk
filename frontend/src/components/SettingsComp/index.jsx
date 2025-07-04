@@ -8,11 +8,17 @@ import {
   Card,
   Space,
   Typography,
+  Progress,
 } from "antd";
-import { DEFAULT_ORC_LANG, ORC_LANG_KEY } from "../../constant";
+import {
+  DEFAULT_ORC_LANG,
+  ORC_LANG_KEY,
+  DEFAULT_DAILY_LIMIT,
+} from "../../constant";
 import useLocalStorage from "../../hooks/useLocalStorage";
 import { OCR_LANGUAGE_OPTIONS } from "../../data/language";
 import { InfoCircleOutlined, SaveOutlined } from "@ant-design/icons";
+import { checkDailyUsageLimit } from "../../utils";
 
 const { Title, Text } = Typography;
 
@@ -28,6 +34,9 @@ function SettingsComp({
   const [systemShortcutsLocal, setSystemShortcutsLocal] = useState([]);
 
   const [messageApi, contextHolder] = message.useMessage();
+
+  // Get current usage information
+  const usageInfo = checkDailyUsageLimit(DEFAULT_DAILY_LIMIT);
 
   const onChangeORCHandler = (value) => {
     if (value.length > 5) {
@@ -88,6 +97,52 @@ function SettingsComp({
       {contextHolder}
 
       <Space direction="vertical" size="large" style={{ width: "100%" }}>
+        {/* Usage Statistics */}
+        <Card
+          title={
+            <Space>
+              <Title level={4} style={{ margin: 0 }}>
+                Usage Statistics
+              </Title>
+              <Tooltip title="Daily usage statistics" placement="top">
+                <InfoCircleOutlined style={{ color: "#1890ff" }} />
+              </Tooltip>
+            </Space>
+          }
+          size="small"
+        >
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <div>
+              <Text strong>Used today: {usageInfo.used} times</Text>
+              <br />
+              <Text type="secondary">
+                Remaining: {usageInfo.remaining} times
+              </Text>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              <Text type="secondary">Daily limit: {usageInfo.limit} times</Text>
+
+              <Progress
+                type="circle"
+                percent={Math.round((usageInfo.used / usageInfo.limit) * 100)}
+                width={80}
+              />
+            </div>
+          </div>
+        </Card>
+
         {/* OCR Settings */}
         <Card
           title={
