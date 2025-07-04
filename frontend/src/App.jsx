@@ -88,16 +88,16 @@ const App = () => {
         />
       ),
     },
-    {
-      key: "history",
-      label: "History",
-      children: (
-        <HistoryComp
-          historyList={historyList}
-          setHistoryList={setHistoryList}
-        />
-      ),
-    },
+    // {
+    //   key: "history",
+    //   label: "History",
+    //   children: (
+    //     <HistoryComp
+    //       historyList={historyList}
+    //       setHistoryList={setHistoryList}
+    //     />
+    //   ),
+    // },
     {
       key: "chatHistory",
       label: "Chat History",
