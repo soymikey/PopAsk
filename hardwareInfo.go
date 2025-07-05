@@ -248,3 +248,23 @@ func (a *HardwareInfo) ValidateHardwareID(hardwareID string) bool {
 
 	return true
 }
+
+// GetOS 获取当前操作系统
+func (a *HardwareInfo) GetOS() string {
+	return runtime.GOOS
+}
+
+// IsMacOS 判断是否为 macOS
+func (a *HardwareInfo) IsMacOS() bool {
+	return a.GetOS() == "darwin"
+}
+
+// IsWindows 判断是否为 Windows
+func (a *HardwareInfo) IsWindows() bool {
+	return a.GetOS() == "windows"
+}
+
+// IsLinux 判断是否为 Linux
+func (a *HardwareInfo) IsLinux() bool {
+	return a.GetOS() == "linux"
+}

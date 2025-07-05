@@ -14,11 +14,15 @@ import {
   CHAT_HISTORY_LIST_KEY,
   DEFAULT_CHAT_HISTORY_LIST,
   HARDWARE_FINGERPRINT_KEY,
+  SELECTED_PROMPT_KEY,
 } from "./constant";
 import { useEffect, useState } from "react";
 import { EventsEmit } from "../wailsjs/runtime/runtime";
 import "./app.css";
-import { DEFAULT_PROMPT_OPTIONS } from "./data/language";
+import {
+  DEFAULT_PROMPT_OPTIONS,
+  DEFAULT_PROMPT_OPTIONS_VALUE,
+} from "./data/language";
 import { GetUniqueHardwareID } from "../wailsjs/go/main/App";
 const App = () => {
   const [promptList, setPromptList] = useLocalStorage(
@@ -48,6 +52,11 @@ const App = () => {
   );
   // current chat messages
   const [chatMessages, setChatMessages] = useState([]);
+
+  const [selectedPrompt, setSelectedPrompt] = useLocalStorage(
+    SELECTED_PROMPT_KEY,
+    DEFAULT_PROMPT_OPTIONS_VALUE
+  );
 
   const [activeKey, setActiveKey] = useState("chat");
   const onChange = (key) => {
@@ -91,6 +100,8 @@ const App = () => {
           setChatHistoryList={setChatHistoryList}
           chatMessages={chatMessages}
           setChatMessages={setChatMessages}
+          selectedPrompt={selectedPrompt}
+          setSelectedPrompt={setSelectedPrompt}
         />
       ),
     },

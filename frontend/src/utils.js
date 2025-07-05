@@ -116,3 +116,7 @@ export const checkDailyUsageLimit = (limit = 5) => {
         limit: limit
     };
 };
+
+export const sleep = (ms) => {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+};

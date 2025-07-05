@@ -36,7 +36,7 @@ import {
 } from "../../../wailsjs/runtime/runtime";
 import Tesseract from "tesseract.js";
 import { ChatAPIV2 } from "../../../wailsjs/go/main/App";
-import { DEFAULT_PROMPT_OPTIONS, TAG_COLORS } from "../../data/language";
+import { TAG_COLORS } from "../../data/language";
 import {
   messageGenerator,
   newPromptGenerator,
@@ -47,13 +47,13 @@ import {
   assistantMessageGenerator,
   checkDailyUsageLimit,
   incrementDailyUsageCount,
+  sleep,
 } from "../../utils";
 import useLocalStorage from "../../hooks/useLocalStorage";
 import "./index.css";
 import {
   DEFAULT_ORC_LANG,
   RECENT_PROMPTS_KEY,
-  SELECTED_PROMPT_KEY,
   ORC_LANG_KEY,
   IS_SHOW_PROMPT_AREA_KEY,
   IS_SHOW_PROMPT_AREA_VALUE,
@@ -77,15 +77,17 @@ const ChatComp = ({
   setChatHistoryList,
   chatMessages,
   setChatMessages,
+  selectedPrompt,
+  setSelectedPrompt,
 }) => {
+  const chatHistoryListRef = useRef(chatHistoryList);
+  const chatMessagesRef = useRef(chatMessages);
+  const selectedPromptRef = useRef(selectedPrompt);
   const [messageApi, contextHolder] = message.useMessage();
   const [form] = Form.useForm();
 
   const [selection, setSelection] = useState("");
-  const [selectedPrompt, setSelectedPrompt] = useLocalStorage(
-    SELECTED_PROMPT_KEY,
-    DEFAULT_PROMPT_OPTIONS[0].value
-  );
+
   const [isLoading, setIsLoading] = useState(false);
   const [isAskLoading, setIsAskLoading] = useState(false);
 
@@ -94,6 +96,7 @@ const ChatComp = ({
     []
   );
   const askRef = useRef(null);
+  const inputRef = useRef(null);
   const messagesEndRef = useRef(null);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -234,7 +237,6 @@ const ChatComp = ({
         isOCR,
         isOpenWindow,
       } = selection;
-      console.log("selection", selection);
       let text = selectionText;
       WindowShow();
       setActiveKey("chat");
@@ -251,16 +253,16 @@ const ChatComp = ({
       }
       let prompt_ = prompt;
       if (isOpenWindow || isOCR) {
-        prompt_ = selectedPrompt;
+        prompt_ = selectedPromptRef.current;
       }
-      newChatHandler;
+      newChatHandler(chatMessagesRef.current, chatHistoryListRef.current);
       setSelectedPrompt(prompt_);
       const formattedMessage = messageGenerator(prompt_, text);
       setSelection(formattedMessage);
 
       if (autoAsking) {
         setSelection("");
-        handleChat(formattedMessage);
+        await handleChat(formattedMessage);
       }
     } catch (error) {
       console.log("error", error);
@@ -270,6 +272,8 @@ const ChatComp = ({
       });
     } finally {
       setIsLoading(false);
+      await sleep(100);
+      inputRef.current?.focus();
     }
   };
 
@@ -295,12 +299,15 @@ const ChatComp = ({
     }
     setSelection(event.target.value);
   };
-  const newChatHandler = () => {
+  const newChatHandler = (chatMessages, chatHistoryList) => {
     setChatMessages([]);
+    saveChatHistory(chatMessages, chatHistoryList);
   };
 
-  const saveChatHistory = () => {
-    setChatMessages([]);
+  const saveChatHistory = (chatMessages, chatHistoryList) => {
+    if (chatMessages.length === 0) {
+      return;
+    }
     // 如果当前的chatMessages 存在历史记录中，则不添加
     if (
       chatHistoryList.length > 0 &&
@@ -310,9 +317,12 @@ const ChatComp = ({
         )
       )
     ) {
+      setChatMessages([]);
+
       return;
     }
-    setChatHistoryList([...chatHistoryList, chatMessages]);
+    setChatHistoryList([chatMessages, ...chatHistoryList]);
+    setChatMessages([]);
   };
 
   const clearChat = () => {
@@ -332,6 +342,19 @@ const ChatComp = ({
     return () => {
       EventsOff("GET_SELECTION");
     };
+  }, []);
+
+  // 更新 ref 值
+  useEffect(() => {
+    chatHistoryListRef.current = chatHistoryList;
+  }, [chatHistoryList]);
+
+  useEffect(() => {
+    chatMessagesRef.current = chatMessages;
+  }, [chatMessages]);
+
+  useEffect(() => {
+    selectedPromptRef.current = selectedPrompt;
   }, [selectedPrompt]);
 
   const dropdownRenderElement = (menu) => {
@@ -556,7 +579,9 @@ const ChatComp = ({
                           type="text"
                           size="small"
                           icon={<PlusOutlined />}
-                          onClick={newChatHandler}
+                          onClick={() => {
+                            newChatHandler(chatMessages, chatHistoryList);
+                          }}
                         />
                       </Tooltip>
                     )}
@@ -568,7 +593,9 @@ const ChatComp = ({
                           type="text"
                           size="small"
                           icon={<SaveOutlined />}
-                          onClick={saveChatHistory}
+                          onClick={() => {
+                            saveChatHistory(chatMessages, chatHistoryList);
+                          }}
                         />
                       </Tooltip>
                     )}
@@ -792,8 +819,9 @@ const ChatComp = ({
               >
                 <div style={{ flex: 1 }}>
                   <TextArea
+                    ref={inputRef}
                     autoSize={{ minRows: 3, maxRows: 6 }}
-                    placeholder="Type your message here... (Cmd+Enter to send) (Shift+Enter to send new chat)"
+                    placeholder="(Cmd+Enter to send) (Shift+Enter to send new chat)"
                     value={selection}
                     onChange={onChangeSelectionHandler}
                     allowClear
@@ -807,7 +835,7 @@ const ChatComp = ({
                       // Shift+Enter to send new chat
                       if (e.shiftKey) {
                         e.preventDefault();
-                        newChatHandler();
+                        newChatHandler(chatMessages, chatHistoryList);
                         setTimeout(() => {
                           askRef.current?.click();
                         }, 200);

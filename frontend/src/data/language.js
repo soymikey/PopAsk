@@ -108,27 +108,21 @@ export const OCR_LANGUAGE_OPTIONS = OCR_LANGUAGE.map((item) => ({
     label: item.lang,
 }));
 
-// Code Generation
-// "Write a function that [specific task]"
-// "Debug this code: [code snippet]"
-// "Optimize this code for performance: [code snippet]"
-// Code Explanation
-// "Explain how this code works: [code snippet]"
-// "What's wrong with this code? [code snippet]"
-// "Convert this code from [language] to [language]: [code snippet]"\
+
 
 export const DEFAULT_PROMPT_OPTIONS = [
-    { label: "Translate to Chinese", value: "Please translate the following text to Chinese, maintaining the original tone and style:\n", shortcut: "" },
-    { label: "Grammar Check & Polish", value: "Please check and improve the grammar, word choice, and expression of the following text to make it clearer and more fluent:\n", shortcut: "" },
-    { label: "Explain Code", value: "Please explain the functionality and logic of the following code in detail, including the purpose of each important part:\n", shortcut: "" },
-    { label: "Email Reply", value: "Please help me write a professional email reply with a polite and appropriate tone:\n", shortcut: "" },
-    { label: "Summarize", value: "Please provide a concise summary of the following content, extracting key information:\n", shortcut: "" },
-    { label: "Answer Question", value: "Please answer the following question with a detailed and accurate explanation:\n", shortcut: "" },
-    { label: "Creative Writing", value: "Please create creative content based on the following topic or material:\n", shortcut: "" },
-    { label: "Data Analysis", value: "Please analyze the following data and provide insights and recommendations:\n", shortcut: "" },
-    { label: "Learning Guide", value: "Please provide detailed learning guidance and key point summaries for the following learning content:\n", shortcut: "" },
-    { label: "Format Convert", value: "Please convert the following content to the requested format while maintaining the integrity of the information:\n", shortcut: "" }
+    { label: "翻译成中文", value: "请将以下文本翻译成中文，保持原文的语气和风格：\n", shortcut: "ctrl+shift+1" },
+    { label: "语法检查与润色", value: "请检查并改进以下文本的语法、用词和表达，使其更清晰流畅：\n", shortcut: "ctrl+shift+2" },
+    { label: "代码解释", value: "请详细解释以下代码的功能和逻辑，包括每个重要部分的作用：\n", shortcut: "ctrl+shift+3" },
+    { label: "邮件回复", value: "请帮我写一封专业的邮件回复，语气礼貌得体：\n", shortcut: "ctrl+shift+4" },
+    { label: "内容总结", value: "请对以下内容进行简洁的总结，提取关键信息：\n", shortcut: "ctrl+shift+5" },
+    { label: "问题回答", value: "请详细准确地回答以下问题：\n", shortcut: "ctrl+shift+6" },
+    { label: "创意写作", value: "请根据以下主题或材料创作创意内容：\n", shortcut: "ctrl+shift+7" },
+    { label: "数据分析", value: "请分析以下数据并提供见解和建议：\n", shortcut: "ctrl+shift+8" },
+    { label: "学习指导", value: "请为以下学习内容提供详细的学习指导和重点总结：\n", shortcut: "ctrl+shift+9" },
 ]
+
+export const DEFAULT_PROMPT_OPTIONS_VALUE = DEFAULT_PROMPT_OPTIONS[0].value;
 
 export const TAG_COLORS = [
     "processing",
