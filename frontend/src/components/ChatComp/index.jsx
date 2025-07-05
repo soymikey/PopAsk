@@ -17,7 +17,6 @@ import {
   Avatar,
   List,
 } from "antd";
-const { Panel } = Collapse;
 import {
   PlusOutlined,
   DeleteOutlined,
@@ -26,6 +25,7 @@ import {
   RobotOutlined,
   SettingOutlined,
   LinkOutlined,
+  SaveOutlined,
 } from "@ant-design/icons";
 import { useEffect, useState, useRef } from "react";
 import {
@@ -60,6 +60,10 @@ import {
   DEFAULT_DAILY_LIMIT,
 } from "../../constant";
 import { MarkDownComp } from "../MarkDownComp";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+dayjs.extend(relativeTime);
+
 const { TextArea } = Input;
 const { Title, Text } = Typography;
 
@@ -271,6 +275,18 @@ const ChatComp = ({
 
   const onSelectPromptHandler = (value) => {
     setSelectedPrompt(value);
+
+    if (value.length === 0) {
+      return;
+    }
+    for (const prompt of promptList) {
+      if (selection.startsWith(prompt.value)) {
+        const newSelection = selection.slice(prompt.value.length);
+        setSelection(messageGenerator(value, newSelection));
+        return;
+      }
+    }
+    setSelection(messageGenerator(value, selection));
   };
 
   const onChangeSelectionHandler = (event) => {
@@ -281,7 +297,10 @@ const ChatComp = ({
   };
   const newChatHandler = () => {
     setChatMessages([]);
+  };
 
+  const saveChatHistory = () => {
+    setChatMessages([]);
     // 如果当前的chatMessages 存在历史记录中，则不添加
     if (
       chatHistoryList.length > 0 &&
@@ -313,20 +332,6 @@ const ChatComp = ({
     return () => {
       EventsOff("GET_SELECTION");
     };
-  }, [selectedPrompt]);
-
-  useEffect(() => {
-    if (selectedPrompt.length === 0) {
-      return;
-    }
-    for (const prompt of promptList) {
-      if (selection.startsWith(prompt.value)) {
-        const newSelection = selection.slice(prompt.value.length);
-        setSelection(messageGenerator(selectedPrompt, newSelection));
-        return;
-      }
-    }
-    setSelection(messageGenerator(selectedPrompt, selection));
   }, [selectedPrompt]);
 
   const dropdownRenderElement = (menu) => {
@@ -476,7 +481,7 @@ const ChatComp = ({
                   color: isUser ? "rgba(255,255,255,0.8)" : "#999",
                 }}
               >
-                {message.timestamp}
+                {dayjs(message.timestamp).fromNow()}
               </Text>
             </div>
             {isUser ? (
@@ -538,16 +543,46 @@ const ChatComp = ({
                   }}
                 >
                   <span>Chat</span>
-                  <div style={{ display: "flex", gap: "8px" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "8px",
+                      alignItems: "center",
+                    }}
+                  >
                     {chatMessages.length > 0 && (
-                      <Button type="default" onClick={newChatHandler}>
-                        New
-                      </Button>
+                      <Tooltip title="New Chat">
+                        <Button
+                          type="text"
+                          size="small"
+                          icon={<PlusOutlined />}
+                          onClick={newChatHandler}
+                        />
+                      </Tooltip>
                     )}
+
+                    {/* 保存聊天记录 */}
                     {chatMessages.length > 0 && (
-                      <Button danger onClick={clearChat}>
-                        Clear
-                      </Button>
+                      <Tooltip title="Save">
+                        <Button
+                          type="text"
+                          size="small"
+                          icon={<SaveOutlined />}
+                          onClick={saveChatHistory}
+                        />
+                      </Tooltip>
+                    )}
+                    {/* 删除聊天记录 */}
+                    {chatMessages.length > 0 && (
+                      <Tooltip title="Delete">
+                        <Button
+                          danger
+                          type="text"
+                          size="small"
+                          icon={<DeleteOutlined />}
+                          onClick={clearChat}
+                        />
+                      </Tooltip>
                     )}
                   </div>
                 </Title>
@@ -758,35 +793,47 @@ const ChatComp = ({
                 <div style={{ flex: 1 }}>
                   <TextArea
                     autoSize={{ minRows: 3, maxRows: 6 }}
-                    placeholder="Type your message here... (Cmd+Enter to send)"
+                    placeholder="Type your message here... (Cmd+Enter to send) (Shift+Enter to send new chat)"
                     value={selection}
                     onChange={onChangeSelectionHandler}
                     allowClear
                     style={{ fontSize: "14px" }}
                     onPressEnter={(e) => {
+                      // Cmd+Enter to send
                       if (e.metaKey) {
                         e.preventDefault();
                         askRef.current?.click();
+                      }
+                      // Shift+Enter to send new chat
+                      if (e.shiftKey) {
+                        e.preventDefault();
+                        newChatHandler();
+                        setTimeout(() => {
+                          askRef.current?.click();
+                        }, 200);
                       }
                     }}
                   />
                 </div>
               </div>
               <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                <Button
-                  title="Cmd+Enter to send"
-                  ref={askRef}
-                  type="primary"
-                  loading={isAskLoading}
-                  icon={<SendOutlined />}
-                  onClick={() => {
-                    handleChat(selection);
-                    setSelection("");
-                  }}
-                  style={{ minWidth: "100px" }}
-                >
-                  {isAskLoading ? "Sending..." : "Send"}
-                </Button>
+                <Tooltip title="Cmd+Enter to send OR Shift+Enter to send new chat">
+                  <Button
+                    title="Cmd+Enter to send"
+                    ref={askRef}
+                    type="primary"
+                    loading={isAskLoading}
+                    icon={<SendOutlined />}
+                    onClick={() => {
+                      handleChat(selection);
+                      setSelection("");
+                    }}
+                    style={{ minWidth: "100px" }}
+                  >
+                    {isAskLoading ? "Sending..." : "Send"}
+                  </Button>
+                </Tooltip>
+
                 <Button
                   type="text"
                   icon={<SettingOutlined />}

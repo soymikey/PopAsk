@@ -19,4 +19,4 @@ to this in your browser, and you can call your Go code from devtools.
 To build a redistributable, production mode package, use `wails build`.
 
 wails build -debug -devtools -clean -upx -nopackage
-wails build -upx
+wails build -clean -upx
