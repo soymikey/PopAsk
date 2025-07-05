@@ -28,6 +28,8 @@ function SettingsComp({
   systemShortcuts,
   setSystemShortcuts,
   syncShortcutList,
+  showShortcutGuide,
+  resetShortcut,
 }) {
   const [ORCLang, setORCLang] = useLocalStorage(ORC_LANG_KEY, DEFAULT_ORC_LANG);
   const [localPromptList, setLocalPromptList] = useState([]);
@@ -98,6 +100,22 @@ function SettingsComp({
 
       <Space direction="vertical" size="large" style={{ width: "100%" }}>
         {/* Usage Statistics */}
+        <div
+          style={{
+            display: "flex",
+            marginTop: "16px",
+            justifyContent: "space-evenly",
+          }}
+        >
+          <Button type="default" onClick={showShortcutGuide}>
+            📋 View Shortcut Guide
+          </Button>
+
+          {/* restore default shortcuts */}
+          <Button type="default" onClick={resetShortcut}>
+            🔄 Reset Shortcuts
+          </Button>
+        </div>
         <Card
           title={
             <Space>
@@ -238,14 +256,16 @@ function SettingsComp({
 
         {/* Save Button */}
         <div style={{ textAlign: "center" }}>
-          <Button
-            type="primary"
-            icon={<SaveOutlined />}
-            onClick={handleSave}
-            style={{ minWidth: "120px" }}
-          >
-            Save Settings
-          </Button>
+          <Space direction="vertical" size="middle">
+            <Button
+              type="primary"
+              icon={<SaveOutlined />}
+              onClick={handleSave}
+              style={{ minWidth: "120px" }}
+            >
+              Save Settings
+            </Button>
+          </Space>
         </div>
       </Space>
     </div>

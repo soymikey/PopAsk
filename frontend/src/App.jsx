@@ -4,6 +4,7 @@ import ChatComp from "./components/ChatComp";
 import SettingsComp from "./components/SettingsComp";
 import HistoryComp from "./components/HistoryComp";
 import ChatHistoryComp from "./components/ChatHistoryComp";
+import ShortcutGuideComp from "./components/ShortcutGuideComp";
 import useLocalStorage from "./hooks/useLocalStorage";
 import {
   PROMPT_LIST_KEY,
@@ -15,15 +16,14 @@ import {
   DEFAULT_CHAT_HISTORY_LIST,
   HARDWARE_FINGERPRINT_KEY,
   SELECTED_PROMPT_KEY,
+  DEFAULT_PROMPT_OPTIONS,
+  DEFAULT_PROMPT_OPTIONS_VALUE,
 } from "./constant";
 import { useEffect, useState } from "react";
 import { EventsEmit } from "../wailsjs/runtime/runtime";
 import "./app.css";
-import {
-  DEFAULT_PROMPT_OPTIONS,
-  DEFAULT_PROMPT_OPTIONS_VALUE,
-} from "./constant";
 import { GetUniqueHardwareID } from "../wailsjs/go/main/App";
+
 const App = () => {
   const [promptList, setPromptList] = useLocalStorage(
     PROMPT_LIST_KEY,
@@ -50,6 +50,7 @@ const App = () => {
     HARDWARE_FINGERPRINT_KEY,
     ""
   );
+
   // current chat messages
   const [chatMessages, setChatMessages] = useState([]);
 
@@ -59,6 +60,13 @@ const App = () => {
   );
 
   const [activeKey, setActiveKey] = useState("chat");
+
+  // Shortcut guide state
+  const [showShortcutGuide, setShowShortcutGuide] = useLocalStorage(
+    "showShortcutGuide",
+    true
+  );
+
   const onChange = (key) => {
     setActiveKey(key);
   };
@@ -68,6 +76,20 @@ const App = () => {
       "syncShortcutList",
       JSON.stringify([...promptList, ...systemShortcuts])
     );
+  };
+
+  const handleCloseShortcutGuide = () => {
+    setShowShortcutGuide(false);
+  };
+
+  const handleNeverShowShortcutGuide = () => {
+    setShowShortcutGuide(false);
+  };
+
+  const resetShortcut = () => {
+    setSystemShortcuts(DEFAULT_SHORTCUT_LIST);
+    setPromptList(DEFAULT_PROMPT_OPTIONS);
+    syncShortcutList(DEFAULT_PROMPT_OPTIONS, DEFAULT_SHORTCUT_LIST);
   };
 
   const items = [
@@ -137,6 +159,8 @@ const App = () => {
           systemShortcuts={systemShortcuts}
           setSystemShortcuts={setSystemShortcuts}
           syncShortcutList={syncShortcutList}
+          showShortcutGuide={() => setShowShortcutGuide(true)}
+          resetShortcut={resetShortcut}
         />
       ),
     },
@@ -169,6 +193,13 @@ const App = () => {
         activeKey={activeKey}
         items={items}
         onChange={onChange}
+      />
+
+      {/* Shortcut Guide Modal */}
+      <ShortcutGuideComp
+        visible={showShortcutGuide}
+        onClose={handleCloseShortcutGuide}
+        onNeverShow={handleNeverShowShortcutGuide}
       />
     </Layout>
   );

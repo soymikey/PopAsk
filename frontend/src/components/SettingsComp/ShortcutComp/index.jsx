@@ -72,28 +72,52 @@ function ShortcutComp({ localPrompt, setLocalPromptList, localPromptList }) {
       }}
       bodyStyle={{ padding: "16px" }}
     >
-      <Space direction="vertical" style={{ width: "100%" }} size="small">
+      <Space
+        style={{ width: "100%", justifyContent: "space-between" }}
+        size="small"
+      >
         {/* Title and Description */}
         <div>
           <Text
             strong
             style={{ fontSize: "14px", display: "block", marginBottom: "4px" }}
           >
-            {localPrompt.label}
+            {localPrompt?.label}
           </Text>
           <Text
             type="secondary"
-            style={{ fontSize: "12px", lineHeight: "1.4" }}
+            style={{
+              fontSize: "12px",
+              lineHeight: "1.4",
+            }}
           >
-            {localPrompt.value}
+            {localPrompt?.value}
           </Text>
         </div>
 
         {/* Shortcut Input */}
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-          <Text type="secondary" style={{ fontSize: "12px", minWidth: "60px" }}>
-            Shortcut:
-          </Text>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+            gap: "12px",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <Text
+              type="secondary"
+              style={{ fontSize: "14px", minWidth: "60px" }}
+            >
+              Shortcut:
+            </Text>
+            {defaultP2 && (
+              <Tag color="blue" style={{ margin: 0 }}>
+                {`${defaultP1}+${defaultP2}`}
+              </Tag>
+            )}
+          </div>
+
           <Input
             style={{ width: "200px" }}
             addonBefore={selectBefore}
@@ -102,11 +126,6 @@ function ShortcutComp({ localPrompt, setLocalPromptList, localPromptList }) {
             placeholder="key"
             size="middle"
           />
-          {defaultP2 && (
-            <Tag color="blue" style={{ margin: 0 }}>
-              {`${defaultP1}+${defaultP2}`}
-            </Tag>
-          )}
         </div>
       </Space>
     </Card>

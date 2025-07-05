@@ -140,6 +140,25 @@ export const TAG_COLORS = [
     "purple",
 ]
 
+// Colors for shortcut guide
+export const SHORTCUT_COLORS = [
+    "blue",
+    "green",
+    "orange",
+    "purple",
+    "red",
+    "cyan",
+    "magenta",
+    "geekblue",
+    "volcano",
+    "gold",
+    "lime",
+    "processing",
+    "success",
+    "warning",
+    "error",
+];
+
 export const RECENT_PROMPTS_KEY = "recentPrompts";
 export const DEFAULT_ORC_LANG = [] //["eng", "chi_sim"];
 export const DEFAULT_PROMPT = "帮我翻译成中文:\n";
@@ -151,12 +170,12 @@ export const DEFAULT_SHORTCUT_LIST = [
     {
         label: "Open Window",
         value: "Open Window",
-        shortcut: "ctrl+shift+s",
+        shortcut: "ctrl+shift+c",
     },
     {
         label: "ORC",
         value: "ORC",
-        shortcut: "ctrl+shift+o",
+        shortcut: "ctrl+shift+v",
     },
 
 ];
