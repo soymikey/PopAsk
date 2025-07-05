@@ -60,7 +60,7 @@ const ShortcutGuideComp = ({ visible, onClose, onNeverShow }) => {
       title={
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <KeyOutlined style={{ color: "#1890ff" }} />
-          <span>🎉 Welcome to AI Assistant!</span>
+          <span>🎉 Welcome to PopAsk!</span>
         </div>
       }
       open={visible}
@@ -113,7 +113,7 @@ const ShortcutGuideComp = ({ visible, onClose, onNeverShow }) => {
               <ul style={{ margin: "8px 0 0 0", paddingLeft: "16px" }}>
                 <li>Select text in any application</li>
                 <li>Press the corresponding shortcut</li>
-                <li>AI Assistant will automatically process your request</li>
+                <li>PopAsk will automatically process your request</li>
                 <li>Customize shortcuts in Settings tab</li>
               </ul>
             </div>

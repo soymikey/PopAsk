@@ -1,22 +1,22 @@
 {
   "$schema": "https://wails.io/schemas/config.v2.json",
-  "name": "ai_assistant",
-  "outputfilename": "ai_assistant",
+  "name": "PopAsk",
+  "outputfilename": "PopAsk",
   "frontend:install": "npm install",
   "frontend:build": "npm run build",
   "frontend:dev:watcher": "npm run dev",
   "frontend:dev:serverUrl": "auto",
   "author": {
-    "name": "Joseph Udonsak",
-    "email": "joseph.udonsak@live.co.uk"
+    "name": "Michael Zheng",
+    "email": "soymikey0717@gmail.com"
   },
   "allowSystemDialogs": true,
   "allowSystemAccess": true,
   "info": {
-    "productName": "GitHub Client",
+    "productName": "PopAsk",
     "productVersion": "1.0.0",
-    "copyright": "Copyright © 2024",
-    "comments": "A GitHub client application"
+    "copyright": "Copyright © 2025",
+    "comments": "A AI Ask Assistant application"
   },
   "mac": {
     "entitlements": "build/darwin/entitlements.plist",

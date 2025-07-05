@@ -235,7 +235,7 @@ func (a *App) CreateScreenshot(ctx context.Context) (string, error) {
 	// 生成带时间戳的文件名
 	timestamp := time.Now().Format("20060102_150405")
 	tempDir := os.TempDir()
-	filename := filepath.Join(tempDir, fmt.Sprintf("AI_Assistant_Screenshot_%s.png", timestamp))
+	filename := filepath.Join(tempDir, fmt.Sprintf("PopAsk_Screenshot_%s.png", timestamp))
 	println("filename", filename)
 	cmd := exec.Command("screencapture", "-i", filename)
 
