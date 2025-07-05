@@ -36,7 +36,7 @@ import {
 } from "../../../wailsjs/runtime/runtime";
 import Tesseract from "tesseract.js";
 import { ChatAPIV2 } from "../../../wailsjs/go/main/App";
-import { TAG_COLORS } from "../../data/language";
+import { TAG_COLORS } from "../../constant";
 import {
   messageGenerator,
   newPromptGenerator,

@@ -16,7 +16,7 @@ import {
   DEFAULT_DAILY_LIMIT,
 } from "../../constant";
 import useLocalStorage from "../../hooks/useLocalStorage";
-import { OCR_LANGUAGE_OPTIONS } from "../../data/language";
+import { OCR_LANGUAGE_OPTIONS } from "../../constant";
 import { InfoCircleOutlined, SaveOutlined } from "@ant-design/icons";
 import { checkDailyUsageLimit } from "../../utils";
 

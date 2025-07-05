@@ -22,7 +22,7 @@ import "./app.css";
 import {
   DEFAULT_PROMPT_OPTIONS,
   DEFAULT_PROMPT_OPTIONS_VALUE,
-} from "./data/language";
+} from "./constant";
 import { GetUniqueHardwareID } from "../wailsjs/go/main/App";
 const App = () => {
   const [promptList, setPromptList] = useLocalStorage(
