@@ -167,7 +167,10 @@ const ChatComp = ({
     }
 
     // Add user message to chat
-    const newChatMessages = [...chatMessages, userMessageGenerator(messages)];
+    const newChatMessages = [
+      ...chatMessagesRef.current,
+      userMessageGenerator(messages),
+    ];
     setChatMessages(newChatMessages);
     setIsAskLoading(true);
 
@@ -186,14 +189,9 @@ const ChatComp = ({
         const assistantMessage = assistantMessageGenerator(response.data);
         setChatMessages((prev) => [...prev, assistantMessage]);
 
-        // // Update history
-        // setHistoryList([
-        //   historyGenerator(messages, response.data),
-        //   ...historyList,
-        // ]);
-
-        // Update recent prompts
-        const prompt = promptList.find((p) => p.value === selectedPrompt);
+        const prompt = promptList.find(
+          (p) => p.value === selectedPromptRef.current
+        );
         if (prompt) {
           setRecentPrompts((prev) => {
             const filteredPrompts = prev.filter(
@@ -321,7 +319,7 @@ const ChatComp = ({
 
       return;
     }
-    setChatHistoryList([chatMessages, ...chatHistoryList]);
+    setChatHistoryList([chatMessages, ...chatHistoryList].slice(0, 100));
     setChatMessages([]);
   };
 

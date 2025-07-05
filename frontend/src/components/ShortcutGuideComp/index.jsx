@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal, Typography, Space, Tag, Divider } from "antd";
+import { Modal, Typography, Space, Tag, Divider, Button } from "antd";
 import {
   KeyOutlined,
   SettingOutlined,
@@ -74,19 +74,9 @@ const ShortcutGuideComp = ({ visible, onClose, onNeverShow }) => {
           <Text type="link" onClick={onNeverShow} style={{ fontSize: "12px" }}>
             Don't show again
           </Text>
-          <button
-            onClick={onClose}
-            style={{
-              padding: "4px 15px",
-              backgroundColor: "#1890ff",
-              color: "white",
-              border: "none",
-              borderRadius: "6px",
-              cursor: "pointer",
-            }}
-          >
+          <Button onClick={onClose} size="small" type="primary">
             Got it!
-          </button>
+          </Button>
         </Space>,
       ]}
       closable={true}
@@ -130,7 +120,7 @@ const ShortcutGuideComp = ({ visible, onClose, onNeverShow }) => {
               gap: "8px",
             }}
           >
-            <SettingOutlined style={{ color: "#52c41a" }} />
+            <SettingOutlined style={{ color: "#1890ff" }} />
             System Shortcuts
           </Title>
           <div
@@ -141,7 +131,7 @@ const ShortcutGuideComp = ({ visible, onClose, onNeverShow }) => {
             }}
           >
             {systemShortcuts.map((item) =>
-              renderShortcutItem(item.key, item.desc, item.icon, "green")
+              renderShortcutItem(item.key, item.desc, item.icon, "blue")
             )}
           </div>
         </div>
