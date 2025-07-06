@@ -238,86 +238,84 @@ func (a *App) GetSelection(ctx context.Context) (string, error) {
 }
 
 func (a *App) CreateScreenshot(ctx context.Context) (string, error) {
+
+	if a.hardwareInfo.IsWindows() {
+		return a.CreateScreenshotWindows(ctx)
+	} else {
+		return a.CreateScreenshotMac(ctx)
+	}
+}
+
+func (a *App) CreateScreenshotWindows(ctx context.Context) (string, error) {
+	var cmd *exec.Cmd
+
+	cmd = exec.Command("snippingtool.exe")
+	if err := cmd.Start(); err != nil {
+		return "", fmt.Errorf("failed to start snipping tool: %v", err)
+	}
+
+	// 等待工具启动并自动进入截图模式
+	time.Sleep(1000 * time.Millisecond)
+	robotgo.KeyTap("enter")
+	// 轮询检查剪贴板是否有图片，最多等待10秒
+	var imgData []byte
+	var err error
+	maxAttempts := 5
+	for i := 0; i < maxAttempts; i++ {
+		time.Sleep(500 * time.Millisecond)
+		imgData, err = a.getClipboardImage(ctx)
+		if err == nil && len(imgData) > 0 {
+			// 强制关闭截图工具
+			exec.Command("taskkill", "/IM", "snippingtool.exe", "/F").Run()
+			// 清理剪贴板
+			runtime.ClipboardSetText(ctx, "")
+			break
+		}
+		// 检查 snippingtool.exe 是否还在运行
+		out, _ := exec.Command("tasklist", "/FI", "IMAGENAME eq snippingtool.exe").Output()
+		if !strings.Contains(strings.ToLower(string(out)), "snippingtool.exe") {
+			println("snippingtool.exe 已关闭")
+			break
+		}
+	}
+	exec.Command("taskkill", "/IM", "snippingtool.exe", "/F").Run()
+	if len(imgData) == 0 {
+		return "", fmt.Errorf("screenshot timeout or cancelled by user")
+	}
+
+	// 转换为base64
+	base64Str := base64.StdEncoding.EncodeToString(imgData)
+	return "data:image/png;base64," + base64Str, nil
+}
+
+func (a *App) CreateScreenshotMac(ctx context.Context) (string, error) {
 	// 生成带时间戳的文件名
 	timestamp := time.Now().Format("20060102_150405")
 	tempDir := os.TempDir()
 	filename := filepath.Join(tempDir, fmt.Sprintf("PopAsk_Screenshot_%s.png", timestamp))
 	println("filename", filename)
-
 	var cmd *exec.Cmd
-	if a.hardwareInfo.IsWindows() {
-		// Windows: 使用PowerShell调用截图工具
-		// 方案1: 使用Windows内置的截图工具 (Win+Shift+S)
-		// cmd = exec.Command("powershell", "-Command", "Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.SendKeys]::SendWait('^{ESC}')")
-		// if err := cmd.Run(); err != nil {
-		// 	return "", fmt.Errorf("failed to open start menu: %v", err)
-		// }
-		// time.Sleep(100 * time.Millisecond)
 
-		// 使用Windows截图工具
-		cmd = exec.Command("snippingtool.exe")
-
-		if err := cmd.Start(); err != nil {
-
-			// // 备用方案：使用PowerShell发送快捷键
-			// cmd = exec.Command("powershell", "-Command", "Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.SendKeys]::SendWait('^{ESC}+S')")
-			// if err := cmd.Run(); err != nil {
-			// 	return "", fmt.Errorf("failed to trigger screenshot: %v", err)
-			// }
-		}
-
-		time.Sleep(500 * time.Millisecond)
-		// ctrl + n
-		robotgo.KeyTap("enter")
-		// 轮询检查剪贴板是否有图片，最多等待10秒
-		var imgData []byte
-		var err error
-		// 5秒内每1000ms检查一次
-		maxAttempts := 5
-		for i := 0; i < maxAttempts; i++ {
-			time.Sleep(1000 * time.Millisecond)
-			imgData, err = a.getClipboardImage(ctx)
-			if err == nil && len(imgData) > 0 {
-
-				// 移除剪贴板中的图片
-				runtime.ClipboardSetText(ctx, "")
-				exec.Command("taskkill", "/IM", "snippingtool.exe", "/F").Run()
-
-				break // 成功获取到图片
-			}
-		}
-
-		if err != nil || len(imgData) == 0 {
-			return "", fmt.Errorf("screenshot timeout or cancelled by user")
-		}
-
-		// 转换为base64
-		base64Str := base64.StdEncoding.EncodeToString(imgData)
-		base64WithPrefix := "data:image/png;base64," + base64Str
-
-		return base64WithPrefix, nil
-	} else {
-		// macOS: 使用screencapture
-		cmd = exec.Command("screencapture", "-i", filename)
-		if err := cmd.Run(); err != nil {
-			return "", fmt.Errorf("failed to execute screenshot command: %v", err)
-		}
-
-		// 读取图片文件并转换为base64
-		imgData, err := os.ReadFile(filename)
-		if err != nil {
-			return "", fmt.Errorf("failed to read screenshot file: %v", err)
-		}
-
-		// 转换为base64
-		base64Str := base64.StdEncoding.EncodeToString(imgData)
-		base64WithPrefix := "data:image/png;base64," + base64Str
-
-		// 清理临时文件
-		os.Remove(filename)
-
-		return base64WithPrefix, nil
+	// macOS: 使用screencapture
+	cmd = exec.Command("screencapture", "-i", filename)
+	if err := cmd.Run(); err != nil {
+		return "", fmt.Errorf("failed to execute screenshot command: %v", err)
 	}
+
+	// 读取图片文件并转换为base64
+	imgData, err := os.ReadFile(filename)
+	if err != nil {
+		return "", fmt.Errorf("failed to read screenshot file: %v", err)
+	}
+
+	// 转换为base64
+	base64Str := base64.StdEncoding.EncodeToString(imgData)
+	base64WithPrefix := "data:image/png;base64," + base64Str
+
+	// 清理临时文件
+	os.Remove(filename)
+
+	return base64WithPrefix, nil
 }
 
 // getClipboardImage 获取剪贴板中的图片数据
