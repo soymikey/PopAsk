@@ -244,44 +244,106 @@ func (a *App) CreateScreenshot(ctx context.Context) (string, error) {
 	filename := filepath.Join(tempDir, fmt.Sprintf("PopAsk_Screenshot_%s.png", timestamp))
 	println("filename", filename)
 
-	// 根据操作系统选择不同的截图命令
 	var cmd *exec.Cmd
 	if a.hardwareInfo.IsWindows() {
-		// Windows: 使用nircmd进行交互式截图选择
-		// 从应用目录调用nircmd.exe
-		exePath, err := os.Executable()
-		if err != nil {
-			return "", fmt.Errorf("failed to get executable path: %v", err)
+		// Windows: 使用PowerShell调用截图工具
+		// 方案1: 使用Windows内置的截图工具 (Win+Shift+S)
+		cmd = exec.Command("powershell", "-Command", "Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.SendKeys]::SendWait('^{ESC}')")
+		if err := cmd.Run(); err != nil {
+			return "", fmt.Errorf("failed to open start menu: %v", err)
 		}
-		appDir := filepath.Dir(exePath)
-		nircmdPath := filepath.Join(appDir, "nircmd.exe")
+		time.Sleep(100 * time.Millisecond)
 
-		cmd = exec.Command(nircmdPath, "savescreenshot", filename)
+		// 使用Windows截图工具
+		cmd = exec.Command("snippingtool.exe")
+		if err := cmd.Start(); err != nil {
+			// 备用方案：使用PowerShell发送快捷键
+			cmd = exec.Command("powershell", "-Command", "Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.SendKeys]::SendWait('^{ESC}+S')")
+			if err := cmd.Run(); err != nil {
+				return "", fmt.Errorf("failed to trigger screenshot: %v", err)
+			}
+		}
+
+		// 轮询检查剪贴板是否有图片，最多等待10秒
+		var imgData []byte
+		var err error
+		maxAttempts := 50 // 10秒内每200ms检查一次
+		for i := 0; i < maxAttempts; i++ {
+			time.Sleep(200 * time.Millisecond)
+			imgData, err = a.getClipboardImage(ctx)
+			if err == nil && len(imgData) > 0 {
+				break // 成功获取到图片
+			}
+		}
+
+		if err != nil || len(imgData) == 0 {
+			return "", fmt.Errorf("screenshot timeout or cancelled by user")
+		}
+
+		// 转换为base64
+		base64Str := base64.StdEncoding.EncodeToString(imgData)
+		base64WithPrefix := "data:image/png;base64," + base64Str
+
+		return base64WithPrefix, nil
 	} else {
 		// macOS: 使用screencapture
 		cmd = exec.Command("screencapture", "-i", filename)
-	}
+		if err := cmd.Run(); err != nil {
+			return "", fmt.Errorf("failed to execute screenshot command: %v", err)
+		}
 
-	if err := cmd.Run(); err != nil {
-		return "", fmt.Errorf("failed to execute screenshot command: %v", err)
-	}
+		// 读取图片文件并转换为base64
+		imgData, err := os.ReadFile(filename)
+		if err != nil {
+			return "", fmt.Errorf("failed to read screenshot file: %v", err)
+		}
 
-	// 读取图片文件并转换为base64
-	imgData, err := os.ReadFile(filename)
+		// 转换为base64
+		base64Str := base64.StdEncoding.EncodeToString(imgData)
+		base64WithPrefix := "data:image/png;base64," + base64Str
+
+		// 清理临时文件
+		os.Remove(filename)
+
+		return base64WithPrefix, nil
+	}
+}
+
+// getClipboardImage 获取剪贴板中的图片数据
+func (a *App) getClipboardImage(ctx context.Context) ([]byte, error) {
+	// 使用PowerShell获取剪贴板图片
+	cmd := exec.Command("powershell", "-Command", `
+		Add-Type -AssemblyName System.Windows.Forms
+		$clipboard = [System.Windows.Forms.Clipboard]::GetImage()
+		if ($clipboard) {
+			$stream = New-Object System.IO.MemoryStream
+			$clipboard.Save($stream, [System.Drawing.Imaging.ImageFormat]::Png)
+			$bytes = $stream.ToArray()
+			$stream.Close()
+			[System.Convert]::ToBase64String($bytes)
+		} else {
+			""
+		}
+	`)
+
+	output, err := cmd.Output()
 	if err != nil {
-		return "", fmt.Errorf("failed to read screenshot file: %v", err)
+		return nil, fmt.Errorf("failed to get clipboard image: %v", err)
 	}
 
-	// 转换为base64
-	base64Str := base64.StdEncoding.EncodeToString(imgData)
+	// 移除输出中的换行符
+	base64Str := strings.TrimSpace(string(output))
+	if base64Str == "" {
+		return nil, fmt.Errorf("no image found in clipboard")
+	}
 
-	// 添加标准base64前缀
-	base64WithPrefix := "data:image/png;base64," + base64Str
+	// 解码base64
+	imgData, err := base64.StdEncoding.DecodeString(base64Str)
+	if err != nil {
+		return nil, fmt.Errorf("failed to decode base64 image: %v", err)
+	}
 
-	// 清理临时文件
-	os.Remove(filename)
-
-	return base64WithPrefix, nil
+	return imgData, nil
 }
 
 // beforeClose is called when the application is about to quit,
