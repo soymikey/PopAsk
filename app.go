@@ -208,8 +208,14 @@ func (a *App) GetSelection(ctx context.Context) (string, error) {
 		return "", fmt.Errorf("failed to restore original clipboard text: %v", err)
 	}
 
-	// 模拟 Cmd+C
-	cmd := exec.Command("osascript", "-e", "tell application \"System Events\" to keystroke \"c\" using command down")
+	// 根据操作系统选择不同的复制命令
+	var cmd *exec.Cmd
+	if a.hardwareInfo.IsWindows() {
+		cmd = exec.Command("powershell", "-Command", "Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.SendKeys]::SendWait('^c')")
+	} else {
+		cmd = exec.Command("osascript", "-e", "tell application \"System Events\" to keystroke \"c\" using command down")
+	}
+
 	if err := cmd.Run(); err != nil {
 		return "", fmt.Errorf("failed to execute copy command: %v", err)
 	}
