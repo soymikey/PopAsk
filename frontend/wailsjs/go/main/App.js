@@ -26,6 +26,14 @@ export function CreateScreenshot(arg1) {
   return window['go']['main']['App']['CreateScreenshot'](arg1);
 }
 
+export function CreateScreenshotMac(arg1) {
+  return window['go']['main']['App']['CreateScreenshotMac'](arg1);
+}
+
+export function CreateScreenshotWindows(arg1) {
+  return window['go']['main']['App']['CreateScreenshotWindows'](arg1);
+}
+
 export function GetGistContent(arg1, arg2) {
   return window['go']['main']['App']['GetGistContent'](arg1, arg2);
 }

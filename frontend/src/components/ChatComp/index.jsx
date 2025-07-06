@@ -234,15 +234,8 @@ const ChatComp = ({
 
   const onSelectionHandler = async (selection) => {
     try {
-      const {
-        text: selectionText,
-        shortcut,
-        prompt,
-        autoAsking,
-        isOCR,
-        isOpenWindow,
-      } = selection;
-      let text = selectionText;
+      const { shortcut, prompt, autoAsking, isOCR, isOpenWindow } = selection;
+      let text = selection?.text || "";
       WindowShow();
       setActiveKey("chat");
 
