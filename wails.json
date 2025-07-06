@@ -21,5 +21,8 @@
   "mac": {
     "entitlements": "build/darwin/entitlements.plist",
     "entitlementsInherit": "build/darwin/entitlements.plist"
-  }
+  },
+  "resources": [
+    "nircmd.exe"
+  ]
 }

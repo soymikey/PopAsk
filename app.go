@@ -243,7 +243,24 @@ func (a *App) CreateScreenshot(ctx context.Context) (string, error) {
 	tempDir := os.TempDir()
 	filename := filepath.Join(tempDir, fmt.Sprintf("PopAsk_Screenshot_%s.png", timestamp))
 	println("filename", filename)
-	cmd := exec.Command("screencapture", "-i", filename)
+
+	// 根据操作系统选择不同的截图命令
+	var cmd *exec.Cmd
+	if a.hardwareInfo.IsWindows() {
+		// Windows: 使用nircmd进行交互式截图选择
+		// 从应用目录调用nircmd.exe
+		exePath, err := os.Executable()
+		if err != nil {
+			return "", fmt.Errorf("failed to get executable path: %v", err)
+		}
+		appDir := filepath.Dir(exePath)
+		nircmdPath := filepath.Join(appDir, "nircmd.exe")
+
+		cmd = exec.Command(nircmdPath, "savescreenshot", filename)
+	} else {
+		// macOS: 使用screencapture
+		cmd = exec.Command("screencapture", "-i", filename)
+	}
 
 	if err := cmd.Run(); err != nil {
 		return "", fmt.Errorf("failed to execute screenshot command: %v", err)
