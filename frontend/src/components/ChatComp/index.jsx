@@ -35,7 +35,11 @@ import {
   BrowserOpenURL,
 } from "../../../wailsjs/runtime/runtime";
 import Tesseract from "tesseract.js";
-import { ChatAPIV2 } from "../../../wailsjs/go/main/App";
+import {
+  AIBianxieAPI,
+  ChatAPIV2,
+  AIOpenHubAPI,
+} from "../../../wailsjs/go/main/App";
 import { TAG_COLORS } from "../../constant";
 import {
   messageGenerator,
@@ -147,7 +151,7 @@ const ChatComp = ({
     });
   };
 
-  const handleChat = async (messages) => {
+  const handleChat = async (messages, isNewChat = false) => {
     if (!messages.trim()) {
       messageApi.open({
         type: "warning",
@@ -167,10 +171,13 @@ const ChatComp = ({
     }
 
     // Add user message to chat
-    const newChatMessages = [
+    let newChatMessages = [
       ...chatMessagesRef.current,
       userMessageGenerator(messages),
     ];
+    if (isNewChat) {
+      newChatMessages = [userMessageGenerator(messages)];
+    }
     setChatMessages(newChatMessages);
     setIsAskLoading(true);
 
@@ -179,7 +186,7 @@ const ChatComp = ({
         role: message.type,
         content: message.content,
       }));
-      const response = await ChatAPIV2(JSON.stringify(params));
+      const response = await AIOpenHubAPI(JSON.stringify(params));
       setIsAskLoading(false);
       if (response.code === 200) {
         // Increment usage count after successful call
@@ -239,12 +246,13 @@ const ChatComp = ({
       WindowShow();
       setActiveKey("chat");
 
-      setIsLoading(true);
       if (isOCR) {
+        setIsLoading(true);
         const ORCLang = getLocalStorage(ORC_LANG_KEY, DEFAULT_ORC_LANG);
         const lang = ORCLang.length > 1 ? ORCLang.join("+") : ORCLang[0];
         const result = await Tesseract.recognize(text, lang);
         text = languageFormate(result?.data?.text || "");
+        setIsLoading(false);
       }
       if (text.length === 0) {
         return;
@@ -260,7 +268,7 @@ const ChatComp = ({
 
       if (autoAsking) {
         setSelection("");
-        await handleChat(formattedMessage);
+        await handleChat(formattedMessage, true);
       }
     } catch (error) {
       console.log("error", error);
@@ -269,7 +277,6 @@ const ChatComp = ({
         content: error?.message || "error",
       });
     } finally {
-      setIsLoading(false);
       await sleep(100);
       inputRef.current?.focus();
     }
@@ -851,7 +858,7 @@ const ChatComp = ({
                     loading={isAskLoading}
                     icon={<SendOutlined />}
                     onClick={() => {
-                      handleChat(selection);
+                      handleChat(selection, false);
                       setSelection("");
                     }}
                     style={{ minWidth: "100px" }}

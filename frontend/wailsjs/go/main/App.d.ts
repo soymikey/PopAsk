@@ -3,6 +3,10 @@
 import {main} from '../models';
 import {context} from '../models';
 
+export function AIBianxieAPI(arg1:string):Promise<main.ChatResponse>;
+
+export function AIOpenHubAPI(arg1:string):Promise<main.ChatResponse>;
+
 export function ChatAPI(arg1:string):Promise<main.ChatResponse>;
 
 export function ChatAPIV2(arg1:string):Promise<main.ChatResponse>;
