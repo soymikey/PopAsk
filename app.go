@@ -248,30 +248,41 @@ func (a *App) CreateScreenshot(ctx context.Context) (string, error) {
 	if a.hardwareInfo.IsWindows() {
 		// Windows: 使用PowerShell调用截图工具
 		// 方案1: 使用Windows内置的截图工具 (Win+Shift+S)
-		cmd = exec.Command("powershell", "-Command", "Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.SendKeys]::SendWait('^{ESC}')")
-		if err := cmd.Run(); err != nil {
-			return "", fmt.Errorf("failed to open start menu: %v", err)
-		}
-		time.Sleep(100 * time.Millisecond)
+		// cmd = exec.Command("powershell", "-Command", "Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.SendKeys]::SendWait('^{ESC}')")
+		// if err := cmd.Run(); err != nil {
+		// 	return "", fmt.Errorf("failed to open start menu: %v", err)
+		// }
+		// time.Sleep(100 * time.Millisecond)
 
 		// 使用Windows截图工具
 		cmd = exec.Command("snippingtool.exe")
+
 		if err := cmd.Start(); err != nil {
-			// 备用方案：使用PowerShell发送快捷键
-			cmd = exec.Command("powershell", "-Command", "Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.SendKeys]::SendWait('^{ESC}+S')")
-			if err := cmd.Run(); err != nil {
-				return "", fmt.Errorf("failed to trigger screenshot: %v", err)
-			}
+
+			// // 备用方案：使用PowerShell发送快捷键
+			// cmd = exec.Command("powershell", "-Command", "Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.SendKeys]::SendWait('^{ESC}+S')")
+			// if err := cmd.Run(); err != nil {
+			// 	return "", fmt.Errorf("failed to trigger screenshot: %v", err)
+			// }
 		}
 
+		time.Sleep(500 * time.Millisecond)
+		// ctrl + n
+		robotgo.KeyTap("enter")
 		// 轮询检查剪贴板是否有图片，最多等待10秒
 		var imgData []byte
 		var err error
-		maxAttempts := 50 // 10秒内每200ms检查一次
+		// 5秒内每1000ms检查一次
+		maxAttempts := 5
 		for i := 0; i < maxAttempts; i++ {
-			time.Sleep(200 * time.Millisecond)
+			time.Sleep(1000 * time.Millisecond)
 			imgData, err = a.getClipboardImage(ctx)
 			if err == nil && len(imgData) > 0 {
+
+				// 移除剪贴板中的图片
+				runtime.ClipboardSetText(ctx, "")
+				exec.Command("taskkill", "/IM", "snippingtool.exe", "/F").Run()
+
 				break // 成功获取到图片
 			}
 		}
