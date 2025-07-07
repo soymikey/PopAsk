@@ -74,6 +74,10 @@ export function Greet(arg1) {
   return window['go']['main']['App']['Greet'](arg1);
 }
 
+export function IsMac() {
+  return window['go']['main']['App']['IsMac']();
+}
+
 export function RegisterKeyboardShortcut(arg1) {
   return window['go']['main']['App']['RegisterKeyboardShortcut'](arg1);
 }

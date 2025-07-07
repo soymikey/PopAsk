@@ -33,6 +33,7 @@ import {
   EventsOff,
   WindowShow,
   BrowserOpenURL,
+  WindowSetAlwaysOnTop,
 } from "../../../wailsjs/runtime/runtime";
 import Tesseract from "tesseract.js";
 import {
@@ -83,6 +84,7 @@ const ChatComp = ({
   setChatMessages,
   selectedPrompt,
   setSelectedPrompt,
+  isMac,
 }) => {
   const chatHistoryListRef = useRef(chatHistoryList);
   const chatMessagesRef = useRef(chatMessages);
@@ -236,7 +238,12 @@ const ChatComp = ({
     try {
       const { shortcut, prompt, autoAsking, isOCR, isOpenWindow } = selection;
       let text = selection?.text || "";
-      WindowShow();
+      WindowSetAlwaysOnTop(true);
+
+      setTimeout(() => {
+        WindowSetAlwaysOnTop(false);
+      }, 1000);
+
       setActiveKey("chat");
 
       if (isOCR) {
@@ -825,13 +832,17 @@ const ChatComp = ({
                     allowClear
                     style={{ fontSize: "14px" }}
                     onPressEnter={(e) => {
-                      // Cmd+Enter to send
-                      if (e.metaKey) {
+                      const isCmdOrCtrl = isMac ? e.metaKey : e.ctrlKey;
+                      if (isCmdOrCtrl && e.shiftKey) {
+                        e.preventDefault();
+                        newChatHandler(chatMessages, chatHistoryList);
+                        setTimeout(() => {
+                          askRef.current?.click();
+                        }, 200);
+                      } else if (isCmdOrCtrl) {
                         e.preventDefault();
                         askRef.current?.click();
-                      }
-                      // Shift+Enter to send new chat
-                      if (e.shiftKey) {
+                      } else if (e.shiftKey) {
                         e.preventDefault();
                         newChatHandler(chatMessages, chatHistoryList);
                         setTimeout(() => {

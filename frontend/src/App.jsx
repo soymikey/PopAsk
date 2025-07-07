@@ -22,9 +22,11 @@ import {
 import { useEffect, useState } from "react";
 import { EventsEmit } from "../wailsjs/runtime/runtime";
 import "./app.css";
-import { GetUniqueHardwareID } from "../wailsjs/go/main/App";
+import { GetUniqueHardwareID, IsMac } from "../wailsjs/go/main/App";
 
 const App = () => {
+  const [isMac, setIsMac] = useState(false);
+
   const [promptList, setPromptList] = useLocalStorage(
     PROMPT_LIST_KEY,
     DEFAULT_PROMPT_OPTIONS
@@ -124,6 +126,7 @@ const App = () => {
           setChatMessages={setChatMessages}
           selectedPrompt={selectedPrompt}
           setSelectedPrompt={setSelectedPrompt}
+          isMac={isMac}
         />
       ),
     },
@@ -177,6 +180,14 @@ const App = () => {
       setHardwareFingerprint(res);
     });
   }, [hardwareFingerprint]);
+
+  useEffect(() => {
+    const checkIsMac = async () => {
+      const isMac = await IsMac();
+      setIsMac(isMac);
+    };
+    checkIsMac();
+  }, []);
 
   return (
     <Layout

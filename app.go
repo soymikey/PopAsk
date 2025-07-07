@@ -8,10 +8,12 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	goRuntime "runtime"
 	"strings"
 	"time"
 
 	"github.com/go-vgo/robotgo"
+	"github.com/micmonay/keybd_event"
 	hook "github.com/robotn/gohook"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -46,6 +48,10 @@ func (a *App) startup(ctx context.Context) {
 			a.RegisterKeyboardShortcut(ctx)
 		}
 	})
+}
+
+func (a *App) IsMac() bool {
+	return goRuntime.GOOS == "darwin"
 }
 
 func (a *App) GetUniqueHardwareID() (string, error) {
@@ -198,6 +204,38 @@ func (a *App) RegisterKeyboardShortcut(ctx context.Context) {
 	}()
 }
 
+func (a *App) simulateCtrlC() error {
+	kb, err := keybd_event.NewKeyBonding()
+	if err != nil {
+		return err
+	}
+	kb.SetKeys(keybd_event.VK_C)
+	kb.HasCTRL(true)
+	err = kb.Launching()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (a *App) simulateCopy() error {
+	if goRuntime.GOOS == "windows" {
+		kb, err := keybd_event.NewKeyBonding()
+		if err != nil {
+			return err
+		}
+		kb.SetKeys(keybd_event.VK_C)
+		kb.HasCTRL(true)
+		return kb.Launching()
+	} else if goRuntime.GOOS == "darwin" {
+		var cmd *exec.Cmd
+		cmd = exec.Command("osascript", "-e", `tell application "System Events" to keystroke "c" using command down`)
+		return cmd.Run()
+	}
+	// 其他平台...
+	return nil
+}
+
 func (a *App) GetSelection(ctx context.Context) (string, error) {
 	// 保存当前剪贴板内容
 	originalText, err := runtime.ClipboardGetText(ctx)
@@ -209,15 +247,9 @@ func (a *App) GetSelection(ctx context.Context) (string, error) {
 	}
 
 	// 根据操作系统选择不同的复制命令
-	var cmd *exec.Cmd
-	if a.hardwareInfo.IsWindows() {
-		cmd = exec.Command("powershell", "-Command", "Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.SendKeys]::SendWait('^c')")
-	} else {
-		cmd = exec.Command("osascript", "-e", "tell application \"System Events\" to keystroke \"c\" using command down")
-	}
-
-	if err := cmd.Run(); err != nil {
-		return "", fmt.Errorf("failed to execute copy command: %v", err)
+	err = a.simulateCopy()
+	if err != nil {
+		return "", fmt.Errorf("failed to simulate copy: %v", err)
 	}
 
 	// 添加短暂延迟确保复制完成

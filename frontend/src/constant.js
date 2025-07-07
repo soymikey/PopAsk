@@ -170,12 +170,12 @@ export const DEFAULT_SHORTCUT_LIST = [
     {
         label: "Open Window",
         value: "Open Window",
-        shortcut: "ctrl+shift+c",
+        shortcut: "ctrl+shift+x",
     },
     {
         label: "ORC",
         value: "ORC",
-        shortcut: "ctrl+shift+v",
+        shortcut: "ctrl+shift+z",
     },
 
 ];
