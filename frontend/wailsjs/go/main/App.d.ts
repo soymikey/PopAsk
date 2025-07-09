@@ -27,6 +27,8 @@ export function GetMoreInformationFromURL(arg1:string,arg2:string):Promise<main.
 
 export function GetMousePosition():Promise<any>;
 
+export function GetPromptsCSV():Promise<string>;
+
 export function GetPublicGists():Promise<main.APIResponse>;
 
 export function GetPublicRepositories():Promise<main.APIResponse>;
@@ -40,6 +42,8 @@ export function GetUniqueHardwareID():Promise<string>;
 export function Greet(arg1:string):Promise<string>;
 
 export function IsMac():Promise<boolean>;
+
+export function LoadPrompts():Promise<Array<main.Prompt>>;
 
 export function RegisterKeyboardShortcut(arg1:context.Context):Promise<void>;
 

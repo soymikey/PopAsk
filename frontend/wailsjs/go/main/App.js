@@ -50,6 +50,10 @@ export function GetMousePosition() {
   return window['go']['main']['App']['GetMousePosition']();
 }
 
+export function GetPromptsCSV() {
+  return window['go']['main']['App']['GetPromptsCSV']();
+}
+
 export function GetPublicGists() {
   return window['go']['main']['App']['GetPublicGists']();
 }
@@ -76,6 +80,10 @@ export function Greet(arg1) {
 
 export function IsMac() {
   return window['go']['main']['App']['IsMac']();
+}
+
+export function LoadPrompts() {
+  return window['go']['main']['App']['LoadPrompts']();
 }
 
 export function RegisterKeyboardShortcut(arg1) {

@@ -5,6 +5,7 @@ import SettingsComp from "./components/SettingsComp";
 import HistoryComp from "./components/HistoryComp";
 import ChatHistoryComp from "./components/ChatHistoryComp";
 import ShortcutGuideComp from "./components/ShortcutGuideComp";
+import PromptComp from "./components/PromptComp";
 import useLocalStorage from "./hooks/useLocalStorage";
 import {
   PROMPT_LIST_KEY,
@@ -132,6 +133,13 @@ const App = () => {
     //   ),
     // },
     {
+      key: "prompt",
+      label: "Prompt",
+      children: (
+        <PromptComp promptList={promptList} setPromptList={setPromptList} />
+      ),
+    },
+    {
       key: "chatHistory",
       label: "Chat History",
       children: (
@@ -143,6 +151,7 @@ const App = () => {
         />
       ),
     },
+
     {
       key: "settings",
       label: "Settings",

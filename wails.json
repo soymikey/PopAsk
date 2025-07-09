@@ -12,6 +12,11 @@
   },
   "allowSystemDialogs": true,
   "allowSystemAccess": true,
+  "assets": {
+    "embed": [
+      "data/prompts.csv"
+    ]
+  },
   "info": {
     "productName": "PopAsk",
     "productVersion": "1.0.0",

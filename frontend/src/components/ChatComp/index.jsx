@@ -32,7 +32,6 @@ import {
   EventsOn,
   EventsOff,
   WindowShow,
-  BrowserOpenURL,
   WindowSetAlwaysOnTop,
 } from "../../../wailsjs/runtime/runtime";
 import Tesseract from "tesseract.js";
@@ -733,20 +732,6 @@ const ChatComp = ({
                     );
                   }}
                 />
-                {/* https://prompts.chat/ */}
-                <Button
-                  type="link"
-                  style={{
-                    color: "#1890ff",
-                    fontSize: "14px",
-                  }}
-                  onClick={() => {
-                    BrowserOpenURL("https://prompts.chat/");
-                  }}
-                >
-                  <LinkOutlined />
-                  Prompts
-                </Button>
               </div>
 
               <div

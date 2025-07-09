@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	"embed"
 	"encoding/base64"
+	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -16,6 +18,16 @@ import (
 	hook "github.com/robotn/gohook"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
+
+//go:embed data/prompts.csv
+var csvData embed.FS
+
+// Prompt 结构体用于存储提示词数据
+type Prompt struct {
+	Act     string `json:"act"`
+	Prompt  string `json:"prompt"`
+	ForDevs string `json:"for_devs"`
+}
 
 const COMMAND_KEY_CODE = 3675
 const SPACE_KEY_CODE = 57
@@ -722,4 +734,51 @@ func (a *App) SetShortcutList(jsonData string) error {
 	}
 	println("Prompt list updated with", len(shortcutItems), "items")
 	return nil
+}
+
+// LoadPrompts 从嵌入的 CSV 文件中读取提示词数据
+func (a *App) LoadPrompts() ([]Prompt, error) {
+	// 读取嵌入的 CSV 文件
+	data, err := csvData.ReadFile("data/prompts.csv")
+	if err != nil {
+		return nil, fmt.Errorf("failed to read CSV file: %w", err)
+	}
+
+	// 创建 CSV reader
+	reader := csv.NewReader(strings.NewReader(string(data)))
+
+	// 读取所有记录
+	records, err := reader.ReadAll()
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse CSV: %w", err)
+	}
+
+	if len(records) < 2 {
+		return []Prompt{}, nil
+	}
+
+	// 跳过标题行，解析数据
+	var prompts []Prompt
+	for i := 1; i < len(records); i++ {
+		record := records[i]
+		if len(record) >= 3 {
+			prompt := Prompt{
+				Act:     strings.TrimSpace(record[0]),
+				Prompt:  strings.TrimSpace(record[1]),
+				ForDevs: strings.TrimSpace(record[2]),
+			}
+			prompts = append(prompts, prompt)
+		}
+	}
+
+	return prompts, nil
+}
+
+// GetPromptsCSV 返回原始 CSV 文本内容
+func (a *App) GetPromptsCSV() (string, error) {
+	data, err := csvData.ReadFile("data/prompts.csv")
+	if err != nil {
+		return "", fmt.Errorf("failed to read CSV file: %w", err)
+	}
+	return string(data), nil
 }
