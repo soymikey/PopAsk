@@ -14,7 +14,6 @@ import (
 	"time"
 
 	"github.com/go-vgo/robotgo"
-	"github.com/micmonay/keybd_event"
 	hook "github.com/robotn/gohook"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -215,29 +214,14 @@ func (a *App) RegisterKeyboardShortcut(ctx context.Context) {
 	}()
 }
 
-func (a *App) simulateCtrlC() error {
-	kb, err := keybd_event.NewKeyBonding()
-	if err != nil {
-		return err
-	}
-	kb.SetKeys(keybd_event.VK_C)
-	kb.HasCTRL(true)
-	err = kb.Launching()
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
 func (a *App) simulateCopy() error {
 	if a.hardwareInfo.IsWindows() {
-		kb, err := keybd_event.NewKeyBonding()
-		if err != nil {
-			return err
-		}
-		kb.SetKeys(keybd_event.VK_C)
-		kb.HasCTRL(true)
-		return kb.Launching()
+		// 使用 PowerShell 直接操作剪贴板，避免模拟按键
+		cmd := exec.Command("powershell", "-Command", `
+			Add-Type -AssemblyName System.Windows.Forms
+			[System.Windows.Forms.SendKeys]::SendWait("^c")
+		`)
+		return cmd.Run()
 	} else if a.hardwareInfo.IsMacOS() {
 		var cmd *exec.Cmd
 		cmd = exec.Command("osascript", "-e", `tell application "System Events" to keystroke "c" using command down`)
