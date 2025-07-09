@@ -19,6 +19,8 @@ import {
   SELECTED_PROMPT_KEY,
   DEFAULT_PROMPT_OPTIONS,
   DEFAULT_PROMPT_OPTIONS_VALUE,
+  ORC_LANG_KEY,
+  DEFAULT_ORC_LANG,
 } from "./constant";
 import { useEffect, useState } from "react";
 import { EventsEmit } from "../wailsjs/runtime/runtime";
@@ -61,6 +63,8 @@ const App = () => {
     "showShortcutGuide",
     true
   );
+
+  const [ORCLang, setORCLang] = useLocalStorage(ORC_LANG_KEY, DEFAULT_ORC_LANG);
 
   const onChange = (key) => {
     setActiveKey(key);
@@ -157,6 +161,7 @@ const App = () => {
       label: "Settings",
       children: (
         <SettingsComp
+          activeKey={activeKey}
           promptList={promptList}
           setPromptList={setPromptList}
           systemShortcuts={systemShortcuts}
@@ -164,6 +169,8 @@ const App = () => {
           syncShortcutList={syncShortcutList}
           showShortcutGuide={() => setShowShortcutGuide(true)}
           resetShortcut={resetShortcut}
+          ORCLang={ORCLang}
+          setORCLang={setORCLang}
         />
       ),
     },

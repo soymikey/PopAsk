@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import ShortcutComp from "./ShortcutComp";
 import {
   Button,
@@ -12,10 +13,9 @@ import {
 } from "antd";
 import {
   DEFAULT_ORC_LANG,
-  ORC_LANG_KEY,
   DEFAULT_DAILY_LIMIT,
+  DEFAULT_PROMPT_LIST,
 } from "../../constant";
-import useLocalStorage from "../../hooks/useLocalStorage";
 import { OCR_LANGUAGE_OPTIONS } from "../../constant";
 import { InfoCircleOutlined, SaveOutlined } from "@ant-design/icons";
 import { checkDailyUsageLimit } from "../../utils";
@@ -30,10 +30,14 @@ function SettingsComp({
   syncShortcutList,
   showShortcutGuide,
   resetShortcut,
+  ORCLang,
+  setORCLang,
+  activeKey,
 }) {
-  const [ORCLang, setORCLang] = useLocalStorage(ORC_LANG_KEY, DEFAULT_ORC_LANG);
-  const [localPromptList, setLocalPromptList] = useState([]);
-  const [systemShortcutsLocal, setSystemShortcutsLocal] = useState([]);
+  const [localORCLang, setLocalORCLang] = useState(DEFAULT_ORC_LANG);
+
+  const [localPromptList, setLocalPromptList] = useState(DEFAULT_PROMPT_LIST);
+  const [localSystemShortcuts, setLocalSystemShortcuts] = useState([]);
 
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -48,11 +52,11 @@ function SettingsComp({
       });
       return;
     }
-    setORCLang(value);
+    setLocalORCLang(value);
   };
 
   const validateShortcut = () => {
-    const list = [...localPromptList, ...systemShortcutsLocal];
+    const list = [...localPromptList, ...localSystemShortcuts];
     const shortcutMap = new Map();
 
     for (const item of list) {
@@ -76,46 +80,60 @@ function SettingsComp({
       message.error(validateResult.message);
       return;
     }
+    setORCLang(localORCLang);
     setPromptList(localPromptList);
-    setSystemShortcuts(systemShortcutsLocal);
-    syncShortcutList(localPromptList, systemShortcutsLocal);
+    setSystemShortcuts(localSystemShortcuts);
+    syncShortcutList(localPromptList, localSystemShortcuts);
     messageApi.open({
       type: "success",
       content: "Settings saved successfully",
     });
   };
 
+  const handleDragEnd = (result) => {
+    if (!result.destination) return;
+
+    const items = Array.from(localPromptList);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+    // 如果顺序没有变化，则不更新
+    if (JSON.stringify(items) === JSON.stringify(localPromptList)) {
+      return;
+    }
+    setLocalPromptList(items);
+  };
+
   useEffect(() => {
     setLocalPromptList(promptList);
-    setSystemShortcutsLocal(systemShortcuts);
   }, [promptList, systemShortcuts]);
+
+  useEffect(() => {
+    setLocalSystemShortcuts(systemShortcuts);
+  }, [systemShortcuts]);
+
+  useEffect(() => {
+    setLocalORCLang(localORCLang);
+  }, [ORCLang]);
 
   useEffect(() => {
     console.log("SettingsComp");
   }, []);
 
+  useEffect(() => {
+    if (activeKey === "settings") {
+      setLocalORCLang(ORCLang);
+      setLocalPromptList(promptList);
+      setLocalSystemShortcuts(systemShortcuts);
+    }
+  }, [activeKey]);
+
   return (
-    <div style={{ paddingBottom: "12px" }}>
+    <div>
       {contextHolder}
 
-      <Space direction="vertical" size="large" style={{ width: "100%" }}>
+      <div style={{ width: "100%", position: "relative" }}>
         {/* Usage Statistics */}
-        <div
-          style={{
-            display: "flex",
-            marginTop: "16px",
-            justifyContent: "space-evenly",
-          }}
-        >
-          <Button type="default" onClick={showShortcutGuide}>
-            📋 View Shortcut Guide
-          </Button>
 
-          {/* restore default shortcuts */}
-          <Button type="default" onClick={resetShortcut}>
-            🔄 Reset Shortcuts
-          </Button>
-        </div>
         <Card
           title={
             <Space>
@@ -182,9 +200,9 @@ function SettingsComp({
             mode="multiple"
             style={{ width: "100%" }}
             options={OCR_LANGUAGE_OPTIONS}
-            value={ORCLang}
+            value={localORCLang}
             onChange={onChangeORCHandler}
-            placeholder="Select recognition languages (max 5)"
+            placeholder="Select a language for more accurate OCR"
             maxTagCount={3}
             showSearch
           />
@@ -192,7 +210,7 @@ function SettingsComp({
             type="secondary"
             style={{ fontSize: "12px", display: "block", marginTop: "8px" }}
           >
-            Select up to 5 languages for optimal OCR performance
+            up to 5 languages
           </Text>
         </Card>
 
@@ -206,15 +224,16 @@ function SettingsComp({
           size="small"
         >
           <Space direction="vertical" style={{ width: "100%" }} size="middle">
-            {systemShortcutsLocal.map((item, index) => (
+            {localSystemShortcuts.map((item, index) => (
               <ShortcutComp
+                isShowDragIcon={false}
                 localPrompt={item}
-                setLocalPromptList={setSystemShortcutsLocal}
-                localPromptList={systemShortcutsLocal}
+                setLocalPromptList={setLocalSystemShortcuts}
+                localPromptList={localSystemShortcuts}
                 key={index}
               />
             ))}
-            {systemShortcutsLocal.length === 0 && (
+            {localSystemShortcuts.length === 0 && (
               <Text
                 type="secondary"
                 style={{ textAlign: "center", display: "block" }}
@@ -228,46 +247,95 @@ function SettingsComp({
         {/* Prompt Shortcuts */}
         <Card
           title={
-            <Title level={4} style={{ margin: 0 }}>
-              Prompt Shortcuts
-            </Title>
+            <Space>
+              <Title level={4} style={{ margin: 0 }}>
+                Prompt Shortcuts
+              </Title>
+              <span style={{ fontSize: "12px", color: "#999" }}>
+                (drag to reorder)
+              </span>
+            </Space>
           }
           size="small"
         >
-          <Space direction="vertical" style={{ width: "100%" }} size="middle">
-            {localPromptList.map((prompt, index) => (
-              <ShortcutComp
-                localPrompt={prompt}
-                setLocalPromptList={setLocalPromptList}
-                localPromptList={localPromptList}
-                key={index}
-              />
-            ))}
-            {localPromptList.length === 0 && (
-              <Text
-                type="secondary"
-                style={{ textAlign: "center", display: "block" }}
-              >
-                No prompt shortcuts configured
-              </Text>
-            )}
-          </Space>
+          <DragDropContext onDragEnd={handleDragEnd}>
+            <Droppable droppableId="prompt-shortcuts">
+              {(provided) => (
+                <div {...provided.droppableProps} ref={provided.innerRef}>
+                  <Space
+                    direction="vertical"
+                    style={{ width: "100%" }}
+                    size="middle"
+                  >
+                    {localPromptList.map((prompt, index) => (
+                      <Draggable
+                        key={prompt.value || index}
+                        draggableId={prompt.value || index.toString()}
+                        index={index}
+                      >
+                        {(provided, snapshot) => (
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            style={{
+                              ...provided.draggableProps.style,
+                              opacity: snapshot.isDragging ? 0.8 : 1,
+                            }}
+                          >
+                            <ShortcutComp
+                              isShowDragIcon={true}
+                              localPrompt={prompt}
+                              setLocalPromptList={setLocalPromptList}
+                              localPromptList={localPromptList}
+                            />
+                          </div>
+                        )}
+                      </Draggable>
+                    ))}
+                    {localPromptList.length === 0 && (
+                      <Text
+                        type="secondary"
+                        style={{ textAlign: "center", display: "block" }}
+                      >
+                        No prompt shortcuts configured
+                      </Text>
+                    )}
+                  </Space>
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
         </Card>
 
         {/* Save Button */}
-        <div style={{ textAlign: "center" }}>
-          <Space direction="vertical" size="middle">
-            <Button
-              type="primary"
-              icon={<SaveOutlined />}
-              onClick={handleSave}
-              style={{ minWidth: "120px" }}
-            >
-              Save Settings
-            </Button>
-          </Space>
+        <div
+          style={{
+            position: "sticky",
+            bottom: 0,
+            padding: "16px 0",
+            marginTop: "16px",
+            textAlign: "center",
+            zIndex: 10,
+            display: "flex",
+            justifyContent: "space-evenly",
+            backgroundColor: "#f5f5f5",
+          }}
+        >
+          <Button type="default" onClick={showShortcutGuide}>
+            📋 View Shortcut Guide
+          </Button>
+
+          {/* restore default shortcuts */}
+          <Button type="default" onClick={resetShortcut}>
+            🔄 Reset Shortcuts
+          </Button>
+          <Button icon={<SaveOutlined />} onClick={handleSave}>
+            Save Settings
+          </Button>
         </div>
-      </Space>
+      </div>
     </div>
   );
 }

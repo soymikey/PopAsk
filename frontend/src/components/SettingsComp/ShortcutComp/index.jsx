@@ -4,7 +4,12 @@ import React, { useEffect, useState } from "react";
 
 const { Text } = Typography;
 
-function ShortcutComp({ localPrompt, setLocalPromptList, localPromptList }) {
+function ShortcutComp({
+  localPrompt,
+  setLocalPromptList,
+  localPromptList,
+  isShowDragIcon,
+}) {
   const [defaultP1, setDefaultP1] = useState("ctrl+shift");
   const [defaultP2, setDefaultP2] = useState("");
 
@@ -71,28 +76,42 @@ function ShortcutComp({ localPrompt, setLocalPromptList, localPromptList }) {
         boxShadow: "0 1px 2px rgba(0,0,0,0.03)",
       }}
       bodyStyle={{ padding: "16px" }}
+      // title={
+      //   isShowDragIcon ? (
+      //     <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+      //       <DragOutlined style={{ color: "#999", cursor: "grab" }} />
+      //       <span>Drag to reorder</span>
+      //     </div>
+      //   ) : null
+      // }
     >
       <Space
         style={{ width: "100%", justifyContent: "space-between" }}
         size="small"
       >
         {/* Title and Description */}
-        <div>
-          <Text
-            strong
-            style={{ fontSize: "14px", display: "block", marginBottom: "4px" }}
-          >
-            {localPrompt?.label}
-          </Text>
-          <Text
-            type="secondary"
-            style={{
-              fontSize: "12px",
-              lineHeight: "1.4",
-            }}
-          >
-            {localPrompt?.value}
-          </Text>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <div>
+            <Text
+              strong
+              style={{
+                fontSize: "14px",
+                display: "block",
+                marginBottom: "4px",
+              }}
+            >
+              {localPrompt?.label}
+            </Text>
+            <Text
+              type="secondary"
+              style={{
+                fontSize: "12px",
+                lineHeight: "1.4",
+              }}
+            >
+              {localPrompt?.value}
+            </Text>
+          </div>
         </div>
 
         {/* Shortcut Input */}

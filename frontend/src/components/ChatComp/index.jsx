@@ -236,11 +236,15 @@ const ChatComp = ({
     try {
       const { shortcut, prompt, autoAsking, isOCR, isOpenWindow } = selection;
       let text = selection?.text || "";
-      WindowSetAlwaysOnTop(true);
+      if (confing_.isMac) {
+        WindowShow();
+      } else {
+        WindowSetAlwaysOnTop(true);
 
-      setTimeout(() => {
-        WindowSetAlwaysOnTop(false);
-      }, 1000);
+        setTimeout(() => {
+          WindowSetAlwaysOnTop(false);
+        }, 1000);
+      }
 
       setActiveKey("chat");
 
@@ -857,18 +861,20 @@ const ChatComp = ({
                   </Button>
                 </Tooltip>
 
-                <Button
-                  type="text"
-                  icon={<SettingOutlined />}
-                  onClick={() => {
-                    setShowPromptArea(!showPromptArea);
-                  }}
-                  title={
-                    showPromptArea
-                      ? "Hide Prompt Settings"
-                      : "Show Prompt Settings"
-                  }
-                />
+                <Tooltip title="Toggle Prompt" placement="bottomLeft">
+                  <Button
+                    type="text"
+                    icon={<SettingOutlined />}
+                    onClick={() => {
+                      setShowPromptArea(!showPromptArea);
+                    }}
+                    title={
+                      showPromptArea
+                        ? "Hide Prompt Settings"
+                        : "Show Prompt Settings"
+                    }
+                  />
+                </Tooltip>
               </div>
             </Space>
           </Card>
