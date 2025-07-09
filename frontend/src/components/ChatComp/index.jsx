@@ -236,7 +236,7 @@ const ChatComp = ({
     try {
       const { shortcut, prompt, autoAsking, isOCR, isOpenWindow } = selection;
       let text = selection?.text || "";
-      if (confing_.isMac) {
+      if (config_.isMac) {
         WindowShow();
       } else {
         WindowSetAlwaysOnTop(true);
