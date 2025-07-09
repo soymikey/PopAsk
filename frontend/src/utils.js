@@ -1,3 +1,14 @@
+import { IsMac, GetUniqueHardwareID } from "../wailsjs/go/main/App";
+
+export const initEnv = async () => {
+    return {
+        isMac: await IsMac(),
+        uniqueHardwareID: await GetUniqueHardwareID(),
+
+    }
+
+};
+
 export const messageGenerator = (prompt, text) => {
     return `${prompt}${text}`;
 };

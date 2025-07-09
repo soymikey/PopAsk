@@ -8,7 +8,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	goRuntime "runtime"
 	"strings"
 	"time"
 
@@ -51,7 +50,7 @@ func (a *App) startup(ctx context.Context) {
 }
 
 func (a *App) IsMac() bool {
-	return goRuntime.GOOS == "darwin"
+	return a.hardwareInfo.IsMacOS()
 }
 
 func (a *App) GetUniqueHardwareID() (string, error) {
@@ -219,7 +218,7 @@ func (a *App) simulateCtrlC() error {
 }
 
 func (a *App) simulateCopy() error {
-	if goRuntime.GOOS == "windows" {
+	if a.hardwareInfo.IsWindows() {
 		kb, err := keybd_event.NewKeyBonding()
 		if err != nil {
 			return err
@@ -227,7 +226,7 @@ func (a *App) simulateCopy() error {
 		kb.SetKeys(keybd_event.VK_C)
 		kb.HasCTRL(true)
 		return kb.Launching()
-	} else if goRuntime.GOOS == "darwin" {
+	} else if a.hardwareInfo.IsMacOS() {
 		var cmd *exec.Cmd
 		cmd = exec.Command("osascript", "-e", `tell application "System Events" to keystroke "c" using command down`)
 		return cmd.Run()

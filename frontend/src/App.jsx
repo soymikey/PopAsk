@@ -22,11 +22,8 @@ import {
 import { useEffect, useState } from "react";
 import { EventsEmit } from "../wailsjs/runtime/runtime";
 import "./app.css";
-import { GetUniqueHardwareID, IsMac } from "../wailsjs/go/main/App";
 
 const App = () => {
-  const [isMac, setIsMac] = useState(false);
-
   const [promptList, setPromptList] = useLocalStorage(
     PROMPT_LIST_KEY,
     DEFAULT_PROMPT_OPTIONS
@@ -46,11 +43,6 @@ const App = () => {
   const [chatHistoryList, setChatHistoryList] = useLocalStorage(
     CHAT_HISTORY_LIST_KEY,
     DEFAULT_CHAT_HISTORY_LIST
-  );
-
-  const [hardwareFingerprint, setHardwareFingerprint] = useLocalStorage(
-    HARDWARE_FINGERPRINT_KEY,
-    ""
   );
 
   // current chat messages
@@ -126,7 +118,6 @@ const App = () => {
           setChatMessages={setChatMessages}
           selectedPrompt={selectedPrompt}
           setSelectedPrompt={setSelectedPrompt}
-          isMac={isMac}
         />
       ),
     },
@@ -170,23 +161,6 @@ const App = () => {
   ];
   useEffect(() => {
     syncShortcutList(promptList, systemShortcuts);
-  }, []);
-
-  useEffect(() => {
-    if (hardwareFingerprint) {
-      return;
-    }
-    GetUniqueHardwareID().then((res) => {
-      setHardwareFingerprint(res);
-    });
-  }, [hardwareFingerprint]);
-
-  useEffect(() => {
-    const checkIsMac = async () => {
-      const isMac = await IsMac();
-      setIsMac(isMac);
-    };
-    checkIsMac();
   }, []);
 
   return (

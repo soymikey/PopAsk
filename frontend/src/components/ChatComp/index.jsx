@@ -84,7 +84,6 @@ const ChatComp = ({
   setChatMessages,
   selectedPrompt,
   setSelectedPrompt,
-  isMac,
 }) => {
   const chatHistoryListRef = useRef(chatHistoryList);
   const chatMessagesRef = useRef(chatMessages);
@@ -832,7 +831,9 @@ const ChatComp = ({
                     allowClear
                     style={{ fontSize: "14px" }}
                     onPressEnter={(e) => {
-                      const isCmdOrCtrl = isMac ? e.metaKey : e.ctrlKey;
+                      const isCmdOrCtrl = window.config_.isMac
+                        ? e.metaKey
+                        : e.ctrlKey;
                       if (isCmdOrCtrl && e.shiftKey) {
                         e.preventDefault();
                         newChatHandler(chatMessages, chatHistoryList);
