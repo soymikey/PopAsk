@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	goRuntime "runtime"
 	"strings"
 	"time"
 
@@ -16,7 +17,7 @@ import (
 
 // CreateScreenshot 创建截图，根据操作系统选择不同的实现
 func (a *App) CreateScreenshot(ctx context.Context) (string, error) {
-	if a.hardware.IsWindows() {
+	if goRuntime.GOOS == "windows" {
 		return a.CreateScreenshotWindows(ctx)
 	} else {
 		return a.CreateScreenshotMac(ctx)

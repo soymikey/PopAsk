@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os/exec"
+	goRuntime "runtime"
 	"strings"
 	"time"
 
@@ -12,14 +13,14 @@ import (
 
 // simulateCopy 模拟复制操作，根据操作系统选择不同的实现
 func (a *App) simulateCopy() error {
-	if a.hardware.IsWindows() {
+	if goRuntime.GOOS == "windows" {
 		// 使用 PowerShell 直接操作剪贴板，避免模拟按键
 		cmd := exec.Command("powershell", "-Command", `
 			Add-Type -AssemblyName System.Windows.Forms
 			[System.Windows.Forms.SendKeys]::SendWait("^c")
 		`)
 		return cmd.Run()
-	} else if a.hardware.IsMacOS() {
+	} else if goRuntime.GOOS == "darwin" {
 		var cmd *exec.Cmd
 		cmd = exec.Command("osascript", "-e", `tell application "System Events" to keystroke "c" using command down`)
 		return cmd.Run()
