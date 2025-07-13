@@ -428,16 +428,6 @@ func (a *App) Greet(name string) string {
 	return fmt.Sprintf("Hello %s, It's show time!", name)
 }
 
-type APIResponse []interface{}
-
-type Gist struct {
-	Description string      `json:"description"`
-	Public      bool        `json:"public"`
-	Files       interface{} `json:"files"`
-}
-
-const BASE_URL = "https://api.github.com"
-
 const SERVER_URL = "https://extension.migaox.com"
 
 const BIANXIE_URL = "https://api.bianxie.ai"
@@ -445,105 +435,6 @@ const BIANXIE_URL = "https://api.bianxie.ai"
 const OPENHUB_URL = "https://api.openai-hub.com"
 
 // const SERVER_URL = "http://localhost:4000"
-
-var githubResponse APIResponse
-
-func (a *App) GetPublicRepositories() (APIResponse, error) {
-
-	url := fmt.Sprintf("%s/repositories", BASE_URL)
-	response, err := MakeGetRequest(url, "")
-
-	if err != nil {
-		return nil, err
-	}
-
-	json.Unmarshal(response, &githubResponse)
-
-	return githubResponse, nil
-}
-
-func (a *App) GetPublicGists() (APIResponse, error) {
-
-	url := fmt.Sprintf("%s/gists/public", BASE_URL)
-	response, err := MakeGetRequest(url, "")
-
-	if err != nil {
-		return nil, err
-	}
-
-	json.Unmarshal(response, &githubResponse)
-
-	return githubResponse, nil
-}
-
-func (a *App) GetRepositoriesForAuthenticatedUser(token string) (APIResponse, error) {
-
-	url := fmt.Sprintf("%s/user/repos?type=private", BASE_URL)
-	response, err := MakeGetRequest(url, token)
-
-	if err != nil {
-		return nil, err
-	}
-
-	json.Unmarshal(response, &githubResponse)
-
-	return githubResponse, nil
-}
-
-func (a *App) GetGistsForAuthenticatedUser(token string) (APIResponse, error) {
-
-	url := fmt.Sprintf("%s/gists", BASE_URL)
-	response, err := MakeGetRequest(url, token)
-
-	if err != nil {
-		return nil, err
-	}
-
-	json.Unmarshal(response, &githubResponse)
-
-	return githubResponse, nil
-}
-
-func (a *App) GetMoreInformationFromURL(url, token string) (APIResponse, error) {
-
-	response, err := MakeGetRequest(url, token)
-
-	if err != nil {
-		return nil, err
-	}
-
-	json.Unmarshal(response, &githubResponse)
-
-	return githubResponse, nil
-}
-
-func (a *App) GetGistContent(url, token string) (string, error) {
-
-	githubResponse, err := MakeGetRequest(url, token)
-
-	if err != nil {
-		return "", err
-	}
-
-	return string(githubResponse), nil
-}
-
-func (a *App) CreateNewGist(gist Gist, token string) (interface{}, error) {
-
-	var githubResponse interface{}
-
-	requestBody, _ := json.Marshal(gist)
-	url := fmt.Sprintf("%s/gists", BASE_URL)
-	response, err := MakePostRequest(url, token, requestBody)
-
-	if err != nil {
-		return nil, err
-	}
-
-	json.Unmarshal(response, &githubResponse)
-
-	return githubResponse, nil
-}
 
 type ChatRequest struct {
 	Message string `json:"message"`

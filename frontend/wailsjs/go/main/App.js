@@ -22,10 +22,6 @@ export function ChatAPIV2(arg1) {
   return window['go']['main']['App']['ChatAPIV2'](arg1);
 }
 
-export function CreateNewGist(arg1, arg2) {
-  return window['go']['main']['App']['CreateNewGist'](arg1, arg2);
-}
-
 export function CreateScreenshot(arg1) {
   return window['go']['main']['App']['CreateScreenshot'](arg1);
 }
@@ -38,36 +34,12 @@ export function CreateScreenshotWindows(arg1) {
   return window['go']['main']['App']['CreateScreenshotWindows'](arg1);
 }
 
-export function GetGistContent(arg1, arg2) {
-  return window['go']['main']['App']['GetGistContent'](arg1, arg2);
-}
-
-export function GetGistsForAuthenticatedUser(arg1) {
-  return window['go']['main']['App']['GetGistsForAuthenticatedUser'](arg1);
-}
-
-export function GetMoreInformationFromURL(arg1, arg2) {
-  return window['go']['main']['App']['GetMoreInformationFromURL'](arg1, arg2);
-}
-
 export function GetMousePosition() {
   return window['go']['main']['App']['GetMousePosition']();
 }
 
 export function GetPromptsCSV() {
   return window['go']['main']['App']['GetPromptsCSV']();
-}
-
-export function GetPublicGists() {
-  return window['go']['main']['App']['GetPublicGists']();
-}
-
-export function GetPublicRepositories() {
-  return window['go']['main']['App']['GetPublicRepositories']();
-}
-
-export function GetRepositoriesForAuthenticatedUser(arg1) {
-  return window['go']['main']['App']['GetRepositoriesForAuthenticatedUser'](arg1);
 }
 
 export function GetSelection(arg1) {

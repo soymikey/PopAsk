@@ -13,29 +13,15 @@ export function ChatAPI(arg1:string):Promise<main.ChatResponse>;
 
 export function ChatAPIV2(arg1:string):Promise<main.ChatResponse>;
 
-export function CreateNewGist(arg1:main.Gist,arg2:string):Promise<any>;
-
 export function CreateScreenshot(arg1:context.Context):Promise<string>;
 
 export function CreateScreenshotMac(arg1:context.Context):Promise<string>;
 
 export function CreateScreenshotWindows(arg1:context.Context):Promise<string>;
 
-export function GetGistContent(arg1:string,arg2:string):Promise<string>;
-
-export function GetGistsForAuthenticatedUser(arg1:string):Promise<main.APIResponse>;
-
-export function GetMoreInformationFromURL(arg1:string,arg2:string):Promise<main.APIResponse>;
-
 export function GetMousePosition():Promise<any>;
 
 export function GetPromptsCSV():Promise<string>;
-
-export function GetPublicGists():Promise<main.APIResponse>;
-
-export function GetPublicRepositories():Promise<main.APIResponse>;
-
-export function GetRepositoriesForAuthenticatedUser(arg1:string):Promise<main.APIResponse>;
 
 export function GetSelection(arg1:context.Context):Promise<string>;
 
