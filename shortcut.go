@@ -38,8 +38,11 @@ func NewShortcutService(ctx context.Context, app *App) *ShortcutService {
 
 // RegisterKeyboardShortcut 注册键盘快捷键
 func (s *ShortcutService) RegisterKeyboardShortcut() {
+	s.logSvc.Info("Registering keyboard shortcuts")
+
 	// Clear existing hooks if any
 	if s.hookChan != nil {
+		s.logSvc.Info("Clearing existing keyboard hooks")
 		hook.End()
 		close(s.hookChan)
 		s.hookChan = nil
@@ -53,12 +56,12 @@ func (s *ShortcutService) RegisterKeyboardShortcut() {
 			continue
 		}
 		shortcut := strings.Split(prompt["shortcut"].(string), "+")
-		println("RegisterKeyboardShortcut", prompt["shortcut"].(string))
+		s.logSvc.Info("Registering shortcut: %s for action: %s", prompt["shortcut"].(string), prompt["value"].(string))
 
 		// 创建局部变量避免闭包问题
 		currentPrompt := prompt
 		hook.Register(hook.KeyDown, shortcut, func(e hook.Event) {
-			println("Shortcut triggered:", currentPrompt["shortcut"].(string))
+			s.logSvc.Info("Shortcut triggered: %s", currentPrompt["shortcut"].(string))
 			autoAsking := true
 			text := ""
 			err := error(nil)
@@ -72,6 +75,7 @@ func (s *ShortcutService) RegisterKeyboardShortcut() {
 			if isOrcShortcut {
 				isUserInChina := s.GetApp().IsUserInChina()
 				if isUserInChina {
+					s.logSvc.Error("OCR failed: some countries network are not supported")
 					runtime.MessageDialog(s.GetContext(), runtime.MessageDialogOptions{
 						Type:    runtime.ErrorDialog,
 						Title:   "OCR failed",
@@ -82,6 +86,7 @@ func (s *ShortcutService) RegisterKeyboardShortcut() {
 				}
 				text, err = s.GetApp().CreateScreenshot(s.GetContext())
 				if err != nil {
+					s.logSvc.Error("Failed to create screenshot for OCR: %v", err)
 					fmt.Printf("Error: %v\n", err)
 					return
 				}
@@ -96,11 +101,13 @@ func (s *ShortcutService) RegisterKeyboardShortcut() {
 					}
 				}
 				if err != nil {
+					s.logSvc.Error("Failed to get selection after retries: %v", err)
 					fmt.Printf("Error getting selection after retries: %v\n", err)
 					return
 				}
 			}
 
+			s.logSvc.Info("Emitting GET_SELECTION event with text length: %d", len(text))
 			runtime.EventsEmit(s.GetContext(), "GET_SELECTION", map[string]interface{}{
 				"text":         text,
 				"shortcut":     currentPrompt["shortcut"].(string),
@@ -117,6 +124,7 @@ func (s *ShortcutService) RegisterKeyboardShortcut() {
 		})
 	}
 
+	s.logSvc.Info("Successfully registered %d keyboard shortcuts", len(s.shortcutList))
 	// Start processing in a goroutine to avoid blocking
 	go func() {
 		s := hook.Start()
@@ -126,9 +134,12 @@ func (s *ShortcutService) RegisterKeyboardShortcut() {
 
 // SetShortcutList 设置快捷键列表
 func (s *ShortcutService) SetShortcutList(jsonData string) error {
+	s.logSvc.Info("Setting shortcut list from JSON data")
+
 	var shortcutItems []ShortcutItem
 	err := json.Unmarshal([]byte(jsonData), &shortcutItems)
 	if err != nil {
+		s.logSvc.Error("Failed to unmarshal prompt list: %v", err)
 		return fmt.Errorf("failed to unmarshal prompt list: %v", err)
 	}
 
@@ -140,6 +151,7 @@ func (s *ShortcutService) SetShortcutList(jsonData string) error {
 			"shortcut": item.Shortcut,
 		}
 	}
+	s.logSvc.Info("Successfully updated shortcut list with %d items", len(shortcutItems))
 	println("Prompt list updated with", len(shortcutItems), "items")
 	return nil
 }

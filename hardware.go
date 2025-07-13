@@ -43,6 +43,8 @@ func NewHardwareService(ctx context.Context, app *App) *HardwareService {
 
 // GetHardwareFingerprint 获取硬件指纹
 func (h *HardwareService) GetHardwareFingerprint() (*HardwareInfo, error) {
+	h.logSvc.Info("Getting hardware fingerprint")
+
 	info := &HardwareInfo{}
 
 	// 获取CPU信息
@@ -50,6 +52,9 @@ func (h *HardwareService) GetHardwareFingerprint() (*HardwareInfo, error) {
 	if err == nil && len(cpuInfo) > 0 {
 		info.CPUInfo = cpuInfo[0].ModelName
 		info.CPUCount = len(cpuInfo)
+		h.logSvc.Info("CPU info: %s, count: %d", info.CPUInfo, info.CPUCount)
+	} else {
+		h.logSvc.Error("Failed to get CPU info: %v", err)
 	}
 
 	// 获取主机信息
@@ -59,27 +64,39 @@ func (h *HardwareService) GetHardwareFingerprint() (*HardwareInfo, error) {
 		info.Platform = hostInfo.Platform
 		info.OS = hostInfo.OS
 		info.MachineID = hostInfo.HostID
+		h.logSvc.Info("Host info: %s, platform: %s, OS: %s", info.Hostname, info.Platform, info.OS)
+	} else {
+		h.logSvc.Error("Failed to get host info: %v", err)
 	}
 
 	// 获取内存信息
 	memInfo, err := mem.VirtualMemory()
 	if err == nil {
 		info.MemoryTotal = memInfo.Total
+		h.logSvc.Info("Memory total: %d bytes", info.MemoryTotal)
+	} else {
+		h.logSvc.Error("Failed to get memory info: %v", err)
 	}
 
 	// 获取MAC地址
 	info.MACAddress = h.getMACAddress()
+	h.logSvc.Info("MAC address: %s", info.MACAddress)
 
 	// 获取磁盘序列号
 	info.DiskSerial = h.getDiskSerial()
+	h.logSvc.Info("Disk serial: %s", info.DiskSerial)
 
+	h.logSvc.Info("Hardware fingerprint collection completed")
 	return info, nil
 }
 
 // GetUniqueHardwareID 获取唯一硬件ID
 func (h *HardwareService) GetUniqueHardwareID() (string, error) {
+	h.logSvc.Info("Generating unique hardware ID")
+
 	info, err := h.GetHardwareFingerprint()
 	if err != nil {
+		h.logSvc.Error("Failed to get hardware fingerprint: %v", err)
 		return "", err
 	}
 
@@ -96,7 +113,9 @@ func (h *HardwareService) GetUniqueHardwareID() (string, error) {
 
 	// 生成MD5哈希
 	hash := md5.Sum([]byte(hardwareString))
-	return hex.EncodeToString(hash[:]), nil
+	hardwareID := hex.EncodeToString(hash[:])
+	h.logSvc.Info("Generated hardware ID: %s", hardwareID)
+	return hardwareID, nil
 }
 
 // getMACAddress 获取MAC地址

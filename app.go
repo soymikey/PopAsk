@@ -34,23 +34,46 @@ func NewApp() *App {
 
 // startup is called at application startup
 func (a *App) startup(ctx context.Context) {
+	a.logSvc.Info("Starting PopAsk application")
 	a.ctx = ctx
 
+	a.logSvc.Info("Initializing services...")
 	a.hardwareSvc = NewHardwareService(ctx, a)
+	a.logSvc.Info("HardwareService initialized")
+
 	// 初始化服务
 	a.screenshotSvc = NewScreenshotService(ctx, a)
+	a.logSvc.Info("ScreenshotService initialized")
+
 	a.promptSvc = NewPromptService(ctx, a)
+	a.logSvc.Info("PromptService initialized")
+
 	a.clipboardSvc = NewClipboardService(ctx, a)
+	a.logSvc.Info("ClipboardService initialized")
+
 	a.shortcutSvc = NewShortcutService(ctx, a)
+	a.logSvc.Info("ShortcutService initialized")
+
 	a.apiSvc = NewAPIService(ctx, a)
+	a.logSvc.Info("APIService initialized")
+
 	a.windowSvc = NewWindowService(ctx, a)
+	a.logSvc.Info("WindowService initialized")
+
 	a.networkSvc = NewNetworkService(ctx, a)
+	a.logSvc.Info("NetworkService initialized")
+
+	a.logSvc.Info("All services initialized successfully")
+
 	runtime.EventsOn(ctx, "syncShortcutList", func(data ...interface{}) {
 		if len(data) > 0 {
+			a.logSvc.Info("Received syncShortcutList event")
 			a.SetShortcutList(data[0].(string))
 			a.RegisterKeyboardShortcut(ctx)
 		}
 	})
+
+	a.logSvc.Info("PopAsk application startup completed")
 }
 
 // domReady is called after front-end resources have been loaded

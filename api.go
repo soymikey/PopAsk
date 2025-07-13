@@ -74,6 +74,8 @@ func NewAPIService(ctx context.Context, app *App) *APIService {
 
 // HTTP request helper functions
 func (api *APIService) makeRequest(requestType, url, token string, payload []byte) ([]byte, error) {
+	api.logSvc.Info("Making %s request to: %s", requestType, url)
+
 	var request *http.Request
 
 	if payload != nil {
@@ -91,10 +93,12 @@ func (api *APIService) makeRequest(requestType, url, token string, payload []byt
 
 	response, err := api.client.Do(request)
 	if err != nil {
+		api.logSvc.Error("HTTP request failed: %v", err)
 		return nil, fmt.Errorf("request failed: %w", err)
 	}
 
 	body, _ := io.ReadAll(response.Body)
+	api.logSvc.Info("HTTP request completed successfully, response size: %d bytes", len(body))
 
 	return body, nil
 }
@@ -109,6 +113,8 @@ func (api *APIService) MakePostRequest(url, token string, payload []byte) ([]byt
 
 // API functions
 func (api *APIService) ChatAPI(message string) (ChatResponse, error) {
+	api.logSvc.Info("Calling ChatAPI with message length: %d", len(message))
+
 	var chatResponse ChatResponse
 
 	requestBody, _ := json.Marshal(ChatRequest{Message: message})
@@ -116,15 +122,19 @@ func (api *APIService) ChatAPI(message string) (ChatResponse, error) {
 	response, err := api.MakePostRequest(url, "", requestBody)
 
 	if err != nil {
+		api.logSvc.Error("ChatAPI failed: %v", err)
 		return ChatResponse{}, err
 	}
 
 	json.Unmarshal(response, &chatResponse)
+	api.logSvc.Info("ChatAPI completed successfully, response code: %d", chatResponse.Code)
 
 	return chatResponse, nil
 }
 
 func (api *APIService) ChatAPIV2(messages string) (ChatResponse, error) {
+	api.logSvc.Info("Calling ChatAPIV2 with messages length: %d", len(messages))
+
 	var chatResponse ChatResponse
 
 	requestBody, _ := json.Marshal(ChatRequestV2{Messages: messages})
@@ -132,15 +142,19 @@ func (api *APIService) ChatAPIV2(messages string) (ChatResponse, error) {
 	response, err := api.MakePostRequest(url, "", requestBody)
 
 	if err != nil {
+		api.logSvc.Error("ChatAPIV2 failed: %v", err)
 		return ChatResponse{}, err
 	}
 
 	json.Unmarshal(response, &chatResponse)
+	api.logSvc.Info("ChatAPIV2 completed successfully, response code: %d", chatResponse.Code)
 
 	return chatResponse, nil
 }
 
 func (api *APIService) AIBianxieAPI(messages string) (ChatResponse, error) {
+	api.logSvc.Info("Calling AIBianxieAPI with messages length: %d", len(messages))
+
 	var BianxieChatResponse BianxieChatResponse
 	parsedMessages := []map[string]interface{}{}
 	json.Unmarshal([]byte(messages), &parsedMessages)
@@ -150,15 +164,19 @@ func (api *APIService) AIBianxieAPI(messages string) (ChatResponse, error) {
 	response, err := api.MakePostRequest(url, "sk-8SjlkyqUQMESPzZdfma7abopO9HcZ3epYmwckJcMAQwLnPHD", requestBody)
 
 	if err != nil {
+		api.logSvc.Error("AIBianxieAPI failed: %v", err)
 		return ChatResponse{Code: 500, Data: err.Error()}, err
 	}
 
 	json.Unmarshal(response, &BianxieChatResponse)
+	api.logSvc.Info("AIBianxieAPI completed successfully")
 
 	return ChatResponse{Code: 200, Data: BianxieChatResponse.Choices[0].Message.Content}, nil
 }
 
 func (api *APIService) AIOpenHubAPI(messages string) (ChatResponse, error) {
+	api.logSvc.Info("Calling AIOpenHubAPI with messages length: %d", len(messages))
+
 	var OpenHubChatResponse OpenHubChatResponse
 	parsedMessages := []map[string]interface{}{}
 	json.Unmarshal([]byte(messages), &parsedMessages)
@@ -168,10 +186,12 @@ func (api *APIService) AIOpenHubAPI(messages string) (ChatResponse, error) {
 	response, err := api.MakePostRequest(url, "sk-S1KQNcR9Op9Er1VmeGVj3NhPf5Hsa0aq3aAU6zpkmOwUI8TJ", requestBody)
 
 	if err != nil {
+		api.logSvc.Error("AIOpenHubAPI failed: %v", err)
 		return ChatResponse{Code: 500, Data: err.Error()}, err
 	}
 
 	json.Unmarshal(response, &OpenHubChatResponse)
+	api.logSvc.Info("AIOpenHubAPI completed successfully")
 
 	return ChatResponse{Code: 200, Data: OpenHubChatResponse.Choices[0].Message.Content}, nil
 }

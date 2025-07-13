@@ -34,9 +34,12 @@ func NewPromptService(ctx context.Context, app *App) *PromptService {
 
 // LoadPrompts 从嵌入的 CSV 文件中读取提示词数据
 func (p *PromptService) LoadPrompts() ([]Prompt, error) {
+	p.logSvc.Info("Loading prompts from embedded CSV file")
+
 	// 读取嵌入的 CSV 文件
 	data, err := csvData.ReadFile("data/prompts.csv")
 	if err != nil {
+		p.logSvc.Error("Failed to read CSV file: %v", err)
 		return nil, fmt.Errorf("failed to read CSV file: %w", err)
 	}
 
@@ -46,10 +49,12 @@ func (p *PromptService) LoadPrompts() ([]Prompt, error) {
 	// 读取所有记录
 	records, err := reader.ReadAll()
 	if err != nil {
+		p.logSvc.Error("Failed to parse CSV: %v", err)
 		return nil, fmt.Errorf("failed to parse CSV: %w", err)
 	}
 
 	if len(records) < 2 {
+		p.logSvc.Info("CSV file has insufficient records, returning empty prompts")
 		return []Prompt{}, nil
 	}
 
@@ -67,15 +72,21 @@ func (p *PromptService) LoadPrompts() ([]Prompt, error) {
 		}
 	}
 
+	p.logSvc.Info("Successfully loaded %d prompts", len(prompts))
 	return prompts, nil
 }
 
 // GetPromptsCSV 返回原始 CSV 文本内容
 func (p *PromptService) GetPromptsCSV() (string, error) {
+	p.logSvc.Info("Getting raw CSV content")
+
 	data, err := csvData.ReadFile("data/prompts.csv")
 	if err != nil {
+		p.logSvc.Error("Failed to read CSV file: %v", err)
 		return "", fmt.Errorf("failed to read CSV file: %w", err)
 	}
+
+	p.logSvc.Info("Successfully retrieved CSV content, size: %d bytes", len(data))
 	return string(data), nil
 }
 
