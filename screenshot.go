@@ -15,17 +15,27 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
+// ScreenshotService 截图服务
+type ScreenshotService struct {
+	ctx context.Context
+}
+
+// NewScreenshotService 创建新的截图服务
+func NewScreenshotService(ctx context.Context) *ScreenshotService {
+	return &ScreenshotService{ctx: ctx}
+}
+
 // CreateScreenshot 创建截图，根据操作系统选择不同的实现
-func (a *App) CreateScreenshot(ctx context.Context) (string, error) {
+func (s *ScreenshotService) CreateScreenshot() (string, error) {
 	if goRuntime.GOOS == "windows" {
-		return a.CreateScreenshotWindows(ctx)
+		return s.CreateScreenshotWindows()
 	} else {
-		return a.CreateScreenshotMac(ctx)
+		return s.CreateScreenshotMac()
 	}
 }
 
 // CreateScreenshotWindows Windows系统截图实现
-func (a *App) CreateScreenshotWindows(ctx context.Context) (string, error) {
+func (s *ScreenshotService) CreateScreenshotWindows() (string, error) {
 	var cmd *exec.Cmd
 
 	cmd = exec.Command("snippingtool.exe")
@@ -42,12 +52,12 @@ func (a *App) CreateScreenshotWindows(ctx context.Context) (string, error) {
 	maxAttempts := 5
 	for i := 0; i < maxAttempts; i++ {
 		time.Sleep(500 * time.Millisecond)
-		imgData, err = a.getClipboardImage(ctx)
+		imgData, err = s.getClipboardImage()
 		if err == nil && len(imgData) > 0 {
 			// 强制关闭截图工具
 			exec.Command("taskkill", "/IM", "snippingtool.exe", "/F").Run()
 			// 清理剪贴板
-			runtime.ClipboardSetText(ctx, "")
+			runtime.ClipboardSetText(s.ctx, "")
 			break
 		}
 		// 检查 snippingtool.exe 是否还在运行
@@ -68,7 +78,7 @@ func (a *App) CreateScreenshotWindows(ctx context.Context) (string, error) {
 }
 
 // CreateScreenshotMac macOS系统截图实现
-func (a *App) CreateScreenshotMac(ctx context.Context) (string, error) {
+func (s *ScreenshotService) CreateScreenshotMac() (string, error) {
 	// 生成带时间戳的文件名
 	timestamp := time.Now().Format("20060102_150405")
 	tempDir := os.TempDir()
@@ -99,7 +109,7 @@ func (a *App) CreateScreenshotMac(ctx context.Context) (string, error) {
 }
 
 // getClipboardImage 获取剪贴板中的图片数据
-func (a *App) getClipboardImage(ctx context.Context) ([]byte, error) {
+func (s *ScreenshotService) getClipboardImage() ([]byte, error) {
 	// 使用PowerShell获取剪贴板图片
 	cmd := exec.Command("powershell", "-Command", `
 		Add-Type -AssemblyName System.Windows.Forms
@@ -133,4 +143,20 @@ func (a *App) getClipboardImage(ctx context.Context) ([]byte, error) {
 	}
 
 	return imgData, nil
+}
+
+// 保持向后兼容的方法
+func (a *App) CreateScreenshot(ctx context.Context) (string, error) {
+	screenshotSvc := NewScreenshotService(ctx)
+	return screenshotSvc.CreateScreenshot()
+}
+
+func (a *App) CreateScreenshotWindows(ctx context.Context) (string, error) {
+	screenshotSvc := NewScreenshotService(ctx)
+	return screenshotSvc.CreateScreenshotWindows()
+}
+
+func (a *App) CreateScreenshotMac(ctx context.Context) (string, error) {
+	screenshotSvc := NewScreenshotService(ctx)
+	return screenshotSvc.CreateScreenshotMac()
 }

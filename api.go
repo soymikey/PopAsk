@@ -55,10 +55,20 @@ type ChatResponse struct {
 	Data interface{} `json:"data"`
 }
 
-// HTTP request helper functions
-func makeRequest(requestType, url, token string, payload []byte) ([]byte, error) {
-	client := &http.Client{}
+// APIService API服务
+type APIService struct {
+	client *http.Client
+}
 
+// NewAPIService 创建新的API服务
+func NewAPIService() *APIService {
+	return &APIService{
+		client: &http.Client{},
+	}
+}
+
+// HTTP request helper functions
+func (api *APIService) makeRequest(requestType, url, token string, payload []byte) ([]byte, error) {
 	var request *http.Request
 
 	if payload != nil {
@@ -74,7 +84,7 @@ func makeRequest(requestType, url, token string, payload []byte) ([]byte, error)
 		request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
 	}
 
-	response, err := client.Do(request)
+	response, err := api.client.Do(request)
 	if err != nil {
 		return nil, fmt.Errorf("request failed: %w", err)
 	}
@@ -84,21 +94,21 @@ func makeRequest(requestType, url, token string, payload []byte) ([]byte, error)
 	return body, nil
 }
 
-func MakeGetRequest(url string, token string) ([]byte, error) {
-	return makeRequest("GET", url, token, nil)
+func (api *APIService) MakeGetRequest(url string, token string) ([]byte, error) {
+	return api.makeRequest("GET", url, token, nil)
 }
 
-func MakePostRequest(url, token string, payload []byte) ([]byte, error) {
-	return makeRequest("POST", url, token, payload)
+func (api *APIService) MakePostRequest(url, token string, payload []byte) ([]byte, error) {
+	return api.makeRequest("POST", url, token, payload)
 }
 
 // API functions
-func (a *App) ChatAPI(message string) (ChatResponse, error) {
+func (api *APIService) ChatAPI(message string) (ChatResponse, error) {
 	var chatResponse ChatResponse
 
 	requestBody, _ := json.Marshal(ChatRequest{Message: message})
 	url := fmt.Sprintf("%s/ai-translator/openai", SERVER_URL)
-	response, err := MakePostRequest(url, "", requestBody)
+	response, err := api.MakePostRequest(url, "", requestBody)
 
 	if err != nil {
 		return ChatResponse{}, err
@@ -109,12 +119,12 @@ func (a *App) ChatAPI(message string) (ChatResponse, error) {
 	return chatResponse, nil
 }
 
-func (a *App) ChatAPIV2(messages string) (ChatResponse, error) {
+func (api *APIService) ChatAPIV2(messages string) (ChatResponse, error) {
 	var chatResponse ChatResponse
 
 	requestBody, _ := json.Marshal(ChatRequestV2{Messages: messages})
 	url := fmt.Sprintf("%s/ai-translator/openai/chat", SERVER_URL)
-	response, err := MakePostRequest(url, "", requestBody)
+	response, err := api.MakePostRequest(url, "", requestBody)
 
 	if err != nil {
 		return ChatResponse{}, err
@@ -125,14 +135,14 @@ func (a *App) ChatAPIV2(messages string) (ChatResponse, error) {
 	return chatResponse, nil
 }
 
-func (a *App) AIBianxieAPI(messages string) (ChatResponse, error) {
+func (api *APIService) AIBianxieAPI(messages string) (ChatResponse, error) {
 	var BianxieChatResponse BianxieChatResponse
 	parsedMessages := []map[string]interface{}{}
 	json.Unmarshal([]byte(messages), &parsedMessages)
 	requestBody, _ := json.Marshal(BianxieChatRequest{Messages: parsedMessages, Model: "gpt-3.5-turbo", Stream: false})
 	// println("requestBody", string(requestBody))
 	url := fmt.Sprintf("%s/v1/chat/completions", BIANXIE_URL)
-	response, err := MakePostRequest(url, "sk-8SjlkyqUQMESPzZdfma7abopO9HcZ3epYmwckJcMAQwLnPHD", requestBody)
+	response, err := api.MakePostRequest(url, "sk-8SjlkyqUQMESPzZdfma7abopO9HcZ3epYmwckJcMAQwLnPHD", requestBody)
 
 	if err != nil {
 		return ChatResponse{Code: 500, Data: err.Error()}, err
@@ -143,14 +153,14 @@ func (a *App) AIBianxieAPI(messages string) (ChatResponse, error) {
 	return ChatResponse{Code: 200, Data: BianxieChatResponse.Choices[0].Message.Content}, nil
 }
 
-func (a *App) AIOpenHubAPI(messages string) (ChatResponse, error) {
+func (api *APIService) AIOpenHubAPI(messages string) (ChatResponse, error) {
 	var OpenHubChatResponse OpenHubChatResponse
 	parsedMessages := []map[string]interface{}{}
 	json.Unmarshal([]byte(messages), &parsedMessages)
 	requestBody, _ := json.Marshal(BianxieChatRequest{Messages: parsedMessages, Model: "gpt-3.5-turbo", Stream: false})
 	// println("requestBody", string(requestBody))
 	url := fmt.Sprintf("%s/v1/chat/completions", OPENHUB_URL)
-	response, err := MakePostRequest(url, "sk-S1KQNcR9Op9Er1VmeGVj3NhPf5Hsa0aq3aAU6zpkmOwUI8TJ", requestBody)
+	response, err := api.MakePostRequest(url, "sk-S1KQNcR9Op9Er1VmeGVj3NhPf5Hsa0aq3aAU6zpkmOwUI8TJ", requestBody)
 
 	if err != nil {
 		return ChatResponse{Code: 500, Data: err.Error()}, err
@@ -159,4 +169,40 @@ func (a *App) AIOpenHubAPI(messages string) (ChatResponse, error) {
 	json.Unmarshal(response, &OpenHubChatResponse)
 
 	return ChatResponse{Code: 200, Data: OpenHubChatResponse.Choices[0].Message.Content}, nil
+}
+
+// 保持向后兼容的方法
+func makeRequest(requestType, url, token string, payload []byte) ([]byte, error) {
+	apiSvc := NewAPIService()
+	return apiSvc.makeRequest(requestType, url, token, payload)
+}
+
+func MakeGetRequest(url string, token string) ([]byte, error) {
+	apiSvc := NewAPIService()
+	return apiSvc.MakeGetRequest(url, token)
+}
+
+func MakePostRequest(url, token string, payload []byte) ([]byte, error) {
+	apiSvc := NewAPIService()
+	return apiSvc.MakePostRequest(url, token, payload)
+}
+
+func (a *App) ChatAPI(message string) (ChatResponse, error) {
+	apiSvc := NewAPIService()
+	return apiSvc.ChatAPI(message)
+}
+
+func (a *App) ChatAPIV2(messages string) (ChatResponse, error) {
+	apiSvc := NewAPIService()
+	return apiSvc.ChatAPIV2(messages)
+}
+
+func (a *App) AIBianxieAPI(messages string) (ChatResponse, error) {
+	apiSvc := NewAPIService()
+	return apiSvc.AIBianxieAPI(messages)
+}
+
+func (a *App) AIOpenHubAPI(messages string) (ChatResponse, error) {
+	apiSvc := NewAPIService()
+	return apiSvc.AIOpenHubAPI(messages)
 }

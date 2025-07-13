@@ -19,6 +19,14 @@ type App struct {
 	systemShortcuts []map[string]interface{}
 	hookChan        chan hook.Event
 	hardware        *Hardware
+	// 服务字段
+	screenshotSvc *ScreenshotService
+	promptSvc     *PromptService
+	clipboardSvc  *ClipboardService
+	shortcutSvc   *ShortcutService
+	apiSvc        *APIService
+	windowSvc     *WindowService
+	networkSvc    *NetworkService
 }
 
 // NewApp creates a new App application struct
@@ -29,6 +37,15 @@ func NewApp() *App {
 // startup is called at application startup
 func (a *App) startup(ctx context.Context) {
 	a.hardware = NewHardware()
+	// 初始化服务
+	a.screenshotSvc = NewScreenshotService(ctx)
+	a.promptSvc = NewPromptService()
+	a.clipboardSvc = NewClipboardService(ctx)
+	a.shortcutSvc = NewShortcutService(ctx, a)
+	a.apiSvc = NewAPIService()
+	a.windowSvc = NewWindowService(ctx)
+	a.networkSvc = NewNetworkService()
+
 	// Perform your setup here
 	a.ctx = ctx
 	a.keyRecords = []string{}

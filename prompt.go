@@ -17,8 +17,18 @@ type Prompt struct {
 	ForDevs string `json:"for_devs"`
 }
 
+// PromptService 提示词服务
+type PromptService struct {
+	prompts []Prompt
+}
+
+// NewPromptService 创建新的提示词服务
+func NewPromptService() *PromptService {
+	return &PromptService{}
+}
+
 // LoadPrompts 从嵌入的 CSV 文件中读取提示词数据
-func (a *App) LoadPrompts() ([]Prompt, error) {
+func (p *PromptService) LoadPrompts() ([]Prompt, error) {
 	// 读取嵌入的 CSV 文件
 	data, err := csvData.ReadFile("data/prompts.csv")
 	if err != nil {
@@ -56,10 +66,21 @@ func (a *App) LoadPrompts() ([]Prompt, error) {
 }
 
 // GetPromptsCSV 返回原始 CSV 文本内容
-func (a *App) GetPromptsCSV() (string, error) {
+func (p *PromptService) GetPromptsCSV() (string, error) {
 	data, err := csvData.ReadFile("data/prompts.csv")
 	if err != nil {
 		return "", fmt.Errorf("failed to read CSV file: %w", err)
 	}
 	return string(data), nil
+}
+
+// 保持向后兼容的方法
+func (a *App) LoadPrompts() ([]Prompt, error) {
+	promptSvc := NewPromptService()
+	return promptSvc.LoadPrompts()
+}
+
+func (a *App) GetPromptsCSV() (string, error) {
+	promptSvc := NewPromptService()
+	return promptSvc.GetPromptsCSV()
 }
