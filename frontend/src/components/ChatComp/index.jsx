@@ -26,6 +26,7 @@ import {
   SettingOutlined,
   LinkOutlined,
   SaveOutlined,
+  StopOutlined,
 } from "@ant-design/icons";
 import { useEffect, useState, useRef } from "react";
 import {
@@ -94,6 +95,7 @@ const ChatComp = ({
 
   const [isLoading, setIsLoading] = useState(false);
   const [isAskLoading, setIsAskLoading] = useState(false);
+  const [isRequestCancelled, setIsRequestCancelled] = useState(false);
 
   const [recentPrompts, setRecentPrompts] = useLocalStorage(
     RECENT_PROMPTS_KEY,
@@ -151,6 +153,15 @@ const ChatComp = ({
     });
   };
 
+  const stopRequest = () => {
+    setIsRequestCancelled(true);
+    setIsAskLoading(false);
+    messageApi.open({
+      type: "info",
+      content: "Request stopped",
+    });
+  };
+
   const handleChat = async (messages, isNewChat = false) => {
     if (!messages.trim()) {
       messageApi.open({
@@ -170,6 +181,9 @@ const ChatComp = ({
       return;
     }
 
+    // Reset cancellation flag
+    setIsRequestCancelled(false);
+
     // Add user message to chat
     let newChatMessages = [
       ...chatMessagesRef.current,
@@ -187,6 +201,12 @@ const ChatComp = ({
         content: message.content,
       }));
       const response = await AIOpenHubAPI(JSON.stringify(params));
+
+      // Check if request was cancelled
+      if (isRequestCancelled) {
+        return;
+      }
+
       setIsAskLoading(false);
       if (response.code === 200) {
         // Increment usage count after successful call
@@ -224,6 +244,11 @@ const ChatComp = ({
         });
       }
     } catch (error) {
+      // Check if request was cancelled
+      if (isRequestCancelled) {
+        return;
+      }
+
       setIsAskLoading(false);
       messageApi.open({
         type: "error",
@@ -875,6 +900,17 @@ const ChatComp = ({
                     {isAskLoading ? "Sending..." : "Send"}
                   </Button>
                 </Tooltip>
+
+                {isAskLoading && (
+                  <Tooltip title="Stop Request">
+                    <Button
+                      danger
+                      icon={<StopOutlined />}
+                      onClick={stopRequest}
+                      style={{ marginLeft: "8px" }}
+                    ></Button>
+                  </Tooltip>
+                )}
 
                 <Tooltip title="Toggle Prompt" placement="bottomLeft">
                   <Button
