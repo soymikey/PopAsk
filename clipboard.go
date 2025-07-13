@@ -13,12 +13,15 @@ import (
 
 // ClipboardService 剪贴板服务
 type ClipboardService struct {
-	ctx context.Context
+	BaseService
 }
 
 // NewClipboardService 创建新的剪贴板服务
-func NewClipboardService(ctx context.Context) *ClipboardService {
-	return &ClipboardService{ctx: ctx}
+func NewClipboardService(ctx context.Context, app *App) *ClipboardService {
+	service := &ClipboardService{}
+	service.SetContext(ctx)
+	service.SetApp(app)
+	return service
 }
 
 // simulateCopy 模拟复制操作，根据操作系统选择不同的实现
@@ -75,11 +78,11 @@ func (c *ClipboardService) GetSelection() (string, error) {
 
 // 保持向后兼容的方法
 func (a *App) simulateCopy() error {
-	clipboardSvc := NewClipboardService(a.ctx)
+	clipboardSvc := NewClipboardService(a.ctx, a)
 	return clipboardSvc.simulateCopy()
 }
 
 func (a *App) GetSelection(ctx context.Context) (string, error) {
-	clipboardSvc := NewClipboardService(ctx)
+	clipboardSvc := NewClipboardService(ctx, a)
 	return clipboardSvc.GetSelection()
 }

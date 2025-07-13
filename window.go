@@ -10,12 +10,15 @@ import (
 
 // WindowService 窗口服务
 type WindowService struct {
-	ctx context.Context
+	BaseService
 }
 
 // NewWindowService 创建新的窗口服务
-func NewWindowService(ctx context.Context) *WindowService {
-	return &WindowService{ctx: ctx}
+func NewWindowService(ctx context.Context, app *App) *WindowService {
+	service := &WindowService{}
+	service.SetContext(ctx)
+	service.SetApp(app)
+	return service
 }
 
 // GetMousePosition 获取鼠标位置
@@ -92,11 +95,11 @@ func (w *WindowService) ShowPopWindow() {
 
 // 保持向后兼容的方法
 func (a *App) GetMousePosition() (interface{}, error) {
-	windowSvc := NewWindowService(a.ctx)
+	windowSvc := NewWindowService(a.ctx, a)
 	return windowSvc.GetMousePosition()
 }
 
 func (a *App) ShowPopWindow() {
-	windowSvc := NewWindowService(a.ctx)
+	windowSvc := NewWindowService(a.ctx, a)
 	windowSvc.ShowPopWindow()
 }

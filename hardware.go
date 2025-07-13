@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
@@ -28,12 +29,16 @@ type HardwareInfo struct {
 
 // HardwareService 硬件服务
 type HardwareService struct {
+	BaseService
 	info *HardwareInfo
 }
 
 // NewHardwareService 创建新的硬件服务
-func NewHardwareService() *HardwareService {
-	return &HardwareService{}
+func NewHardwareService(ctx context.Context, app *App) *HardwareService {
+	service := &HardwareService{}
+	service.SetContext(ctx)
+	service.SetApp(app)
+	return service
 }
 
 // GetHardwareFingerprint 获取硬件指纹

@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -57,14 +58,18 @@ type ChatResponse struct {
 
 // APIService API服务
 type APIService struct {
+	BaseService
 	client *http.Client
 }
 
 // NewAPIService 创建新的API服务
-func NewAPIService() *APIService {
-	return &APIService{
+func NewAPIService(ctx context.Context, app *App) *APIService {
+	service := &APIService{
 		client: &http.Client{},
 	}
+	service.SetContext(ctx)
+	service.SetApp(app)
+	return service
 }
 
 // HTTP request helper functions
@@ -173,36 +178,36 @@ func (api *APIService) AIOpenHubAPI(messages string) (ChatResponse, error) {
 
 // 保持向后兼容的方法
 func makeRequest(requestType, url, token string, payload []byte) ([]byte, error) {
-	apiSvc := NewAPIService()
+	apiSvc := NewAPIService(context.Background(), nil)
 	return apiSvc.makeRequest(requestType, url, token, payload)
 }
 
 func MakeGetRequest(url string, token string) ([]byte, error) {
-	apiSvc := NewAPIService()
+	apiSvc := NewAPIService(context.Background(), nil)
 	return apiSvc.MakeGetRequest(url, token)
 }
 
 func MakePostRequest(url, token string, payload []byte) ([]byte, error) {
-	apiSvc := NewAPIService()
+	apiSvc := NewAPIService(context.Background(), nil)
 	return apiSvc.MakePostRequest(url, token, payload)
 }
 
 func (a *App) ChatAPI(message string) (ChatResponse, error) {
-	apiSvc := NewAPIService()
+	apiSvc := NewAPIService(a.ctx, a)
 	return apiSvc.ChatAPI(message)
 }
 
 func (a *App) ChatAPIV2(messages string) (ChatResponse, error) {
-	apiSvc := NewAPIService()
+	apiSvc := NewAPIService(a.ctx, a)
 	return apiSvc.ChatAPIV2(messages)
 }
 
 func (a *App) AIBianxieAPI(messages string) (ChatResponse, error) {
-	apiSvc := NewAPIService()
+	apiSvc := NewAPIService(a.ctx, a)
 	return apiSvc.AIBianxieAPI(messages)
 }
 
 func (a *App) AIOpenHubAPI(messages string) (ChatResponse, error) {
-	apiSvc := NewAPIService()
+	apiSvc := NewAPIService(a.ctx, a)
 	return apiSvc.AIOpenHubAPI(messages)
 }

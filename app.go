@@ -31,18 +31,17 @@ func NewApp() *App {
 
 // startup is called at application startup
 func (a *App) startup(ctx context.Context) {
-	a.hardwareSvc = NewHardwareService()
-	// 初始化服务
-	a.screenshotSvc = NewScreenshotService(ctx)
-	a.promptSvc = NewPromptService()
-	a.clipboardSvc = NewClipboardService(ctx)
-	a.shortcutSvc = NewShortcutService(ctx, a)
-	a.apiSvc = NewAPIService()
-	a.windowSvc = NewWindowService(ctx)
-	a.networkSvc = NewNetworkService()
-
-	// Perform your setup here
 	a.ctx = ctx
+
+	a.hardwareSvc = NewHardwareService(ctx, a)
+	// 初始化服务
+	a.screenshotSvc = NewScreenshotService(ctx, a)
+	a.promptSvc = NewPromptService(ctx, a)
+	a.clipboardSvc = NewClipboardService(ctx, a)
+	a.shortcutSvc = NewShortcutService(ctx, a)
+	a.apiSvc = NewAPIService(ctx, a)
+	a.windowSvc = NewWindowService(ctx, a)
+	a.networkSvc = NewNetworkService(ctx, a)
 	runtime.EventsOn(ctx, "syncShortcutList", func(data ...interface{}) {
 		if len(data) > 0 {
 			a.SetShortcutList(data[0].(string))

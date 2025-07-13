@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"embed"
 	"encoding/csv"
 	"fmt"
@@ -19,12 +20,16 @@ type Prompt struct {
 
 // PromptService 提示词服务
 type PromptService struct {
+	BaseService
 	prompts []Prompt
 }
 
 // NewPromptService 创建新的提示词服务
-func NewPromptService() *PromptService {
-	return &PromptService{}
+func NewPromptService(ctx context.Context, app *App) *PromptService {
+	service := &PromptService{}
+	service.SetContext(ctx)
+	service.SetApp(app)
+	return service
 }
 
 // LoadPrompts 从嵌入的 CSV 文件中读取提示词数据
@@ -76,11 +81,11 @@ func (p *PromptService) GetPromptsCSV() (string, error) {
 
 // 保持向后兼容的方法
 func (a *App) LoadPrompts() ([]Prompt, error) {
-	promptSvc := NewPromptService()
+	promptSvc := NewPromptService(a.ctx, a)
 	return promptSvc.LoadPrompts()
 }
 
 func (a *App) GetPromptsCSV() (string, error) {
-	promptSvc := NewPromptService()
+	promptSvc := NewPromptService(a.ctx, a)
 	return promptSvc.GetPromptsCSV()
 }

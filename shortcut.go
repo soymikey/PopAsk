@@ -20,20 +20,20 @@ type ShortcutItem struct {
 
 // ShortcutService 快捷键服务
 type ShortcutService struct {
-	ctx          context.Context
+	BaseService
 	keyRecords   []string
 	shortcutList []map[string]interface{}
 	hookChan     chan hook.Event
-	app          *App // 引用App以访问其他服务
 }
 
 // NewShortcutService 创建新的快捷键服务
 func NewShortcutService(ctx context.Context, app *App) *ShortcutService {
-	return &ShortcutService{
-		ctx:        ctx,
+	service := &ShortcutService{
 		keyRecords: []string{},
-		app:        app,
 	}
+	service.SetContext(ctx)
+	service.SetApp(app)
+	return service
 }
 
 // RegisterKeyboardShortcut 注册键盘快捷键
@@ -70,9 +70,9 @@ func (s *ShortcutService) RegisterKeyboardShortcut() {
 			}
 
 			if isOrcShortcut {
-				isUserInChina := s.app.IsUserInChina()
+				isUserInChina := s.GetApp().IsUserInChina()
 				if isUserInChina {
-					runtime.MessageDialog(s.ctx, runtime.MessageDialogOptions{
+					runtime.MessageDialog(s.GetContext(), runtime.MessageDialogOptions{
 						Type:    runtime.ErrorDialog,
 						Title:   "OCR failed",
 						Message: "OCR failed: some countries network are not supported",
@@ -80,19 +80,19 @@ func (s *ShortcutService) RegisterKeyboardShortcut() {
 					fmt.Println("OCR failed: some countries network are not supported")
 					return
 				}
-				text, err = s.app.CreateScreenshot(s.ctx)
+				text, err = s.GetApp().CreateScreenshot(s.GetContext())
 				if err != nil {
 					fmt.Printf("Error: %v\n", err)
 					return
 				}
 			} else {
-				text, err = s.app.GetSelection(s.ctx)
+				text, err = s.GetApp().GetSelection(s.GetContext())
 				if text == "" {
 					time.Sleep(100 * time.Millisecond)
-					text, err = s.app.GetSelection(s.ctx)
+					text, err = s.GetApp().GetSelection(s.GetContext())
 					if text == "" {
 						time.Sleep(100 * time.Millisecond)
-						text, err = s.app.GetSelection(s.ctx)
+						text, err = s.GetApp().GetSelection(s.GetContext())
 					}
 				}
 				if err != nil {
@@ -101,7 +101,7 @@ func (s *ShortcutService) RegisterKeyboardShortcut() {
 				}
 			}
 
-			runtime.EventsEmit(s.ctx, "GET_SELECTION", map[string]interface{}{
+			runtime.EventsEmit(s.GetContext(), "GET_SELECTION", map[string]interface{}{
 				"text":         text,
 				"shortcut":     currentPrompt["shortcut"].(string),
 				"prompt":       currentPrompt["value"].(string),

@@ -17,12 +17,15 @@ import (
 
 // ScreenshotService 截图服务
 type ScreenshotService struct {
-	ctx context.Context
+	BaseService
 }
 
 // NewScreenshotService 创建新的截图服务
-func NewScreenshotService(ctx context.Context) *ScreenshotService {
-	return &ScreenshotService{ctx: ctx}
+func NewScreenshotService(ctx context.Context, app *App) *ScreenshotService {
+	service := &ScreenshotService{}
+	service.SetContext(ctx)
+	service.SetApp(app)
+	return service
 }
 
 // CreateScreenshot 创建截图，根据操作系统选择不同的实现
@@ -147,16 +150,16 @@ func (s *ScreenshotService) getClipboardImage() ([]byte, error) {
 
 // 保持向后兼容的方法
 func (a *App) CreateScreenshot(ctx context.Context) (string, error) {
-	screenshotSvc := NewScreenshotService(ctx)
+	screenshotSvc := NewScreenshotService(ctx, a)
 	return screenshotSvc.CreateScreenshot()
 }
 
 func (a *App) CreateScreenshotWindows(ctx context.Context) (string, error) {
-	screenshotSvc := NewScreenshotService(ctx)
+	screenshotSvc := NewScreenshotService(ctx, a)
 	return screenshotSvc.CreateScreenshotWindows()
 }
 
 func (a *App) CreateScreenshotMac(ctx context.Context) (string, error) {
-	screenshotSvc := NewScreenshotService(ctx)
+	screenshotSvc := NewScreenshotService(ctx, a)
 	return screenshotSvc.CreateScreenshotMac()
 }
