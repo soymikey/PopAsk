@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	goRuntime "runtime"
 )
 
 // ServiceBase 服务基础接口
@@ -10,6 +11,10 @@ type ServiceBase interface {
 	SetApp(app *App)
 	GetContext() context.Context
 	GetApp() *App
+	IsWindows() bool
+	IsMacOS() bool
+	IsLinux() bool
+	GetOS() string
 }
 
 // BaseService 基础服务结构
@@ -36,4 +41,24 @@ func (b *BaseService) GetContext() context.Context {
 // GetApp 获取应用实例
 func (b *BaseService) GetApp() *App {
 	return b.app
+}
+
+// IsWindows 判断是否为Windows系统
+func (b *BaseService) IsWindows() bool {
+	return goRuntime.GOOS == "windows"
+}
+
+// IsMacOS 判断是否为macOS系统
+func (b *BaseService) IsMacOS() bool {
+	return goRuntime.GOOS == "darwin"
+}
+
+// IsLinux 判断是否为Linux系统
+func (b *BaseService) IsLinux() bool {
+	return goRuntime.GOOS == "linux"
+}
+
+// GetOS 获取操作系统名称
+func (b *BaseService) GetOS() string {
+	return goRuntime.GOOS
 }

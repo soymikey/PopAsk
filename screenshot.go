@@ -7,7 +7,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	goRuntime "runtime"
 	"strings"
 	"time"
 
@@ -30,7 +29,7 @@ func NewScreenshotService(ctx context.Context, app *App) *ScreenshotService {
 
 // CreateScreenshot 创建截图，根据操作系统选择不同的实现
 func (s *ScreenshotService) CreateScreenshot() (string, error) {
-	if goRuntime.GOOS == "windows" {
+	if s.IsWindows() {
 		return s.CreateScreenshotWindows()
 	} else {
 		return s.CreateScreenshotMac()

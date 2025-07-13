@@ -101,7 +101,7 @@ func (h *HardwareService) GetUniqueHardwareID() (string, error) {
 
 // getMACAddress 获取MAC地址
 func (h *HardwareService) getMACAddress() string {
-	switch runtime.GOOS {
+	switch h.GetOS() {
 	case "darwin":
 		return h.getMacOSMACAddress()
 	case "windows":
@@ -182,7 +182,7 @@ func (h *HardwareService) getLinuxMACAddress() string {
 
 // getDiskSerial 获取磁盘序列号
 func (h *HardwareService) getDiskSerial() string {
-	switch runtime.GOOS {
+	switch h.GetOS() {
 	case "darwin":
 		return h.getMacOSDiskSerial()
 	case "windows":
@@ -260,25 +260,7 @@ func (h *HardwareService) ValidateHardwareID(hardwareID string) bool {
 	return true
 }
 
-// GetOS 获取当前操作系统
-func (h *HardwareService) GetOS() string {
-	return runtime.GOOS
-}
-
-// IsMacOS 判断是否为 macOS
-func (h *HardwareService) IsMacOS() bool {
-	return h.GetOS() == "darwin"
-}
-
-// IsWindows 判断是否为 Windows
-func (h *HardwareService) IsWindows() bool {
-	return h.GetOS() == "windows"
-}
-
-// IsLinux 判断是否为 Linux
-func (h *HardwareService) IsLinux() bool {
-	return h.GetOS() == "linux"
-}
+// 这些方法现在从 BaseService 继承，无需重复定义
 
 // 保持向后兼容的方法
 func (a *App) IsMac() bool {
