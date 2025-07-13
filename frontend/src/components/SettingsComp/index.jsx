@@ -331,7 +331,7 @@ function SettingsComp({
           <Button type="default" onClick={resetShortcut}>
             🔄 Reset Shortcuts
           </Button>
-          <Button icon={<SaveOutlined />} onClick={handleSave}>
+          <Button type="primary" icon={<SaveOutlined />} onClick={handleSave}>
             Save Settings
           </Button>
         </div>

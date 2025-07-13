@@ -10,6 +10,10 @@ export function AIOpenHubAPI(arg1) {
   return window['go']['main']['App']['AIOpenHubAPI'](arg1);
 }
 
+export function CanAccessGoogle() {
+  return window['go']['main']['App']['CanAccessGoogle']();
+}
+
 export function ChatAPI(arg1) {
   return window['go']['main']['App']['ChatAPI'](arg1);
 }
@@ -80,6 +84,10 @@ export function Greet(arg1) {
 
 export function IsMac() {
   return window['go']['main']['App']['IsMac']();
+}
+
+export function IsUserInChina() {
+  return window['go']['main']['App']['IsUserInChina']();
 }
 
 export function LoadPrompts() {

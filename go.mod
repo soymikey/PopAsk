@@ -6,7 +6,6 @@ toolchain go1.23.10
 
 require (
 	github.com/go-vgo/robotgo v0.110.8
-	github.com/micmonay/keybd_event v1.1.2
 	github.com/robotn/gohook v0.42.2
 	github.com/shirou/gopsutil/v3 v3.24.5
 	github.com/wailsapp/wails/v2 v2.10.1

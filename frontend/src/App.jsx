@@ -177,6 +177,11 @@ const App = () => {
   ];
   useEffect(() => {
     syncShortcutList(promptList, systemShortcuts);
+    const getLocationInfo = async () => {
+      const isUserInChina = await window.go.main.App.IsUserInChina();
+      window.config_.isUserInChina = isUserInChina;
+    };
+    getLocationInfo();
   }, []);
 
   return (

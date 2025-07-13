@@ -7,6 +7,8 @@ export function AIBianxieAPI(arg1:string):Promise<main.ChatResponse>;
 
 export function AIOpenHubAPI(arg1:string):Promise<main.ChatResponse>;
 
+export function CanAccessGoogle():Promise<boolean>;
+
 export function ChatAPI(arg1:string):Promise<main.ChatResponse>;
 
 export function ChatAPIV2(arg1:string):Promise<main.ChatResponse>;
@@ -42,6 +44,8 @@ export function GetUniqueHardwareID():Promise<string>;
 export function Greet(arg1:string):Promise<string>;
 
 export function IsMac():Promise<boolean>;
+
+export function IsUserInChina():Promise<boolean>;
 
 export function LoadPrompts():Promise<Array<main.Prompt>>;
 

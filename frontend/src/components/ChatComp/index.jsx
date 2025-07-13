@@ -233,6 +233,7 @@ const ChatComp = ({
   };
 
   const onSelectionHandler = async (selection) => {
+    let timeoutId = null;
     try {
       const { shortcut, prompt, autoAsking, isOCR, isOpenWindow } = selection;
       let text = selection?.text || "";
@@ -240,7 +241,6 @@ const ChatComp = ({
         WindowShow();
       } else {
         WindowSetAlwaysOnTop(true);
-
         setTimeout(() => {
           WindowSetAlwaysOnTop(false);
         }, 1000);
@@ -250,10 +250,18 @@ const ChatComp = ({
 
       if (isOCR) {
         setIsLoading(true);
+        timeoutId = setTimeout(() => {
+          messageApi.open({
+            type: "error",
+            content: "OCR failed: timeout",
+          });
+          setIsLoading(false);
+        }, 5000);
         const ORCLang = getLocalStorage(ORC_LANG_KEY, DEFAULT_ORC_LANG);
         const lang = ORCLang.length > 1 ? ORCLang.join("+") : ORCLang[0];
         const result = await Tesseract.recognize(text, lang);
         text = languageFormate(result?.data?.text || "");
+        clearTimeout(timeoutId);
         setIsLoading(false);
       }
       if (text.length === 0) {

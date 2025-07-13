@@ -7,6 +7,7 @@ import (
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -58,6 +59,21 @@ func (a *App) startup(ctx context.Context) {
 			a.RegisterKeyboardShortcut(ctx)
 		}
 	})
+}
+
+// IsUserInChina 判断用户是否在中国
+func (a *App) IsUserInChina() bool {
+	return !a.CanAccessGoogle()
+}
+
+func (a *App) CanAccessGoogle() bool {
+	client := &http.Client{
+		Timeout: 3 * time.Second,
+	}
+
+	// 尝试访问Google
+	_, err := client.Get("https://www.google.com")
+	return err == nil
 }
 
 func (a *App) IsMac() bool {
