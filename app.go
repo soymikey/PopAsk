@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	hook "github.com/robotn/gohook"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
@@ -13,12 +12,8 @@ const SPACE_KEY_CODE = 57
 
 // App struct
 type App struct {
-	ctx             context.Context
-	keyRecords      []string
-	shortcutList    []map[string]interface{}
-	systemShortcuts []map[string]interface{}
-	hookChan        chan hook.Event
-	hardware        *Hardware
+	ctx         context.Context
+	hardwareSvc *HardwareService
 	// 服务字段
 	screenshotSvc *ScreenshotService
 	promptSvc     *PromptService
@@ -36,7 +31,7 @@ func NewApp() *App {
 
 // startup is called at application startup
 func (a *App) startup(ctx context.Context) {
-	a.hardware = NewHardware()
+	a.hardwareSvc = NewHardwareService()
 	// 初始化服务
 	a.screenshotSvc = NewScreenshotService(ctx)
 	a.promptSvc = NewPromptService()
@@ -48,7 +43,6 @@ func (a *App) startup(ctx context.Context) {
 
 	// Perform your setup here
 	a.ctx = ctx
-	a.keyRecords = []string{}
 	runtime.EventsOn(ctx, "syncShortcutList", func(data ...interface{}) {
 		if len(data) > 0 {
 			a.SetShortcutList(data[0].(string))

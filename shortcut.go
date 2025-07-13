@@ -160,23 +160,16 @@ func (s *ShortcutService) addKeyRecord(record string) {
 
 // 保持向后兼容的方法
 func (a *App) RegisterKeyboardShortcut(ctx context.Context) {
-	shortcutSvc := NewShortcutService(ctx, a)
-	shortcutSvc.shortcutList = a.shortcutList
-	shortcutSvc.RegisterKeyboardShortcut()
+	// 使用已经初始化的服务实例
+	a.shortcutSvc.RegisterKeyboardShortcut()
 }
 
 func (a *App) SetShortcutList(jsonData string) error {
-	shortcutSvc := NewShortcutService(a.ctx, a)
-	err := shortcutSvc.SetShortcutList(jsonData)
-	if err == nil {
-		a.shortcutList = shortcutSvc.shortcutList
-	}
-	return err
+	// 使用已经初始化的服务实例
+	return a.shortcutSvc.SetShortcutList(jsonData)
 }
 
 func (a *App) addKeyRecord(record string) {
-	shortcutSvc := NewShortcutService(a.ctx, a)
-	shortcutSvc.keyRecords = a.keyRecords
-	shortcutSvc.addKeyRecord(record)
-	a.keyRecords = shortcutSvc.keyRecords
+	// 使用已经初始化的服务实例
+	a.shortcutSvc.addKeyRecord(record)
 }
