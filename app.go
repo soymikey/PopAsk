@@ -22,11 +22,14 @@ type App struct {
 	apiSvc        *APIService
 	windowSvc     *WindowService
 	networkSvc    *NetworkService
+	logSvc        *LogService
 }
 
 // NewApp creates a new App application struct
 func NewApp() *App {
-	return &App{}
+	return &App{
+		logSvc: NewLogService(),
+	}
 }
 
 // startup is called at application startup

@@ -19,8 +19,9 @@ type ServiceBase interface {
 
 // BaseService 基础服务结构
 type BaseService struct {
-	ctx context.Context
-	app *App
+	ctx    context.Context
+	app    *App
+	logSvc *LogService
 }
 
 // SetContext 设置上下文
@@ -31,6 +32,9 @@ func (b *BaseService) SetContext(ctx context.Context) {
 // SetApp 设置应用实例
 func (b *BaseService) SetApp(app *App) {
 	b.app = app
+	if app != nil {
+		b.logSvc = app.logSvc
+	}
 }
 
 // GetContext 获取上下文
@@ -61,4 +65,8 @@ func (b *BaseService) IsLinux() bool {
 // GetOS 获取操作系统名称
 func (b *BaseService) GetOS() string {
 	return goRuntime.GOOS
+}
+
+func (b *BaseService) GetLogService() *LogService {
+	return b.logSvc
 }
