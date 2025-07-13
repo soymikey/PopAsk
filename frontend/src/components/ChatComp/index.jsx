@@ -886,6 +886,7 @@ const ChatComp = ({
               <div style={{ display: "flex", justifyContent: "flex-end" }}>
                 <Tooltip title="Cmd+Enter to send OR Shift+Enter to send new chat">
                   <Button
+                    disabled={selection.trim() === ""}
                     title="Cmd+Enter to send"
                     ref={askRef}
                     type="primary"
