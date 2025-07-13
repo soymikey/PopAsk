@@ -256,7 +256,7 @@ const ChatComp = ({
             content: "OCR failed: timeout",
           });
           setIsLoading(false);
-        }, 5000);
+        }, 10000);
         const ORCLang = getLocalStorage(ORC_LANG_KEY, DEFAULT_ORC_LANG);
         const lang = ORCLang.length > 1 ? ORCLang.join("+") : ORCLang[0];
         const result = await Tesseract.recognize(text, lang);
@@ -567,6 +567,7 @@ const ChatComp = ({
               flex: 1,
               display: "flex",
               flexDirection: "column",
+              overflow: "auto",
             }}
           >
             <Card
@@ -633,6 +634,12 @@ const ChatComp = ({
                 flex: 1,
                 display: "flex",
                 flexDirection: "column",
+              }}
+              headStyle={{
+                top: 0,
+                position: "sticky",
+                background: "white",
+                zIndex: 1000,
               }}
               bodyStyle={{
                 flex: 1,
