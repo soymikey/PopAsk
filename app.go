@@ -92,7 +92,14 @@ func (a *App) beforeClose(ctx context.Context) (prevent bool) {
 
 // shutdown is called at application termination
 func (a *App) shutdown(ctx context.Context) {
-	// Perform your teardown here
+	a.logSvc.Info("Shutting down PopAsk application")
+
+	// 关闭日志文件
+	if err := a.logSvc.Close(); err != nil {
+		fmt.Printf("Failed to close log file: %v\n", err)
+	}
+
+	a.logSvc.Info("PopAsk application shutdown completed")
 }
 
 // Greet returns a greeting for the given name
