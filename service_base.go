@@ -2,7 +2,13 @@ package main
 
 import (
 	"context"
+	"net/http"
+	"os"
+	"os/exec"
+	"path/filepath"
 	goRuntime "runtime"
+	"strings"
+	"time"
 )
 
 // ServiceBase 服务基础接口
@@ -69,4 +75,141 @@ func (b *BaseService) GetOS() string {
 
 func (b *BaseService) GetLogService() *LogService {
 	return b.logSvc
+}
+
+// IsDevelopment 判断是否为开发环境
+func (b *BaseService) IsDevelopment() bool {
+	// 1. Wails 特有环境变量
+	if os.Getenv("WAILS_ENV") == "development" {
+		return true
+	}
+
+	// 2. Wails 构建模式
+	if os.Getenv("WAILS_BUILD_MODE") == "development" {
+		return true
+	}
+
+	// 3. 通用环境变量
+	if env := os.Getenv("GO_ENV"); env == "development" || env == "dev" {
+		return true
+	}
+
+	// 4. 调试模式
+	if os.Getenv("DEBUG") == "true" {
+		return true
+	}
+
+	// 5. 检查项目文件（开发环境特征）
+	if _, err := os.Stat("go.mod"); err == nil {
+		if _, err := os.Stat("wails.json"); err == nil {
+			return true
+		}
+	}
+
+	// 6. 检查可执行文件位置
+	execPath, err := os.Executable()
+	if err == nil {
+		if filepath.Base(execPath) == "main" || filepath.Base(execPath) == "popask" {
+			if _, err := os.Stat(filepath.Join(filepath.Dir(execPath), "go.mod")); err == nil {
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
+// ExecuteCommand 执行系统命令并返回输出
+func (b *BaseService) ExecuteCommand(name string, args ...string) (string, error) {
+	cmd := exec.Command(name, args...)
+	output, err := cmd.Output()
+	if err != nil {
+		return "", err
+	}
+	return strings.TrimSpace(string(output)), nil
+}
+
+// ExecuteCommandWithError 执行系统命令并返回输出和错误
+func (b *BaseService) ExecuteCommandWithError(name string, args ...string) (string, error) {
+	cmd := exec.Command(name, args...)
+	output, err := cmd.CombinedOutput()
+	return strings.TrimSpace(string(output)), err
+}
+
+// FormatTime 格式化时间戳
+func (b *BaseService) FormatTime(format string) string {
+	return time.Now().Format(format)
+}
+
+// FormatDateTime 格式化日期时间 (2006-01-02 15:04:05)
+func (b *BaseService) FormatDateTime() string {
+	return time.Now().Format("2006-01-02 15:04:05")
+}
+
+// FormatDate 格式化日期 (2006-01-02)
+func (b *BaseService) FormatDate() string {
+	return time.Now().Format("2006-01-02")
+}
+
+// FormatTimestamp 格式化时间戳 (20060102_150405)
+func (b *BaseService) FormatTimestamp() string {
+	return time.Now().Format("20060102_150405")
+}
+
+// CreateTempFile 创建临时文件
+func (b *BaseService) CreateTempFile(prefix, suffix string) (*os.File, error) {
+	return os.CreateTemp("", prefix+"_*"+suffix)
+}
+
+// EnsureDirectory 确保目录存在，不存在则创建
+func (b *BaseService) EnsureDirectory(dir string) error {
+	return os.MkdirAll(dir, 0755)
+}
+
+// FileExists 检查文件是否存在
+func (b *BaseService) FileExists(path string) bool {
+	_, err := os.Stat(path)
+	return err == nil
+}
+
+// JoinPath 连接路径
+func (b *BaseService) JoinPath(elem ...string) string {
+	return filepath.Join(elem...)
+}
+
+// GetExecutableDir 获取可执行文件所在目录
+func (b *BaseService) GetExecutableDir() (string, error) {
+	execPath, err := os.Executable()
+	if err != nil {
+		return "", err
+	}
+	return filepath.Dir(execPath), nil
+}
+
+// GetExecutableName 获取可执行文件名
+func (b *BaseService) GetExecutableName() (string, error) {
+	execPath, err := os.Executable()
+	if err != nil {
+		return "", err
+	}
+	return filepath.Base(execPath), nil
+}
+
+// CanAccessURL 检测是否可以访问指定URL
+func (b *BaseService) CanAccessURL(url string, timeout time.Duration) bool {
+	client := &http.Client{
+		Timeout: timeout,
+	}
+	_, err := client.Get(url)
+	return err == nil
+}
+
+// CanAccessGoogle 检测是否可以访问Google
+func (b *BaseService) CanAccessGoogle() bool {
+	return b.CanAccessURL("https://www.google.com", 3*time.Second)
+}
+
+// IsUserInChina 判断用户是否在中国（基于Google访问性）
+func (b *BaseService) IsUserInChina() bool {
+	return !b.CanAccessGoogle()
 }

@@ -27,7 +27,7 @@ func NewNetworkService(ctx context.Context, app *App) *NetworkService {
 // IsUserInChina 判断用户是否在中国
 func (n *NetworkService) IsUserInChina() bool {
 	n.logSvc.Info("Checking if user is in China")
-	result := !n.CanAccessGoogle()
+	result := n.BaseService.IsUserInChina()
 	n.logSvc.Info("User in China: %v", result)
 	return result
 }
@@ -35,14 +35,13 @@ func (n *NetworkService) IsUserInChina() bool {
 // CanAccessGoogle 检测是否可以访问Google
 func (n *NetworkService) CanAccessGoogle() bool {
 	n.logSvc.Info("Testing Google accessibility")
-	// 尝试访问Google
-	_, err := n.client.Get("https://www.google.com")
-	if err != nil {
-		n.logSvc.Error("Cannot access Google: %v", err)
-		return false
+	result := n.BaseService.CanAccessGoogle()
+	if result {
+		n.logSvc.Info("Successfully accessed Google")
+	} else {
+		n.logSvc.Error("Cannot access Google")
 	}
-	n.logSvc.Info("Successfully accessed Google")
-	return true
+	return result
 }
 
 // 保持向后兼容的方法
