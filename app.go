@@ -138,6 +138,16 @@ func (a *App) RegisterKeyboardShortcut(ctx context.Context) {
 			}
 
 			if isOrcShortcut {
+				isUserInChina := a.IsUserInChina()
+				if isUserInChina {
+					runtime.MessageDialog(a.ctx, runtime.MessageDialogOptions{
+						Type:    runtime.ErrorDialog,
+						Title:   "OCR failed",
+						Message: "OCR failed: some countries network are not supported",
+					})
+					fmt.Println("OCR failed: some countries network are not supported")
+					return
+				}
 				text, err = a.CreateScreenshot(ctx)
 				if err != nil {
 					fmt.Printf("Error: %v\n", err)
