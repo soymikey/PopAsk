@@ -13,8 +13,8 @@ import (
 	"github.com/shirou/gopsutil/v3/mem"
 )
 
-// HardwareInfo 硬件信息结构
-type HardwareInfo struct {
+// Hardware 硬件信息结构
+type Hardware struct {
 	CPUInfo     string `json:"cpu_info"`
 	CPUCount    int    `json:"cpu_count"`
 	Hostname    string `json:"hostname"`
@@ -26,13 +26,13 @@ type HardwareInfo struct {
 	DiskSerial  string `json:"disk_serial"`
 }
 
-func NewHardwareInfo() *HardwareInfo {
-	return &HardwareInfo{}
+func NewHardware() *Hardware {
+	return &Hardware{}
 }
 
 // GetHardwareFingerprint 获取硬件指纹
-func (a *HardwareInfo) GetHardwareFingerprint() (*HardwareInfo, error) {
-	info := &HardwareInfo{}
+func (a *Hardware) GetHardwareFingerprint() (*Hardware, error) {
+	info := &Hardware{}
 
 	// 获取CPU信息
 	cpuInfo, err := cpu.Info()
@@ -66,7 +66,7 @@ func (a *HardwareInfo) GetHardwareFingerprint() (*HardwareInfo, error) {
 }
 
 // GetUniqueHardwareID 获取唯一硬件ID
-func (a *HardwareInfo) GetUniqueHardwareID() (string, error) {
+func (a *Hardware) GetUniqueHardwareID() (string, error) {
 	info, err := a.GetHardwareFingerprint()
 	if err != nil {
 		return "", err
@@ -89,7 +89,7 @@ func (a *HardwareInfo) GetUniqueHardwareID() (string, error) {
 }
 
 // getMACAddress 获取MAC地址
-func (a *HardwareInfo) getMACAddress() string {
+func (a *Hardware) getMACAddress() string {
 	switch runtime.GOOS {
 	case "darwin":
 		return a.getMacOSMACAddress()
@@ -103,7 +103,7 @@ func (a *HardwareInfo) getMACAddress() string {
 }
 
 // getMacOSMACAddress 获取macOS的MAC地址
-func (a *HardwareInfo) getMacOSMACAddress() string {
+func (a *Hardware) getMacOSMACAddress() string {
 	cmd := exec.Command("ifconfig")
 	output, err := cmd.Output()
 	if err != nil {
@@ -125,7 +125,7 @@ func (a *HardwareInfo) getMacOSMACAddress() string {
 }
 
 // getWindowsMACAddress 获取Windows的MAC地址
-func (a *HardwareInfo) getWindowsMACAddress() string {
+func (a *Hardware) getWindowsMACAddress() string {
 	cmd := exec.Command("getmac", "/fo", "csv", "/nh")
 	output, err := cmd.Output()
 	if err != nil {
@@ -148,7 +148,7 @@ func (a *HardwareInfo) getWindowsMACAddress() string {
 }
 
 // getLinuxMACAddress 获取Linux的MAC地址
-func (a *HardwareInfo) getLinuxMACAddress() string {
+func (a *Hardware) getLinuxMACAddress() string {
 	cmd := exec.Command("ip", "link", "show")
 	output, err := cmd.Output()
 	if err != nil {
@@ -170,7 +170,7 @@ func (a *HardwareInfo) getLinuxMACAddress() string {
 }
 
 // getDiskSerial 获取磁盘序列号
-func (a *HardwareInfo) getDiskSerial() string {
+func (a *Hardware) getDiskSerial() string {
 	switch runtime.GOOS {
 	case "darwin":
 		return a.getMacOSDiskSerial()
@@ -184,7 +184,7 @@ func (a *HardwareInfo) getDiskSerial() string {
 }
 
 // getMacOSDiskSerial 获取macOS磁盘序列号
-func (a *HardwareInfo) getMacOSDiskSerial() string {
+func (a *Hardware) getMacOSDiskSerial() string {
 	cmd := exec.Command("diskutil", "info", "/")
 	output, err := cmd.Output()
 	if err != nil {
@@ -204,7 +204,7 @@ func (a *HardwareInfo) getMacOSDiskSerial() string {
 }
 
 // getWindowsDiskSerial 获取Windows磁盘序列号
-func (a *HardwareInfo) getWindowsDiskSerial() string {
+func (a *Hardware) getWindowsDiskSerial() string {
 	cmd := exec.Command("wmic", "diskdrive", "get", "serialnumber")
 	output, err := cmd.Output()
 	if err != nil {
@@ -222,7 +222,7 @@ func (a *HardwareInfo) getWindowsDiskSerial() string {
 }
 
 // getLinuxDiskSerial 获取Linux磁盘序列号
-func (a *HardwareInfo) getLinuxDiskSerial() string {
+func (a *Hardware) getLinuxDiskSerial() string {
 	cmd := exec.Command("lsblk", "-no", "UUID", "/")
 	output, err := cmd.Output()
 	if err != nil {
@@ -233,7 +233,7 @@ func (a *HardwareInfo) getLinuxDiskSerial() string {
 }
 
 // ValidateHardwareID 验证硬件ID是否有效
-func (a *HardwareInfo) ValidateHardwareID(hardwareID string) bool {
+func (a *Hardware) ValidateHardwareID(hardwareID string) bool {
 	// 检查硬件ID格式
 	if len(hardwareID) != 32 {
 		return false
@@ -250,21 +250,31 @@ func (a *HardwareInfo) ValidateHardwareID(hardwareID string) bool {
 }
 
 // GetOS 获取当前操作系统
-func (a *HardwareInfo) GetOS() string {
+func (a *Hardware) GetOS() string {
 	return runtime.GOOS
 }
 
 // IsMacOS 判断是否为 macOS
-func (a *HardwareInfo) IsMacOS() bool {
+func (a *Hardware) IsMacOS() bool {
 	return a.GetOS() == "darwin"
 }
 
 // IsWindows 判断是否为 Windows
-func (a *HardwareInfo) IsWindows() bool {
+func (a *Hardware) IsWindows() bool {
 	return a.GetOS() == "windows"
 }
 
 // IsLinux 判断是否为 Linux
-func (a *HardwareInfo) IsLinux() bool {
+func (a *Hardware) IsLinux() bool {
 	return a.GetOS() == "linux"
+}
+
+// IsMac 检查是否为Mac系统
+func (a *App) IsMac() bool {
+	return a.hardware.IsMacOS()
+}
+
+// GetUniqueHardwareID 获取唯一硬件ID
+func (a *App) GetUniqueHardwareID() (string, error) {
+	return a.hardware.GetUniqueHardwareID()
 }
