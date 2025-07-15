@@ -45,7 +45,15 @@ func (s *ScreenshotService) CreateScreenshotWindows() (string, error) {
 	time.Sleep(100 * time.Millisecond)
 
 	// 使用 CGO 发送 Shift+Win+S 快捷键
+	s.logSvc.Info("Sending Shift+Win+S shortcut...")
 	SendShiftWinS()
+
+	// 如果第一次不成功，尝试替代方案
+	time.Sleep(500 * time.Millisecond)
+	if !HasClipboardImage() {
+		s.logSvc.Info("First attempt failed, trying alternative method...")
+		SendShiftWinSAlternative()
+	}
 
 	// 等待截图工具启动
 	time.Sleep(300 * time.Millisecond)
