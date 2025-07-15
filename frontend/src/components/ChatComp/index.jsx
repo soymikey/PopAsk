@@ -88,6 +88,8 @@ const ChatComp = ({
   const chatHistoryListRef = useRef(chatHistoryList);
   const chatMessagesRef = useRef(chatMessages);
   const selectedPromptRef = useRef(selectedPrompt);
+  const isRequestCancelledRef = useRef(false);
+
   const [messageApi, contextHolder] = message.useMessage();
   const [form] = Form.useForm();
 
@@ -95,7 +97,6 @@ const ChatComp = ({
 
   const [isLoading, setIsLoading] = useState(false);
   const [isAskLoading, setIsAskLoading] = useState(false);
-  const [isRequestCancelled, setIsRequestCancelled] = useState(false);
 
   const [recentPrompts, setRecentPrompts] = useLocalStorage(
     RECENT_PROMPTS_KEY,
@@ -154,7 +155,7 @@ const ChatComp = ({
   };
 
   const stopRequest = () => {
-    setIsRequestCancelled(true);
+    isRequestCancelledRef.current = true;
     setIsAskLoading(false);
     messageApi.open({
       type: "info",
@@ -182,7 +183,7 @@ const ChatComp = ({
     }
 
     // Reset cancellation flag
-    setIsRequestCancelled(false);
+    isRequestCancelledRef.current = false;
 
     // Add user message to chat
     let newChatMessages = [
@@ -203,7 +204,7 @@ const ChatComp = ({
       const response = await AIOpenHubAPI(JSON.stringify(params));
 
       // Check if request was cancelled
-      if (isRequestCancelled) {
+      if (isRequestCancelledRef.current) {
         return;
       }
 
@@ -245,7 +246,7 @@ const ChatComp = ({
       }
     } catch (error) {
       // Check if request was cancelled
-      if (isRequestCancelled) {
+      if (isRequestCancelledRef.current) {
         return;
       }
 
