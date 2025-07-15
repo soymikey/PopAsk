@@ -341,11 +341,17 @@ const ChatComp = ({
     setSelection(event.target.value);
   };
   const newChatHandler = (chatMessages, chatHistoryList) => {
+    if (isAskLoading) {
+      return;
+    }
     setChatMessages([]);
     saveChatHistory(chatMessages, chatHistoryList);
   };
 
   const saveChatHistory = (chatMessages, chatHistoryList) => {
+    if (isAskLoading) {
+      return;
+    }
     if (chatMessages.length === 0) {
       return;
     }
@@ -367,6 +373,9 @@ const ChatComp = ({
   };
 
   const clearChat = () => {
+    if (isAskLoading) {
+      return;
+    }
     setChatMessages([]);
     messageApi.open({
       type: "success",
