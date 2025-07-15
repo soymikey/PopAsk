@@ -49,11 +49,11 @@ func (s *ScreenshotService) CreateScreenshotWindows() (string, error) {
 	SendShiftWinS()
 
 	// 如果第一次不成功，尝试替代方案
-	// time.Sleep(500 * time.Millisecond)
-	// if !HasClipboardImage() {
-	// 	s.logSvc.Info("First attempt failed, trying alternative method...")
-	// 	SendShiftWinSAlternative()
-	// }
+	time.Sleep(500 * time.Millisecond)
+	if !HasClipboardImage() {
+		s.logSvc.Info("First attempt failed, trying alternative method...")
+		SendShiftWinSAlternative()
+	}
 
 	// 等待截图工具启动
 	time.Sleep(300 * time.Millisecond)
