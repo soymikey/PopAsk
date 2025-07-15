@@ -311,7 +311,7 @@ const ChatComp = ({
         timeoutId = setTimeout(() => {
           messageApi.open({
             type: "error",
-            content: "OCR failed: timeout",
+            content: "OCR failed: Please check your network",
           });
           setIsLoading(false);
         }, 10000);
@@ -400,7 +400,6 @@ const ChatComp = ({
 
       return;
     }
-    setChatHistoryList([chatMessages, ...chatHistoryList].slice(0, 100));
     setChatMessages([]);
   };
 
@@ -886,7 +885,6 @@ const ChatComp = ({
               <div
                 style={{
                   flex: 1,
-                  overflowY: "auto",
                   padding: "16px",
                   backgroundColor: "#fafafa",
                   borderRadius: "8px",
