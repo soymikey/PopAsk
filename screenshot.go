@@ -7,10 +7,8 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strings"
 	"time"
 
-	"github.com/go-vgo/robotgo"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 	"golang.design/x/clipboard"
 )
@@ -40,43 +38,39 @@ func (s *ScreenshotService) CreateScreenshot() (string, error) {
 
 // CreateScreenshotWindows Windows系统截图实现
 func (s *ScreenshotService) CreateScreenshotWindows() (string, error) {
-	s.logSvc.Info("Creating Windows screenshot using snipping tool")
+	s.logSvc.Info("Creating Windows screenshot using Shift+Win+S")
 
-	var cmd *exec.Cmd
+	// 清空剪贴板，确保检测到新图片
+	runtime.ClipboardSetText(s.ctx, "")
+	time.Sleep(100 * time.Millisecond)
 
-	cmd = exec.Command("snippingtool.exe")
-	if err := cmd.Start(); err != nil {
-		s.logSvc.Error("Failed to start snipping tool: %v", err)
-		return "", fmt.Errorf("failed to start snipping tool: %v", err)
-	}
+	// 使用 CGO 发送 Shift+Win+S 快捷键
+	SendShiftWinS()
 
-	// 等待工具启动并自动进入截图模式
-	time.Sleep(1000 * time.Millisecond)
-	robotgo.KeyTap("enter")
-	// 轮询检查剪贴板是否有图片，最多等待10秒
+	// 等待截图工具启动
+	time.Sleep(300 * time.Millisecond)
+
+	// 使用更智能的检测方法
 	var imgData []byte
 	var err error
-	maxAttempts := 5
-	for i := 0; i < maxAttempts; i++ {
-		time.Sleep(500 * time.Millisecond)
-		imgData, err = s.getClipboardImage()
-		if err == nil && len(imgData) > 0 {
-			// 强制关闭截图工具
-			exec.Command("taskkill", "/IM", "snippingtool.exe", "/F").Run()
-			// 清理剪贴板
-			runtime.ClipboardSetText(s.ctx, "")
-			s.logSvc.Info("Successfully captured Windows screenshot, size: %d bytes", len(imgData))
-			break
+	maxWaitTime := 30 * time.Second // 最多等待30秒
+	checkInterval := 200 * time.Millisecond
+	startTime := time.Now()
+
+	for time.Since(startTime) < maxWaitTime {
+		// 首先检查 Windows 剪贴板格式
+		if HasClipboardImage() {
+			// 剪贴板有图片格式，尝试读取
+			imgData, err = s.getClipboardImage()
+			if err == nil && len(imgData) > 0 {
+				s.logSvc.Info("Successfully captured Windows screenshot, size: %d bytes", len(imgData))
+				break
+			}
 		}
-		// 检查 snippingtool.exe 是否还在运行
-		out, _ := exec.Command("tasklist", "/FI", "IMAGENAME eq snippingtool.exe").Output()
-		if !strings.Contains(strings.ToLower(string(out)), "snippingtool.exe") {
-			s.logSvc.Info("Snipping tool process has ended")
-			println("snippingtool.exe 已关闭")
-			break
-		}
+
+		time.Sleep(checkInterval)
 	}
-	exec.Command("taskkill", "/IM", "snippingtool.exe", "/F").Run()
+
 	if len(imgData) == 0 {
 		s.logSvc.Error("Screenshot timeout or cancelled by user")
 		return "", fmt.Errorf("screenshot timeout or cancelled by user")
