@@ -24,12 +24,14 @@ type ShortcutService struct {
 	keyRecords   []string
 	shortcutList []map[string]interface{}
 	hookChan     chan hook.Event
+	lastTrigger  map[string]time.Time // 记录每个快捷键的最后触发时间
 }
 
 // NewShortcutService 创建新的快捷键服务
 func NewShortcutService(ctx context.Context, app *App) *ShortcutService {
 	service := &ShortcutService{
-		keyRecords: []string{},
+		keyRecords:  []string{},
+		lastTrigger: make(map[string]time.Time),
 	}
 	service.SetContext(ctx)
 	service.SetApp(app)
@@ -61,7 +63,19 @@ func (s *ShortcutService) RegisterKeyboardShortcut() {
 		// 创建局部变量避免闭包问题
 		currentPrompt := prompt
 		hook.Register(hook.KeyDown, shortcut, func(e hook.Event) {
-			s.logSvc.Info("Shortcut triggered: %s", currentPrompt["shortcut"].(string))
+			// 检查是否在3秒内已经触发过
+			shortcutKey := currentPrompt["shortcut"].(string)
+			if lastTime, exists := s.lastTrigger[shortcutKey]; exists {
+				if time.Since(lastTime) < 3*time.Second {
+					s.logSvc.Info("Shortcut %s triggered too frequently, ignoring", shortcutKey)
+					return
+				}
+			}
+
+			// 更新最后触发时间
+			s.lastTrigger[shortcutKey] = time.Now()
+
+			s.logSvc.Info("Shortcut triggered: %s", shortcutKey)
 			autoAsking := true
 			text := ""
 			err := error(nil)
