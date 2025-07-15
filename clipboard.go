@@ -27,7 +27,8 @@ func NewClipboardService(ctx context.Context, app *App) *ClipboardService {
 func (c *ClipboardService) simulateCopy() error {
 	if c.IsWindows() {
 		// 使用 Windows API 直接发送 Ctrl+C，完全避免窗口显示
-		return SendCtrlC()
+		SendCtrlC()
+		return nil
 	} else if c.IsMacOS() {
 		var cmd *exec.Cmd
 		cmd = exec.Command("osascript", "-e", `tell application "System Events" to keystroke "c" using command down`)
