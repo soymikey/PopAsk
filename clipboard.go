@@ -45,12 +45,7 @@ func (c *ClipboardService) GetSelection() (string, error) {
 	// 保存当前剪贴板内容
 	originalText, err := runtime.ClipboardGetText(c.ctx)
 	if err != nil {
-		c.logSvc.Error("Failed to get original clipboard text: %v", err)
-		return "", fmt.Errorf("failed to get original clipboard text: %v", err)
-	}
-	if err := runtime.ClipboardSetText(c.ctx, ""); err != nil {
-		c.logSvc.Error("Failed to clear clipboard: %v", err)
-		return "", fmt.Errorf("failed to restore original clipboard text: %v", err)
+		originalText = ""
 	}
 
 	// 根据操作系统选择不同的复制命令
