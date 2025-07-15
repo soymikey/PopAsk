@@ -27,6 +27,9 @@ import {
   LinkOutlined,
   SaveOutlined,
   StopOutlined,
+  EditOutlined,
+  CheckOutlined,
+  CloseOutlined,
 } from "@ant-design/icons";
 import { useEffect, useState, useRef } from "react";
 import {
@@ -112,6 +115,9 @@ const ChatComp = ({
     IS_SHOW_PROMPT_AREA_VALUE
   );
 
+  const [editingMessageId, setEditingMessageId] = useState(null);
+  const [editingContent, setEditingContent] = useState("");
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -163,7 +169,20 @@ const ChatComp = ({
     });
   };
 
-  const handleChat = async (messages, isNewChat = false) => {
+  const handleChat = async (
+    messages,
+    isNewChat = false,
+    isEdit = false,
+    isRegenerate = false,
+    messageIndex = null
+  ) => {
+    if (isAskLoading) {
+      messageApi.open({
+        type: "warning",
+        content: "Please wait for the current request to complete",
+      });
+      return;
+    }
     if (!messages.trim()) {
       messageApi.open({
         type: "warning",
@@ -186,13 +205,26 @@ const ChatComp = ({
     isRequestCancelledRef.current = false;
 
     // Add user message to chat
-    let newChatMessages = [
-      ...chatMessagesRef.current,
-      userMessageGenerator(messages),
-    ];
+    let newChatMessages = [];
     if (isNewChat) {
       newChatMessages = [userMessageGenerator(messages)];
+    } else if (isEdit) {
+      if (messageIndex === -1) return;
+      newChatMessages = [
+        ...chatMessagesRef.current.slice(0, messageIndex),
+        userMessageGenerator(messages),
+      ];
+    } else if (isEdit) {
+      newChatMessages = messages;
+    } else if (isRegenerate) {
+      newChatMessages = [...chatMessagesRef.current.slice(0, messageIndex)];
+    } else {
+      newChatMessages = [
+        ...chatMessagesRef.current,
+        userMessageGenerator(messages),
+      ];
     }
+    console.log("newChatMessages", newChatMessages);
     setChatMessages(newChatMessages);
     setIsAskLoading(true);
 
@@ -383,6 +415,59 @@ const ChatComp = ({
     });
   };
 
+  // 编辑消息
+  const handleEditMessage = (messageId, content) => {
+    setEditingMessageId(messageId);
+    setEditingContent(content);
+  };
+
+  // 保存编辑
+  const handleSaveEdit = async () => {
+    if (!editingContent.trim()) {
+      messageApi.open({
+        type: "warning",
+        content: "Please enter a message",
+      });
+      return;
+    }
+    if (!editingMessageId) return;
+    // 找到要编辑的消息索引
+    const messageIndex = chatMessages.findIndex(
+      (msg) => msg.id === editingMessageId
+    );
+    if (messageIndex === -1) return;
+
+    await handleChat(editingContent.trim(), false, true, false, messageIndex);
+    setEditingMessageId(null);
+    setEditingContent("");
+  };
+  // 取消编辑
+  const handleCancelEdit = () => {
+    setEditingMessageId(null);
+    setEditingContent("");
+  };
+
+  const handleRegenerateResponse = async (messageId) => {
+    if (isAskLoading) {
+      return;
+    }
+    setEditingMessageId(null);
+    setEditingContent("");
+
+    // 找到要重新生成的消息索引
+    const messageIndex = chatMessages.findIndex((msg) => msg.id === messageId);
+
+    await handleChat("anything", false, false, true, messageIndex);
+    // // 移除该消息及其之后的所有消息
+    // setChatMessages(messagesToSend);
+
+    // // 重新发送最后一条用户消息
+    // const lastUserMessage = messagesToSend[messagesToSend.length - 1];
+    // if (lastUserMessage && lastUserMessage.type === "user") {
+    //   await handleChat(lastUserMessage.content, false);
+    // }
+  };
+
   useEffect(() => {
     EventsOn("GET_SELECTION", (event) => {
       console.log("GET_SELECTION event:", event);
@@ -507,6 +592,8 @@ const ChatComp = ({
 
   const renderMessage = (message) => {
     const isUser = message.type === "user";
+    const isEditing = editingMessageId === message.id;
+
     return (
       <div
         key={message.id}
@@ -545,7 +632,9 @@ const ChatComp = ({
               borderRadius: "12px",
               maxWidth: "100%",
               wordWrap: "break-word",
+              position: "relative",
             }}
+            className="message-container"
           >
             <div style={{ marginBottom: "4px" }}>
               <Text
@@ -557,10 +646,119 @@ const ChatComp = ({
                 {dayjs(message.timestamp).fromNow()}
               </Text>
             </div>
-            {isUser ? (
-              <div style={{ whiteSpace: "pre-wrap" }}>{message.content}</div>
+
+            {isEditing ? (
+              <div
+                style={{
+                  backgroundColor: "rgba(255, 255, 255, 0.95)",
+                  borderRadius: "8px",
+                  padding: "12px",
+                  border: "2px solid #1890ff",
+                  marginBottom: "8px",
+                  boxShadow: "0 4px 12px rgba(24, 144, 255, 0.15)",
+                }}
+              >
+                <TextArea
+                  value={editingContent}
+                  onChange={(e) => setEditingContent(e.target.value)}
+                  autoSize={{ minRows: 2, maxRows: 8 }}
+                  style={{
+                    backgroundColor: "white",
+                    color: "black",
+                    marginBottom: "12px",
+                    border: "1px solid #d9d9d9",
+                    borderRadius: "6px",
+                    fontSize: "14px",
+                  }}
+                  placeholder="Edit your message here..."
+                  onPressEnter={(e) => {
+                    if (e.ctrlKey || e.metaKey) {
+                      e.preventDefault();
+                      handleSaveEdit();
+                    }
+                  }}
+                />
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "8px",
+                    justifyContent: "flex-end",
+                    alignItems: "center",
+                  }}
+                >
+                  <Button
+                    size="small"
+                    icon={<CloseOutlined />}
+                    onClick={handleCancelEdit}
+                    style={{ borderRadius: "6px" }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="primary"
+                    size="small"
+                    icon={<CheckOutlined />}
+                    onClick={handleSaveEdit}
+                    style={{ borderRadius: "6px" }}
+                  >
+                    Save & Send
+                  </Button>
+                </div>
+              </div>
             ) : (
-              <MarkDownComp>{message.content}</MarkDownComp>
+              <>
+                {isUser ? (
+                  <div style={{ whiteSpace: "pre-wrap" }}>
+                    {message.content}
+                  </div>
+                ) : (
+                  <MarkDownComp>{message.content}</MarkDownComp>
+                )}
+
+                {/* 操作按钮 - 只在悬停时显示 */}
+                <div
+                  className="message-actions"
+                  style={{
+                    display: "flex",
+                    gap: "4px",
+                    opacity: 0,
+                    transition: "opacity 0.2s ease",
+                    pointerEvents: "none",
+                  }}
+                >
+                  {isUser && (
+                    <Button
+                      type="text"
+                      size="small"
+                      icon={<EditOutlined />}
+                      onClick={() =>
+                        handleEditMessage(message.id, message.content)
+                      }
+                      style={{
+                        color: "#666",
+                        padding: "2px 4px",
+                        height: "auto",
+                        pointerEvents: "auto",
+                      }}
+                    />
+                  )}
+                  {!isUser && (
+                    <Button
+                      type="text"
+                      size="small"
+                      icon={<SendOutlined />}
+                      onClick={() => handleRegenerateResponse(message.id)}
+                      style={{
+                        color: "#666",
+                        padding: "2px 4px",
+                        height: "auto",
+                        pointerEvents: "auto",
+                      }}
+                      title="Regenerate response"
+                    />
+                  )}
+                </div>
+              </>
             )}
           </div>
           {isUser && (

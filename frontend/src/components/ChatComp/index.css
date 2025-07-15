@@ -60,3 +60,21 @@
   background-color: #f5f5f5;
   border-radius: 12px;
 }
+
+/* 消息悬停效果 */
+.message-container:hover .message-actions {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+/* 确保按钮在悬停时可见 */
+.message-actions {
+  position: absolute;
+  bottom: -36px;
+  z-index: 10;
+  background: white;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  padding: 4px;
+  left: 0px;
+}
