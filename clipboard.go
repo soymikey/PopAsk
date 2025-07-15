@@ -26,11 +26,9 @@ func NewClipboardService(ctx context.Context, app *App) *ClipboardService {
 // simulateCopy 模拟复制操作，根据操作系统选择不同的实现
 func (c *ClipboardService) simulateCopy() error {
 	if c.IsWindows() {
-		// 使用 PowerShell 直接操作剪贴板，避免模拟按键
-		cmd := exec.Command("powershell", "-WindowStyle", "Hidden", "-Command", `
-			Start-Process -WindowStyle Hidden -FilePath "powershell" -ArgumentList "-NoProfile", "-NonInteractive", "-Command", "Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.SendKeys]::SendWait('^c')"
-		`)
-		return cmd.Run()
+		// 使用 Windows API 直接发送 Ctrl+C，完全避免窗口显示
+		SendCtrlC()
+		return nil
 	} else if c.IsMacOS() {
 		var cmd *exec.Cmd
 		cmd = exec.Command("osascript", "-e", `tell application "System Events" to keystroke "c" using command down`)
