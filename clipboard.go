@@ -28,8 +28,7 @@ func (c *ClipboardService) simulateCopy() error {
 	if c.IsWindows() {
 		// 使用 PowerShell 直接操作剪贴板，避免模拟按键
 		cmd := exec.Command("powershell", "-WindowStyle", "Hidden", "-Command", `
-			Add-Type -AssemblyName System.Windows.Forms
-			[System.Windows.Forms.SendKeys]::SendWait("^c")
+			Start-Process -WindowStyle Hidden -FilePath "powershell" -ArgumentList "-NoProfile", "-NonInteractive", "-Command", "Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.SendKeys]::SendWait('^c')"
 		`)
 		return cmd.Run()
 	} else if c.IsMacOS() {
