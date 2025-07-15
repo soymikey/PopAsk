@@ -12,6 +12,7 @@ import (
 
 	"github.com/go-vgo/robotgo"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
+	"golang.design/x/clipboard"
 )
 
 // ScreenshotService 截图服务
@@ -125,36 +126,10 @@ func (s *ScreenshotService) CreateScreenshotMac() (string, error) {
 
 // getClipboardImage 获取剪贴板中的图片数据
 func (s *ScreenshotService) getClipboardImage() ([]byte, error) {
-	// 使用PowerShell获取剪贴板图片
-	cmd := exec.Command("powershell", "-Command", `
-		Add-Type -AssemblyName System.Windows.Forms
-		$clipboard = [System.Windows.Forms.Clipboard]::GetImage()
-		if ($clipboard) {
-			$stream = New-Object System.IO.MemoryStream
-			$clipboard.Save($stream, [System.Drawing.Imaging.ImageFormat]::Png)
-			$bytes = $stream.ToArray()
-			$stream.Close()
-			[System.Convert]::ToBase64String($bytes)
-		} else {
-			""
-		}
-	`)
-
-	output, err := cmd.Output()
-	if err != nil {
-		return nil, fmt.Errorf("failed to get clipboard image: %v", err)
-	}
-
-	// 移除输出中的换行符
-	base64Str := strings.TrimSpace(string(output))
-	if base64Str == "" {
+	// 使用 golang.design/x/clipboard 获取剪贴板图片
+	imgData := clipboard.Read(clipboard.FmtImage)
+	if len(imgData) == 0 {
 		return nil, fmt.Errorf("no image found in clipboard")
-	}
-
-	// 解码base64
-	imgData, err := base64.StdEncoding.DecodeString(base64Str)
-	if err != nil {
-		return nil, fmt.Errorf("failed to decode base64 image: %v", err)
 	}
 
 	return imgData, nil

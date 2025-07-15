@@ -73,17 +73,17 @@ func (s *ShortcutService) RegisterKeyboardShortcut() {
 			}
 
 			if isOrcShortcut {
-				isUserInChina := s.GetApp().IsUserInChina()
-				if isUserInChina {
-					s.logSvc.Error("OCR failed: some countries network are not supported")
-					runtime.MessageDialog(s.GetContext(), runtime.MessageDialogOptions{
-						Type:    runtime.ErrorDialog,
-						Title:   "OCR failed",
-						Message: "OCR failed: some countries network are not supported",
-					})
-					fmt.Println("OCR failed: some countries network are not supported")
-					return
-				}
+				// isUserInChina := s.GetApp().IsUserInChina()
+				// if isUserInChina {
+				// 	s.logSvc.Error("OCR failed: some countries network are not supported")
+				// 	runtime.MessageDialog(s.GetContext(), runtime.MessageDialogOptions{
+				// 		Type:    runtime.ErrorDialog,
+				// 		Title:   "OCR failed",
+				// 		Message: "OCR failed: some countries network are not supported",
+				// 	})
+				// 	fmt.Println("OCR failed: some countries network are not supported")
+				// 	return
+				// }
 				text, err = s.GetApp().CreateScreenshot(s.GetContext())
 				if err != nil {
 					s.logSvc.Error("Failed to create screenshot for OCR: %v", err)
