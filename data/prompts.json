@@ -1,0 +1,314 @@
+{
+    "categories": [
+        {
+            "name": "Best ChatGPT Prompts for Bloggers and Content Creators",
+            "prompts": [
+                {
+                    "act": "long-tail keyword trend",
+                    "prompt": "What are some of the top long-tail keywords currently trending in the X niche?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "blog outline",
+                    "prompt": "Make an outline for a blog post about XYZ using related keywords based on Google search data",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "blog introduction",
+                    "prompt": "Write an introduction to a blog post about XYZ",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "blog post",
+                    "prompt": "Write a blog post about XYZ (this is good instruction for each section of your blog post to get longer content)",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "good example",
+                    "prompt": "What's a good example of XYZ",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "step-by-step process",
+                    "prompt": "Give me a step-by-step process for XYZ",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "pros and cons",
+                    "prompt": "What are the pros and cons of XYZ? Present the information in a table.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "personal example",
+                    "prompt": "Give me a personal example of someone using X product for Y.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "personal story",
+                    "prompt": "Tell a personal story about X",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "keyword blog post",
+                    "prompt": "Write a blog post about X using this keyword (insert keyword) several times naturally throughout the content.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "FAQ list",
+                    "prompt": "Give me a list of the most frequently asked questions about X.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "SEO-friendly content",
+                    "prompt": "What is the best approach for creating SEO-friendly content in X niche?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "key points and stats",
+                    "prompt": "Can highlighting key points and stats make a blog post more effective?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "purpose blog posts",
+                    "prompt": "What are some creative ways to repurpose old blog posts?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "target audiences",
+                    "prompt": "How can bloggers effectively target specific audiences through their content?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "converting headlines",
+                    "prompt": "What tips and tricks can be used to write high-converting blog headlines?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "quality content",
+                    "prompt": "How can bloggers ensure they produce quality content that is easily sharable?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "topic research",
+                    "prompt": "What questions should be asked when researching topics for a blog post in X niche?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "audio video content",
+                    "prompt": "How can audio and video content be leveraged to increase traffic to blogs?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "visuals impact",
+                    "prompt": "How do influencers, industry leaders, and top bloggers use visuals to enhance their content's impact on readers?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "brand awareness leads",
+                    "prompt": "How does blogging help increase brand awareness and generate leads for businesses in X niche?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "professional graphics",
+                    "prompt": "Are there any techniques or shortcuts for creating professional graphics quickly for blogs?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "reader relationships",
+                    "prompt": "What strategies can new bloggers use to create meaningful relationships with readers online?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "interactive experiences",
+                    "prompt": "What are some interesting ideas for creating unique interactive experiences through blogging?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "quantity vs quality",
+                    "prompt": "Should bloggers focus more on quantity or quality when it comes to producing content in X niche?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "infographics integration",
+                    "prompt": "Are there any clever ways of incorporating infographics into blog posts while still retaining the readability and usability of the post itself?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "social media engagement",
+                    "prompt": "What types of social media posts lead to increased engagement with blog content across various platforms?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "google ranking topics",
+                    "prompt": "What topics should I include in my blog post to rank on Google for X keyword?",
+                    "for_devs": "false"
+                }
+            ]
+        },
+        {
+            "name": "Best ChatGPT Prompts for SEO Experts",
+            "prompts": [
+                {
+                    "act": "SEO blog titles",
+                    "prompt": "Give me 10 SEO-optimized titles for a blog post about X.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "SEO meta description",
+                    "prompt": "Write an SEO-optimized Meta Description for this blog post.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "popular search phrases",
+                    "prompt": "What are the most popular phrases people use to search for (keyword) on Google?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "SEO benefits blog post",
+                    "prompt": "Write a creative and SEO-optimized blog post describing the benefits of (keyword).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "innovative applications listicle",
+                    "prompt": "Create a listicle of the top 10 most innovative applications of (keyword).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "SEO explainer for business",
+                    "prompt": "Design an SEO-optimized explainer on why businesses need to incorporate (keyword) into their strategies today.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "SEO guide for marketing",
+                    "prompt": "Produce an SEO-friendly guide on how to use (keyword) in marketing campaigns.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "guest post outreach email",
+                    "prompt": "Write an email to ask (name) at (website) if I can write a guest post for them about (subject).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "business revenue with keyword",
+                    "prompt": "Find 10 ways businesses can leverage (keyword) to increase revenue.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "SEO impacts on business models",
+                    "prompt": "Design an SEO-friendly article exploring the potential impacts of (keyword) on traditional business models.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "SEO content strategy",
+                    "prompt": "Create an SEO-driven content strategy outlining how businesses can make strategic use of (keyword).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "FAQ page for keyword",
+                    "prompt": "Develop an FAQ page optimized for (keyword) searches that also contains detailed content about its underlying concepts and applications in business strategies today.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "SEO content checklist",
+                    "prompt": "Draft a comprehensive checklist detailing what is necessary when creating search-engine-optimized content.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "important SEO aspects",
+                    "prompt": "What are the most important aspects of SEO that I need to focus on?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "higher search rankings",
+                    "prompt": "How can I get my site to rank higher in search engine results?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "new SEO tactics",
+                    "prompt": "Are there any new tactics or strategies to increase organic traffic?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "best keyword research tool",
+                    "prompt": "What is the best keyword research tool for SEO?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "multi-keyword optimization",
+                    "prompt": "Is it possible to optimize content for more than one keyword phrase?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "SEO performance tracking",
+                    "prompt": "How can I track my SEO performance and success metrics?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "link building benefits",
+                    "prompt": "How does link building help improve my website’s visibility in search results?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "paid vs free link building",
+                    "prompt": "Should I use a paid or free tool for link building?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "long-tail keyword benefits",
+                    "prompt": "What are the benefits of using long-tail keywords in SEO?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "technical SEO elements",
+                    "prompt": "What specific technical elements must be implemented for SEO optimization success?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "PPC campaign value",
+                    "prompt": "Is it worth investing in pay-per-click campaigns for better visibility with search engines like Google and Bing?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "voice search optimization",
+                    "prompt": "How should I approach optimizing my website for voice search queries?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "meta tags optimization",
+                    "prompt": "What is the best way to optimize meta tags, titles, and descriptions for maximum impact on SEO rankings?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "AMP for SEO",
+                    "prompt": "Should I consider using Accelerated Mobile Pages (AMP) as an SEO strategy?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "SEO update mistakes",
+                    "prompt": "What mistakes should I avoid when updating pages of my website’s content with SEO optimization in mind?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "competitor tracking",
+                    "prompt": "How to keep track of competitors’ keywords and backlinks to stay ahead of them in SERPs (Search Engine Results Pages).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "mobile UX for SEO",
+                    "prompt": "What are some steps I can take to optimize mobile UX for better organic rankings?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "local SEO techniques",
+                    "prompt": "What local SEO techniques will help me target users near my business location more effectively?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "content update frequency",
+                    "prompt": "How often should I update and add new content if I want sustained high rankings on search engines?",
+                    "for_devs": "false"
+                }
+            ]
+        }
+    ]
+}

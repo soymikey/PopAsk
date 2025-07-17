@@ -33,7 +33,9 @@ export function IsMac():Promise<boolean>;
 
 export function IsUserInChina():Promise<boolean>;
 
-export function LoadPrompts():Promise<Array<main.Prompt>>;
+export function LoadPromptsCSV():Promise<Array<main.Prompt>>;
+
+export function LoadPromptsJSON():Promise<Array<main.PromptCategory>>;
 
 export function RegisterKeyboardShortcut(arg1:context.Context):Promise<void>;
 

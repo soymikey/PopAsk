@@ -62,8 +62,12 @@ export function IsUserInChina() {
   return window['go']['main']['App']['IsUserInChina']();
 }
 
-export function LoadPrompts() {
-  return window['go']['main']['App']['LoadPrompts']();
+export function LoadPromptsCSV() {
+  return window['go']['main']['App']['LoadPromptsCSV']();
+}
+
+export function LoadPromptsJSON() {
+  return window['go']['main']['App']['LoadPromptsJSON']();
 }
 
 export function RegisterKeyboardShortcut(arg1) {

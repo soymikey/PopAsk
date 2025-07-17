@@ -17,12 +17,13 @@ import {
   LinkOutlined,
 } from "@ant-design/icons";
 import { useEffect, useState } from "react";
-import { LoadPrompts } from "../../../wailsjs/go/main/App";
+import { LoadPromptsJSON } from "../../../wailsjs/go/main/App";
 import { BrowserOpenURL } from "../../../wailsjs/runtime/runtime";
 
 const PromptComp = ({ promptList, setPromptList }) => {
   const [messageApi, contextHolder] = message.useMessage();
 
+  const [promptsCategories, setPromptsCategories] = useState([]);
   const [prompts, setPrompts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchText, setSearchText] = useState("");
@@ -31,8 +32,9 @@ const PromptComp = ({ promptList, setPromptList }) => {
   const loadPromptsData = async () => {
     setLoading(true);
     try {
-      const data = await LoadPrompts();
-      setPrompts(data);
+      const data = await LoadPromptsJSON();
+      setPromptsCategories(data);
+      setPrompts(data.flatMap((category) => category.prompts));
     } catch (error) {
       console.error("Failed to load prompts:", error);
     } finally {

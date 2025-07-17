@@ -4,12 +4,16 @@ import (
 	"context"
 	"embed"
 	"encoding/csv"
+	"encoding/json"
 	"fmt"
 	"strings"
 )
 
 //go:embed data/prompts.csv
 var csvData embed.FS
+
+//go:embed data/prompts.json
+var jsonData embed.FS
 
 // Prompt 结构体用于存储提示词数据
 type Prompt struct {
@@ -33,7 +37,7 @@ func NewPromptService(ctx context.Context, app *App) *PromptService {
 }
 
 // LoadPrompts 从嵌入的 CSV 文件中读取提示词数据
-func (p *PromptService) LoadPrompts() ([]Prompt, error) {
+func (p *PromptService) LoadCSVPrompts() ([]Prompt, error) {
 	p.logSvc.Info("Loading prompts from embedded CSV file")
 
 	// 读取嵌入的 CSV 文件
@@ -76,6 +80,51 @@ func (p *PromptService) LoadPrompts() ([]Prompt, error) {
 	return prompts, nil
 }
 
+// 返回 categories 结构
+type PromptCategory struct {
+	Name    string   `json:"name"`
+	Prompts []Prompt `json:"prompts"`
+}
+
+func (p *PromptService) LoadJSONPrompts() ([]PromptCategory, error) {
+	p.logSvc.Info("Loading prompts from embedded JSON file")
+
+	data, err := jsonData.ReadFile("data/prompts.json")
+	if err != nil {
+		p.logSvc.Error("Failed to read JSON file: %v", err)
+		return nil, fmt.Errorf("failed to read JSON file: %w", err)
+	}
+
+	// 兼容 categories 或 groups
+	var root struct {
+		Categories []struct {
+			Name    string   `json:"name"`
+			Prompts []Prompt `json:"prompts"`
+		} `json:"categories"`
+	}
+
+	if err := json.Unmarshal(data, &root); err != nil {
+		p.logSvc.Error("Failed to parse JSON: %v", err)
+		return nil, fmt.Errorf("failed to parse JSON: %w", err)
+	}
+
+	var categories []PromptCategory
+	if len(root.Categories) > 0 {
+		for _, c := range root.Categories {
+			categories = append(categories, PromptCategory{
+				Name:    c.Name,
+				Prompts: c.Prompts,
+			})
+		}
+		p.logSvc.Info("Loaded %d categories from JSON", len(categories))
+	} else {
+		p.logSvc.Error("No categories or groups found in JSON")
+		return nil, fmt.Errorf("no categories or groups found in JSON")
+	}
+
+	return categories, nil
+}
+
 // GetPromptsCSV 返回原始 CSV 文本内容
 func (p *PromptService) GetPromptsCSV() (string, error) {
 	p.logSvc.Info("Getting raw CSV content")
@@ -90,13 +139,17 @@ func (p *PromptService) GetPromptsCSV() (string, error) {
 	return string(data), nil
 }
 
-// 保持向后兼容的方法
-func (a *App) LoadPrompts() ([]Prompt, error) {
+func (a *App) LoadPromptsCSV() ([]Prompt, error) {
 	promptSvc := NewPromptService(a.ctx, a)
-	return promptSvc.LoadPrompts()
+	return promptSvc.LoadCSVPrompts()
 }
 
 func (a *App) GetPromptsCSV() (string, error) {
 	promptSvc := NewPromptService(a.ctx, a)
 	return promptSvc.GetPromptsCSV()
+}
+
+func (a *App) LoadPromptsJSON() ([]PromptCategory, error) {
+	promptSvc := NewPromptService(a.ctx, a)
+	return promptSvc.LoadJSONPrompts()
 }

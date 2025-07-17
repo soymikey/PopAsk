@@ -14,7 +14,8 @@
   "allowSystemAccess": true,
   "assets": {
     "embed": [
-      "data/prompts.csv"
+      "data/prompts.csv",
+      "data/prompts.json"
     ]
   },
   "info": {
