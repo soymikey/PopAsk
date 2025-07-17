@@ -9,6 +9,7 @@ import {
   Empty,
   Input,
   message,
+  Collapse,
 } from "antd";
 import {
   PlusOutlined,
@@ -34,7 +35,9 @@ const PromptComp = ({ promptList, setPromptList }) => {
     try {
       const data = await LoadPromptsJSON();
       setPromptsCategories(data);
-      setPrompts(data.flatMap((category) => category.prompts));
+      // 从每个category中提取prompts并扁平化
+      const allPrompts = data.flatMap((category) => category.prompts || []);
+      setPrompts(allPrompts);
     } catch (error) {
       console.error("Failed to load prompts:", error);
     } finally {
@@ -58,11 +61,22 @@ const PromptComp = ({ promptList, setPromptList }) => {
     return words.every((w) => lower.includes(w));
   };
 
-  const filteredPrompts = prompts.filter((prompt) => {
-    const search = searchText.trim().toLowerCase();
-    if (!search) return true;
-    return fuzzyMatch(prompt.act, search) || fuzzyMatch(prompt.prompt, search);
-  });
+  // 过滤categories和prompts
+  const filteredCategories = promptsCategories
+    .map((category) => {
+      const filteredPrompts = (category.prompts || []).filter((prompt) => {
+        const search = searchText.trim().toLowerCase();
+        if (!search) return true;
+        return (
+          fuzzyMatch(prompt.act, search) || fuzzyMatch(prompt.prompt, search)
+        );
+      });
+      return {
+        ...category,
+        prompts: filteredPrompts,
+      };
+    })
+    .filter((category) => category.prompts.length > 0);
 
   const onAddPromptClick = (prompt) => {
     // 如果promptList中已经存在，则不添加
@@ -127,12 +141,12 @@ const PromptComp = ({ promptList, setPromptList }) => {
             />
           </div>
 
-          {filteredPrompts.length === 0 ? (
+          {filteredCategories.length === 0 ? (
             <Empty
               description={
                 <div style={{ textAlign: "center" }}>
                   <Typography.Text type="secondary">
-                    {prompts.length === 0
+                    {promptsCategories.length === 0
                       ? "No prompt templates available"
                       : "No matching prompt templates found"}
                   </Typography.Text>
@@ -141,7 +155,7 @@ const PromptComp = ({ promptList, setPromptList }) => {
                     type="secondary"
                     style={{ fontSize: "12px" }}
                   >
-                    {prompts.length === 0
+                    {promptsCategories.length === 0
                       ? "Prompt templates will appear here when available"
                       : "Try adjusting your search terms"}
                   </Typography.Text>
@@ -150,63 +164,82 @@ const PromptComp = ({ promptList, setPromptList }) => {
               style={{ marginTop: "40px" }}
             />
           ) : (
-            <List
-              dataSource={filteredPrompts}
-              renderItem={(prompt) => (
-                <List.Item
+            <Collapse
+              defaultActiveKey={filteredCategories.map((_, index) => index)}
+              ghost
+              style={{ background: "transparent" }}
+            >
+              {filteredCategories.map((category, categoryIndex) => (
+                <Collapse.Panel
+                  key={categoryIndex}
+                  header={
+                    <Typography.Text strong style={{ fontSize: "14px" }}>
+                      {category.name}
+                    </Typography.Text>
+                  }
                   style={{
-                    padding: "12px",
                     marginBottom: "8px",
                     border: "1px solid #f0f0f0",
                     borderRadius: "6px",
                     backgroundColor: "#fafafa",
-                    transition: "all 0.2s",
                   }}
-                  actions={[
-                    <Tooltip title="Add to prompt list" key="add">
-                      <Button
-                        type="primary"
-                        size="small"
-                        icon={<PlusOutlined />}
-                        onClick={() => onAddPromptClick(prompt)}
-                        style={{
-                          borderRadius: "6px",
-                          fontSize: "12px",
-                        }}
-                      >
-                        Add
-                      </Button>
-                    </Tooltip>,
-                  ]}
                 >
-                  <List.Item.Meta
-                    title={
-                      <Typography.Text
-                        strong
-                        style={{ fontSize: "14px", color: "#262626" }}
-                      >
-                        {prompt.act}
-                      </Typography.Text>
-                    }
-                    description={
-                      <Typography.Text
+                  <List
+                    dataSource={category.prompts}
+                    renderItem={(prompt) => (
+                      <List.Item
                         style={{
-                          fontSize: "13px",
-                          color: "#666",
-                          lineHeight: "1.5",
-                          display: "-webkit-box",
-                          WebkitLineClamp: 2,
-                          WebkitBoxOrient: "vertical",
-                          overflow: "hidden",
+                          padding: "8px 0",
+                          borderBottom: "1px solid #f0f0f0",
                         }}
+                        actions={[
+                          <Tooltip title="Add to prompt list" key="add">
+                            <Button
+                              type="primary"
+                              size="small"
+                              icon={<PlusOutlined />}
+                              onClick={() => onAddPromptClick(prompt)}
+                              style={{
+                                borderRadius: "6px",
+                                fontSize: "12px",
+                              }}
+                            >
+                              Add
+                            </Button>
+                          </Tooltip>,
+                        ]}
                       >
-                        {prompt.prompt}
-                      </Typography.Text>
-                    }
+                        <List.Item.Meta
+                          title={
+                            <Typography.Text
+                              strong
+                              style={{ fontSize: "13px", color: "#262626" }}
+                            >
+                              {prompt.act}
+                            </Typography.Text>
+                          }
+                          description={
+                            <Typography.Text
+                              style={{
+                                fontSize: "12px",
+                                color: "#666",
+                                lineHeight: "1.4",
+                                display: "-webkit-box",
+                                WebkitLineClamp: 2,
+                                WebkitBoxOrient: "vertical",
+                                overflow: "hidden",
+                              }}
+                            >
+                              {prompt.prompt}
+                            </Typography.Text>
+                          }
+                        />
+                      </List.Item>
+                    )}
                   />
-                </List.Item>
-              )}
-            />
+                </Collapse.Panel>
+              ))}
+            </Collapse>
           )}
         </Card>
       </Spin>
