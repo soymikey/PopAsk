@@ -110,6 +110,8 @@ const ChatComp = ({
   const messagesEndRef = useRef(null);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editingPrompt, setEditingPrompt] = useState(null);
   const [showPromptArea, setShowPromptArea] = useLocalStorage(
     IS_SHOW_PROMPT_AREA_KEY,
     IS_SHOW_PROMPT_AREA_VALUE
@@ -138,6 +140,8 @@ const ChatComp = ({
     setPromptList([...promptList, newPrompt_]);
 
     setIsModalVisible(false);
+    setIsEditMode(false);
+    setEditingPrompt(null);
     form.resetFields();
     messageApi.open({
       type: "success",
@@ -145,18 +149,62 @@ const ChatComp = ({
     });
   };
 
+  const editPrompt = (promptId, newPrompt, newPromptTitle) => {
+    const newPrompt_ = newPromptGenerator(newPromptTitle, newPrompt);
+    if (!newPrompt_) {
+      messageApi.open({
+        type: "error",
+        content: "Please enter prompt title and prompt",
+      });
+      return;
+    }
+
+    const updatedPromptList = promptList.map((prompt) =>
+      prompt.value === promptId ? newPrompt_ : prompt
+    );
+    setPromptList(updatedPromptList);
+    syncShortcutList(updatedPromptList, systemShortcuts);
+
+    setIsModalVisible(false);
+    setIsEditMode(false);
+    setEditingPrompt(null);
+    form.resetFields();
+    messageApi.open({
+      type: "success",
+      content: "Prompt updated successfully",
+    });
+  };
+
   const handleAddPromptClick = () => {
+    setIsEditMode(false);
+    setEditingPrompt(null);
+    setIsModalVisible(true);
+  };
+
+  const handleEditPromptClick = (prompt) => {
+    setIsEditMode(true);
+    setEditingPrompt(prompt);
+    form.setFieldsValue({
+      title: prompt.label,
+      prompt: prompt.value,
+    });
     setIsModalVisible(true);
   };
 
   const handleModalCancel = () => {
     setIsModalVisible(false);
+    setIsEditMode(false);
+    setEditingPrompt(null);
     form.resetFields();
   };
 
   const handleModalOk = () => {
     form.validateFields().then((values) => {
-      addPrompt(values.prompt, values.title);
+      if (isEditMode && editingPrompt) {
+        editPrompt(editingPrompt.value, values.prompt, values.title);
+      } else {
+        addPrompt(values.prompt, values.title);
+      }
     });
   };
 
@@ -560,7 +608,18 @@ const ChatComp = ({
               </div>
             )}
           </div>
-          <div style={{ marginLeft: "8px" }}>
+          <div style={{ marginLeft: "8px", display: "flex", gap: "4px" }}>
+            <Button
+              type="text"
+              size="small"
+              icon={<EditOutlined style={{ color: "#1890ff" }} />}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleEditPromptClick(item);
+              }}
+              title="Edit prompt"
+            />
             <Button
               type="text"
               size="small"
@@ -579,6 +638,7 @@ const ChatComp = ({
                   content: "Prompt deleted successfully",
                 });
               }}
+              title="Delete prompt"
             />
           </div>
         </div>
@@ -1231,11 +1291,11 @@ const ChatComp = ({
         </div>
 
         <Modal
-          title="Add New Prompt"
+          title={isEditMode ? "Edit Prompt" : "Add New Prompt"}
           open={isModalVisible}
           onOk={handleModalOk}
           onCancel={handleModalCancel}
-          okText="Add"
+          okText={isEditMode ? "Update" : "Add"}
           cancelText="Cancel"
           destroyOnClose
           width={600}
