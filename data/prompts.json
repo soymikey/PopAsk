@@ -245,7 +245,7 @@
                 },
                 {
                     "act": "link building benefits",
-                    "prompt": "How does link building help improve my website’s visibility in search results?",
+                    "prompt": "How does link building help improve my website's visibility in search results?",
                     "for_devs": "false"
                 },
                 {
@@ -285,12 +285,12 @@
                 },
                 {
                     "act": "SEO update mistakes",
-                    "prompt": "What mistakes should I avoid when updating pages of my website’s content with SEO optimization in mind?",
+                    "prompt": "What mistakes should I avoid when updating pages of my website's content with SEO optimization in mind?",
                     "for_devs": "false"
                 },
                 {
                     "act": "competitor tracking",
-                    "prompt": "How to keep track of competitors’ keywords and backlinks to stay ahead of them in SERPs (Search Engine Results Pages).",
+                    "prompt": "How to keep track of competitors' keywords and backlinks to stay ahead of them in SERPs (Search Engine Results Pages).",
                     "for_devs": "false"
                 },
                 {
@@ -306,6 +306,3141 @@
                 {
                     "act": "content update frequency",
                     "prompt": "How often should I update and add new content if I want sustained high rankings on search engines?",
+                    "for_devs": "false"
+                }
+            ]
+        },
+        {
+            "name": "Best ChatGPT Prompts for Marketing and Copywriting",
+            "prompts": [
+                {
+                    "act": "sales letter",
+                    "prompt": "Write a sales letter about (topic) for (target audience).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "introductory emails",
+                    "prompt": "Write a series of introductory emails to get (target audience) to purchase (product, service).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "PAS marketing formula",
+                    "prompt": "Use the P-A-S (Pain, Agitate, Solution) marketing forumla.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "marketing plan",
+                    "prompt": "Give me a step-by-step marketing plan for a (type of business) serving (target audience).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "30-second video script",
+                    "prompt": "Give me a script for a 30-second video about XYZ.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "20-second commercial script",
+                    "prompt": "Produce a script for a 20-second commercial.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "social media marketing campaign",
+                    "prompt": "How to create a successful social media marketing campaign for XYZ.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "app taglines",
+                    "prompt": "Write 10 creative and persuasive taglines for an app targeted to young adults.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "healthcare testimonials",
+                    "prompt": "Create 10 powerful customer testimonials for a healthcare product targeting senior citizens",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "organic cosmetics headlines",
+                    "prompt": "Come up with 5 catchy headlines for a blog post about the importance of using organic cosmetics products",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "restaurant social media ads",
+                    "prompt": "Design 10 engaging social media ads for a new restaurant in town",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "millennial survey questions",
+                    "prompt": "Generate 7 thought-provoking questions to ask in a survey targeting millennials",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "jewelry slogans",
+                    "prompt": "Craft 5 attention-grabbing slogans that illustrate the features of a new jewelry line",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "HR email subject lines",
+                    "prompt": "Compose 8 eye-catching email subject lines to introduce HR services to small businesses",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "energy conservation tweets",
+                    "prompt": "Construct 10 informative and concise Tweets informing people about the latest trends in energy conservation",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "online education taglines",
+                    "prompt": "Develop 7 catchy and clever taglines promoting online education courses",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "pet grooming sales pitches",
+                    "prompt": "Create 5 effective and convincing sales pitches for a pet grooming product",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "recycling awareness ideas",
+                    "prompt": "Brainstorm 10 ideas to help spread awareness of the best practices in recycling.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "eco-friendly car-sharing CTAs",
+                    "prompt": "Construct 8 persuasive calls-to-action related to eco-friendly car-sharing programs.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "copywriting techniques",
+                    "prompt": "Rewrite this email three times with different copywriting techniques.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "copywriting formula",
+                    "prompt": "What's the best copywriting formula to use to get X to Y?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "urgency CTA",
+                    "prompt": "Give me a CTA that creates urgency.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "sales pitch template",
+                    "prompt": "Write me a template sales pitch for (product or service).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "influencer marketing impact",
+                    "prompt": "The impact of influencer marketing on brand awareness.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "email marketing conversions",
+                    "prompt": "Using email marketing to drive conversions.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "content marketing benefits",
+                    "prompt": "The benefits of content marketing for businesses.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "marketing success measurement",
+                    "prompt": "How to measure the success of your marketing efforts.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "video marketing power",
+                    "prompt": "Leveraging the power of video marketing for your brand.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "marketing ROI maximization",
+                    "prompt": "Maximizing the ROI of your marketing budget.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "brand storytelling importance",
+                    "prompt": "The importance of brand storytelling in marketing.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "data-driven marketing insights",
+                    "prompt": "Using data-driven insights to inform marketing decisions.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "user-generated content impact",
+                    "prompt": "The impact of user-generated content on your marketing strategy.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "mobile-friendly marketing",
+                    "prompt": "Best practices for creating a mobile-friendly marketing campaign.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "event marketing role",
+                    "prompt": "The role of event marketing in building brand recognition.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "multi-channel marketing",
+                    "prompt": "The benefits of creating a multi-channel marketing approach.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "audience targeting",
+                    "prompt": "How to effectively target your audience through marketing.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "personalization impact",
+                    "prompt": "The impact of personalization in marketing and sales.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "traditional digital integration",
+                    "prompt": "Integrating traditional and digital marketing for maximum impact.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "real-time marketing adjustment",
+                    "prompt": "The importance of measuring and adjusting your marketing strategy in real-time.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "customer experience role",
+                    "prompt": "The role of customer experience in modern marketing strategies.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "storytelling in branding",
+                    "prompt": "The role of storytelling in branding and marketing.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "SEO marketing impact",
+                    "prompt": "The impact of search engine optimization (SEO) on your marketing strategy.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "customer data marketing",
+                    "prompt": "Using customer data to improve your marketing tactics.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "new product marketing strategy",
+                    "prompt": "How to create an effective marketing strategy for a new product launch.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "customer feedback marketing",
+                    "prompt": "The role of customer feedback in shaping your marketing approach.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "VR AR marketing impact",
+                    "prompt": "The impact of virtual and augmented reality on marketing.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "resonating marketing campaign",
+                    "prompt": "How to create a marketing campaign that resonates with your target audience.",
+                    "for_devs": "false"
+                }
+            ]
+        },
+        {
+            "name": "Best Business Prompts for ChatGPT",
+            "prompts": [
+                {
+                    "act": "mission statement",
+                    "prompt": "Write a mission statement for (business).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "employee satisfaction",
+                    "prompt": "Give me 10 creative ways to improve employee satisfaction.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "employee thank you email",
+                    "prompt": "Produce an email to thank my employees for (insert what you are thankful for).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "lead generation email",
+                    "prompt": "Write a lead-generation email for (product, service, or business).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "marketing vs sales",
+                    "prompt": "Could you give a breakdown of the differences between marketing and sales?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "online presence boost",
+                    "prompt": "How can a small company boost its online presence?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "customer retention",
+                    "prompt": "Any tips for keeping customers coming back?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "business plan guide",
+                    "prompt": "Can you guide me through the process of putting together a winning business plan?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "marketing ROI evaluation",
+                    "prompt": "How can a company determine if its marketing efforts are paying off?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "successful marketing essentials",
+                    "prompt": "What's essential for a successful marketing effort?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "social media customer expansion",
+                    "prompt": "How can businesses use social media to expand their customer base?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "customer satisfaction loyalty",
+                    "prompt": "Can you suggest ways to improve customer satisfaction and loyalty?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "market competitiveness",
+                    "prompt": "What steps can a company take to stay ahead in today's market?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "market research importance",
+                    "prompt": "Why is market research crucial for a business?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "business ownership structures",
+                    "prompt": "Can you explain the pros and cons of different business ownership structures?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "risk management",
+                    "prompt": "How can a company evaluate and handle risk effectively?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "branding strategy",
+                    "prompt": "What is branding and how can a company build its brand image?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "startup challenges",
+                    "prompt": "Can you share some common hurdles faced by start-ups and how to overcome them?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "financial stability growth",
+                    "prompt": "How can a company maintain financial stability and keep growing?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "pricing strategies",
+                    "prompt": "What are the different approaches for pricing products or services?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "sales strategy",
+                    "prompt": "How can a company create and execute a winning sales strategy?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "technology in business",
+                    "prompt": "What's the role of technology in modern businesses and how can it be used to succeed?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "remote work pros cons",
+                    "prompt": "Can you touch on the upsides and downsides of remote work for businesses?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "remote team management",
+                    "prompt": "What are the best ways to manage and motivate a remote team?",
+                    "for_devs": "false"
+                }
+            ]
+        },
+        {
+            "name": "Best Storytelling Prompts for ChatGPT",
+            "prompts": [
+                {
+                    "act": "story in specific style",
+                    "prompt": "Write a story about X in the style of Y.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "emotional goodbye scene",
+                    "prompt": "Generate an emotional goodbye scene between a father and son.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "novel outline",
+                    "prompt": "Make an outline for a novel called (title) about (premise).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "back cover blurb",
+                    "prompt": "Write a back cover blurb about (story premise).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "query letter",
+                    "prompt": "Write a query letter for a novel called (title) about (story premise).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "screenplay outline",
+                    "prompt": "Write an outline for a screenplay about (subject).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "fictional character description",
+                    "prompt": "Describe a fictional character named (name) who has these qualities (list qualities).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "chapter hook",
+                    "prompt": "Write an end-of-the-chapter hook for a chapter about (describe the chapter or paste part of it into ChatGPT).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "setting description",
+                    "prompt": "Create a setting description of (location) at (time).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "world building",
+                    "prompt": "Design a world and its inhabitants that would be interesting to explore in a novel.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "enemy collaboration",
+                    "prompt": "Describe the relationship between two characters who are enemies but have to work together.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "future story ideas",
+                    "prompt": "Come up with 10 original ideas for a story set in the future.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "antagonist development",
+                    "prompt": "Develop an antagonist with unique motivations and goals.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "detailed novel outline",
+                    "prompt": "Make a detailed novel outline about (premise) that includes three big plot twists spaced out over the entire novel.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "novel marketing plan",
+                    "prompt": "Give me step-by-step instructions on how to write a marketing plan for a (genre) novel about (premise).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "story hooks",
+                    "prompt": "Generate 10 compelling hooks to describe my story about (give a description).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "first chapter moral choice",
+                    "prompt": "Write the first chapter of a story about (character) facing a difficult choice between doing the right thing and pursuing their dreams.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "unique world creation",
+                    "prompt": "Create an interesting world with its own laws, customs, and creatures.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "multiple endings",
+                    "prompt": "Come up with three possible endings for a story about (describe the premise).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "character self-discovery",
+                    "prompt": "Describe the journey of a character who is trying to find themselves.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "breakup elevator scene",
+                    "prompt": "Write a scene of dialogue between a couple who just broke up but are stuck in an elevator together. Format it for a screenplay.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "unique monsters",
+                    "prompt": "Design a unique set of monsters with distinct personalities and qualities.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "dark secret confession",
+                    "prompt": "Create a scene between two characters in which one must confess a dark secret to the other.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "future world painting",
+                    "prompt": "Paint a picture of a future world in which (describe current events/situations)have greatly changed.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "unlikely hero group",
+                    "prompt": "Write a story about an unlikely group of characters who come together to save the world from a great evil.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "love quest obstacles",
+                    "prompt": "Make a list of challenges and obstacles for a character on their quest to find love.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "action opening paragraph",
+                    "prompt": "Craft an action-filled opening paragraph for a novel about (describe premise).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "unique plot twists",
+                    "prompt": "Come up with five unique plot twists for a story about (premise).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "customer testimonial story",
+                    "prompt": "Write a customer testimonial story about (product/service).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "alternate POV scene",
+                    "prompt": "Write the same scene above (paste it into ChatGPT) from the POV of the (another character).",
+                    "for_devs": "false"
+                }
+            ]
+        },
+        {
+            "name": "Web Development Prompts for ChatGPT",
+            "prompts": [
+                {
+                    "act": "responsive design tips",
+                    "prompt": "What are some tips for making a website look great on any device?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Python script",
+                    "prompt": "Write a Python script for XYZ.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "detailed code build",
+                    "prompt": "Please write me a detailed code to build an XYZ.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "app building guide",
+                    "prompt": "Please give me a guide on how to build an app that (function).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "chrome extension code",
+                    "prompt": "Write the code for a chrome extension that (function).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "HTML code",
+                    "prompt": "What is the HTML code for (purpose or function)?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "JavaScript code",
+                    "prompt": "Please provide a JavaScript code for XYZ.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "server client difference",
+                    "prompt": "Can you break down the difference between what happens on the server and what happens on the user's device when a website loads?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "CSS preprocessors",
+                    "prompt": "Why do people use CSS preprocessors like Sass and Less?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "single page applications",
+                    "prompt": "What's the deal with single-page applications and how do they differ from traditional websites?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "progressive web apps",
+                    "prompt": "Can you tell me about progressive web apps and why they're becoming popular?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "HTML XHTML HTML5",
+                    "prompt": "Can you explain the difference between HTML, XHTML, and HTML5?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "web security risks",
+                    "prompt": "What are some of the security risks developers need to be aware of when building a website?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "DOM explanation",
+                    "prompt": "Can you give a rundown on how the Document Object Model (DOM) works and its role in web development?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "CSS framework benefits",
+                    "prompt": "What's the appeal of using a CSS framework like Bootstrap?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "AJAX explanation",
+                    "prompt": "Can you explain what AJAX is and how it's used in web development?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "CMS pros cons",
+                    "prompt": "What are the pros and cons of using a Content Management System (CMS) for a website?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "HTTP HTTPS difference",
+                    "prompt": "Can you clear up the difference between HTTP and HTTPS and why HTTPS is important?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "frontend backend difference",
+                    "prompt": "Can you give an overview of the difference between front-end and back-end web development?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "REST role",
+                    "prompt": "How does REST play a role in web development and what does it do?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "SEO optimization",
+                    "prompt": "Can you describe the process of optimizing a website for search engines?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "data storage retrieval",
+                    "prompt": "Can you talk about the various ways to store and retrieve data for a website, like databases and APIs?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "web accessibility",
+                    "prompt": "Why is accessibility important in web design and how can it be achieved?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "JavaScript frameworks",
+                    "prompt": "Can you give a rundown of the benefits and drawbacks of using JavaScript frameworks like Angular or React?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "cross browser compatibility",
+                    "prompt": "How does making sure a website works on different browsers impact web development and what can be done to make that happen?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "web hosting comparison",
+                    "prompt": "Can you compare and contrast the pros and cons of using a web host versus hosting a website yourself?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "modular design",
+                    "prompt": "Can you explain the concept of modular design in web development and why it's important?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "version control impact",
+                    "prompt": "How does using version control, such as Git, impact the development process?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "WebAssembly role",
+                    "prompt": "Can you discuss the role of WebAssembly in web development and its benefits?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "testing debugging",
+                    "prompt": "What is the importance of testing and debugging in web development and what tools are commonly used?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "ecommerce implementation",
+                    "prompt": "Can you talk about the challenges and benefits of implementing e-commerce functionality on a website?",
+                    "for_devs": "false"
+                }
+            ]
+        },
+        {
+            "name": "Best GPT Prompts for Students",
+            "prompts": [
+                {
+                    "act": "essay in specific style",
+                    "prompt": "Write an essay about X in the style of Y.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "essay outline",
+                    "prompt": "Generate an outline for an essay about (topic).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "essay introduction",
+                    "prompt": "Write the introduction for an essay about (topic).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "essay section",
+                    "prompt": "Write an essay section about (subtopic).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "essay summary for child",
+                    "prompt": "Summarize the essay (paste it into ChatGPT) in simple language for a child.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "essay references",
+                    "prompt": "Give me a list of references I can use for an essay about (topic).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "APA citation",
+                    "prompt": "Convert the following information into an APA-style citation (List the info in ChatGPT).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "research key points",
+                    "prompt": "Research the following topic and generate a list of 5 key points.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "thesis statement",
+                    "prompt": "Create a one-sentence thesis statement for an essay about (topic).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "research process",
+                    "prompt": "Describe your research process for finding information about (topic).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "magazine article",
+                    "prompt": "Write an article about X that could be published in a magazine or newspaper.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "source evaluation importance",
+                    "prompt": "Explain why it's important to evaluate sources when researching a topic.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "argument analysis",
+                    "prompt": "Analyze the arguments in an article (paste it into ChatGPT) and explain why they may or may not be persuasive.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "source comparison",
+                    "prompt": "Compare and contrast two sources of information on a specific topic.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "research support refute",
+                    "prompt": "Find research that directly supports or refutes an argument related to (topic).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "AI writing ethics",
+                    "prompt": "Describe the ethical implications of using artificial intelligence to write essays.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "current events relevance",
+                    "prompt": "Explain why (topic) is relevant to current events in a concise and clear manner.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "discussion questions",
+                    "prompt": "Create a list of questions that could be used to start a discussion about (topic).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "scholarly argument evaluation",
+                    "prompt": "Evaluate an argument from a scholarly article related to (topic).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "scholarly article summary",
+                    "prompt": "Summarize the main points of a scholarly article related to (topic).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "further reading sources",
+                    "prompt": "Generate a list of sources for further reading about (topic).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "source credibility analysis",
+                    "prompt": "Analyze the credibility of a source related to (topic).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "annotated bibliography",
+                    "prompt": "Create an annotated bibliography about (topic) with five entries.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "editorial writing",
+                    "prompt": "Write an editorial about a current issue related to (topic).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "argumentative essay",
+                    "prompt": "Develop an argumentative essay on (topic) from different perspectives.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "essay structure",
+                    "prompt": "How can I structure an essay?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "paper writing approach",
+                    "prompt": "What would be the best approach to writing a paper?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "relevant research",
+                    "prompt": "What research would be most relevant for X topic?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "literary analysis",
+                    "prompt": "In (novel or book), why did (author)…?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "writing techniques analysis",
+                    "prompt": "What are some writing techniques used in the passage above (paste the passage into ChatGPT)?",
+                    "for_devs": "false"
+                }
+            ]
+        },
+        {
+            "name": "Best Education Prompts for ChatGPT",
+            "prompts": [
+                {
+                    "act": "essay in specific style",
+                    "prompt": "Write an essay about X in the style of Y.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "essay outline",
+                    "prompt": "Generate an outline for an essay about (topic).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "essay introduction",
+                    "prompt": "Write the introduction for an essay about (topic).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "essay section",
+                    "prompt": "Write an essay section about (subtopic).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "essay summary for child",
+                    "prompt": "Summarize the essay (paste it into ChatGPT) in simple language for a child.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "essay references",
+                    "prompt": "Give me a list of references I can use for an essay about (topic).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "APA citation",
+                    "prompt": "Convert the following information into an APA-style citation (List the info in ChatGPT).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "research key points",
+                    "prompt": "Research the following topic and generate a list of 5 key points.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "thesis statement",
+                    "prompt": "Create a one-sentence thesis statement for an essay about (topic).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "research process",
+                    "prompt": "Describe your research process for finding information about (topic).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "magazine article",
+                    "prompt": "Write an article about X that could be published in a magazine or newspaper.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "source evaluation importance",
+                    "prompt": "Explain why it's important to evaluate sources when researching a topic.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "argument analysis",
+                    "prompt": "Analyze the arguments in an article (paste it into ChatGPT) and explain why they may or may not be persuasive.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "source comparison",
+                    "prompt": "Compare and contrast two sources of information on a specific topic.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "research support refute",
+                    "prompt": "Find research that directly supports or refutes an argument related to (topic).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "AI writing ethics",
+                    "prompt": "Describe the ethical implications of using artificial intelligence to write essays.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "current events relevance",
+                    "prompt": "Explain why (topic) is relevant to current events in a concise and clear manner.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "discussion questions",
+                    "prompt": "Create a list of questions that could be used to start a discussion about (topic).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "scholarly argument evaluation",
+                    "prompt": "Evaluate an argument from a scholarly article related to (topic).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "scholarly article summary",
+                    "prompt": "Summarize the main points of a scholarly article related to (topic).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "further reading sources",
+                    "prompt": "Generate a list of sources for further reading about (topic).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "source credibility analysis",
+                    "prompt": "Analyze the credibility of a source related to (topic).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "annotated bibliography",
+                    "prompt": "Create an annotated bibliography about (topic) with five entries.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "editorial writing",
+                    "prompt": "Write an editorial about a current issue related to (topic).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "argumentative essay",
+                    "prompt": "Develop an argumentative essay on (topic) from different perspectives.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "essay structure",
+                    "prompt": "How can I structure an essay?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "paper writing approach",
+                    "prompt": "What would be the best approach to writing a paper?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "relevant research",
+                    "prompt": "What research would be most relevant for X topic?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "literary analysis",
+                    "prompt": "In (novel or book), why did (author)…?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "writing techniques analysis",
+                    "prompt": "What are some writing techniques used in the passage above (paste the passage into ChatGPT)?",
+                    "for_devs": "false"
+                }
+            ]
+        },
+        {
+            "name": "Best Comedy Prompts for ChatGPT",
+            "prompts": [
+                {
+                    "act": "comedy script",
+                    "prompt": "Write a comedy script about (subject).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "comedy set",
+                    "prompt": "Write a comedy set about (subject).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "creative jokes",
+                    "prompt": "What are creative jokes about (topic).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "topic jokes list",
+                    "prompt": "List 10 different jokes about (topic).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "funny premises",
+                    "prompt": "What are 5 funny or absurd premises I can use in a comedy set?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "funny topic perspective",
+                    "prompt": "What are some funny ways to think about (topic)?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "controversial opinion",
+                    "prompt": "What is a controversial opinion about (topic)?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "ridiculous pickup lines",
+                    "prompt": "Give me a list of 10 ridiculous pickup lines.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "bad joke",
+                    "prompt": "Tell me a joke that's so bad, it's actually funny.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "funny email",
+                    "prompt": "Write a funny email.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "funny introduction",
+                    "prompt": "Write a funny introduction for (name) who (attributes or credentials).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "heckler response",
+                    "prompt": "What is a hilarious way to respond to a heckler who says (include quote)?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "funniest prank story",
+                    "prompt": "Remember the funniest prank you ever played or were a part of? Share the story!",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "absurd conspiracy theories",
+                    "prompt": "Have you come across any conspiracy theories that are just too absurd to be true?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "ridiculous white lies",
+                    "prompt": "We've all told a few white lies in our time. What's the most ridiculous one you've ever heard or told yourself?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "embarrassing moment",
+                    "prompt": "Everyone has an embarrassing moment they'd rather forget. What's yours?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "funniest movie show",
+                    "prompt": "What's the funniest movie or TV show you've watched lately that had you in stitches?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "nonsensical laws",
+                    "prompt": "Have you ever come across a law or rule that just doesn't make any sense?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "ridiculous dream",
+                    "prompt": "Have you ever had a dream that was just too ridiculous to be true?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "absurd food experience",
+                    "prompt": "What's the most absurd food you've ever tried and why did you try it?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "ridiculous outfit",
+                    "prompt": "What's the most ridiculous outfit you've ever worn and why did you wear it?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "silly nickname",
+                    "prompt": "Do you have a nickname that's so silly, it's embarrassing to admit?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "autocorrect fail",
+                    "prompt": "Have you ever come across an autocorrect fail that had you laughing out loud?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "absurd advertisement",
+                    "prompt": "Remember an advertisement that was so absurd, it left you scratching your head?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "public ridiculous moment",
+                    "prompt": "Have you ever said or done something in public that was just too ridiculous for words?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "ridiculous excuse",
+                    "prompt": "We've all given an excuse or two in our time. What's the most ridiculous one you've ever heard or given?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "absurd social media",
+                    "prompt": "Have you ever seen something on social media that was just too absurd to be real?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "ridiculous love gesture",
+                    "prompt": "Have you ever done something for love that was just too ridiculous to explain?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "absurd gift",
+                    "prompt": "What's the most absurd thing you've ever bought or been gifted with?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "ridiculous sports moment",
+                    "prompt": "Have you ever seen a sports moment that was just too ridiculous to be true?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "absurd phone conversation",
+                    "prompt": "Have you ever overheard someone on the phone saying something so absurd, it made you laugh?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "ridiculous dare",
+                    "prompt": "Have you ever done something for a dare that was just too ridiculous to believe?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "absurd fine avoidance",
+                    "prompt": "Have you ever done something to avoid paying a fine that was just too absurd to be true?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "ridiculous bet",
+                    "prompt": "Have you ever done something for a bet that was just too ridiculous to explain?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "absurd celebrity encounter",
+                    "prompt": "Have you ever met a celebrity that was just too absurd to be real?",
+                    "for_devs": "false"
+                }
+            ]
+        },
+        {
+            "name": "History: Best Prompts for ChatGPT",
+            "prompts": [
+                {
+                    "act": "World War I outbreak",
+                    "prompt": "Can you delve into the reasons behind the outbreak of World War I?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "women in American Civil War",
+                    "prompt": "I'd love to learn more about the role of women in the American Civil War. Can you tell me more about that?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Roman Empire rise",
+                    "prompt": "I'm interested in the history of the Roman Empire. Can you walk me through its rise to power?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Black Death impact",
+                    "prompt": "Can you explain how the Black Death impacted medieval Europe?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "American Revolution events",
+                    "prompt": "I'd like to know more about the events that led to the American Revolution. Can you fill me in on that?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Ottoman Empire WWI",
+                    "prompt": "The Ottoman Empire played a big role in World War I, right? Can you expand on that a bit?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Julius Caesar reign",
+                    "prompt": "I've always been fascinated by Julius Caesar. Can you give me a rundown of his reign in ancient Rome?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Enlightenment impact",
+                    "prompt": "The Enlightenment had a huge impact on European society, didn't it? Can you tell me more about that?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Thirty Years War",
+                    "prompt": "Can you explain what the Thirty Years' War was all about?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Queen Elizabeth I reign",
+                    "prompt": "Queen Elizabeth I was a pretty significant figure in English history, wasn't she? Can you tell me more about her reign?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "French Revolution impact",
+                    "prompt": "The French Revolution really shook up Europe, didn't it? Can you delve into its impact?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "English Civil War",
+                    "prompt": "Can you give me an overview of the events of the English Civil War?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Mongol Empire impact",
+                    "prompt": "The Mongol Empire has had a lasting impact on world history, hasn't it? Can you tell me more about that?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Industrial Revolution impact",
+                    "prompt": "The Industrial Revolution brought a lot of change to Europe and North America, didn't it? Can you tell me more about its impact?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "American Civil Rights Movement",
+                    "prompt": "I'm interested in learning more about the American Civil Rights Movement. Can you give me an overview of the events?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Alexander the Great reign",
+                    "prompt": "Alexander the Great was a pretty impressive figure in history, wasn't he? Can you tell me more about his reign?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "World War II impact",
+                    "prompt": "World War II had a massive impact on Europe and Asia, didn't it? Can you elaborate on that?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "French Revolution events",
+                    "prompt": "Can you walk me through the events leading up to the French Revolution?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Byzantine Empire role",
+                    "prompt": "The Byzantine Empire was an important part of world history, right? Can you give me a rundown of its role?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Scientific Revolution impact",
+                    "prompt": "The Scientific Revolution was a big turning point in Europe, wasn't it? Can you explain its impact?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "American War of Independence",
+                    "prompt": "Can you give me an overview of the American War of Independence?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Cleopatra VII reign",
+                    "prompt": "Cleopatra VII was a fascinating figure in ancient Egypt, wasn't she? Can you tell me more about her reign?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Renaissance impact",
+                    "prompt": "The Renaissance brought a lot of cultural and artistic changes to Europe, didn't it? Can you tell me more about its impact?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Spanish conquest of Aztecs",
+                    "prompt": "Can you explain the events of the Spanish conquest of the Aztecs?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Persian Empire role",
+                    "prompt": "The Persian Empire was a major player in world history, wasn't it? Can you tell me more about its role?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Protestant Reformation impact",
+                    "prompt": "The Protestant Reformation had a big impact on Europe, didn't it? Can you elaborate on that?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "World War II Europe events",
+                    "prompt": "Can you give me an overview of the events leading up to World War II in Europe?",
+                    "for_devs": "false"
+                }
+            ]
+        },
+        {
+            "name": "Health and Medicine Prompts for ChatGPT",
+            "prompts": [
+                {
+                    "act": "virus vs bacteria",
+                    "prompt": "Let's start with a basic one – what's the difference between a virus and bacteria?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "headache causes",
+                    "prompt": "Headaches are a common issue, but do you know the most common cause of them?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "exercise mental health benefits",
+                    "prompt": "Exercise is great for your physical health, but have you heard about its benefits for mental health too?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "anxiety disorder symptoms",
+                    "prompt": "Anxiety can be a tough thing to deal with. Can you identify the symptoms of anxiety disorder?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "cold prevention",
+                    "prompt": "The common cold is a nuisance, but what steps can you take to prevent it?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "COVID-19 testing",
+                    "prompt": "COVID-19 is still a concern for many of us. How does someone get tested for it?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "diet heart disease",
+                    "prompt": "Your diet can play a big role in many aspects of your health, including heart disease. Want to know more?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "daily water intake",
+                    "prompt": "Staying hydrated is important, but how much water should an adult be drinking every day?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "quit smoking methods",
+                    "prompt": "Smoking is bad for you, but quitting can be difficult. What's the most effective way to quit smoking?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "depression treatments",
+                    "prompt": "Depression can be overwhelming. What treatments are available for it?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "meditation benefits",
+                    "prompt": "Meditation is becoming more and more popular, but do you know its benefits?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "stress immune system impact",
+                    "prompt": "Stress can have a negative impact on many parts of your body, including your immune system. Want to know more?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "diabetes types",
+                    "prompt": "Diabetes is a common health issue, but did you know there are two different types? Let's discuss type 1 and type 2.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "chemotherapy side effects",
+                    "prompt": "Chemotherapy is a powerful treatment, but it also comes with side effects. Explain.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "high blood pressure reduction",
+                    "prompt": "High blood pressure can be dangerous, but what are some effective ways to reduce it?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "alcohol liver health",
+                    "prompt": "Alcohol is a part of many people's lives, but how does it impact liver health?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "heart attack warning signs",
+                    "prompt": "Heart attacks can be serious, but do you know the warning signs and what to do if you experience them?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "chronic pain management",
+                    "prompt": "Chronic pain can be debilitating, but what are some ways to manage it effectively?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "infertility causes",
+                    "prompt": "Infertility is an issue for many couples, but what causes infertility in men and women?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "steroids long-term effects",
+                    "prompt": "Steroids can be helpful in some cases, but what are the long-term effects of using them?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "birth control effectiveness",
+                    "prompt": "There are many options for birth control, but what is the most effective form?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "sleep weight gain link",
+                    "prompt": "Sleep and weight gain are linked, but how exactly do they impact each other?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "environmental health impact",
+                    "prompt": "Our environment can have a big impact on our health. Want to know more?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "sedentary lifestyle dangers",
+                    "prompt": "A sedentary lifestyle can be harmful to your health. Let's talk about the dangers of it.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "immune system boost",
+                    "prompt": "Boosting your immune system can help keep you healthy, but what's the best way to do it?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "air pollution respiratory health",
+                    "prompt": "Air pollution is a growing concern, but how does it impact respiratory health?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "osteoporosis symptoms",
+                    "prompt": "Osteoporosis is a condition that affects bone health, but what are its symptoms?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "gut bacteria health",
+                    "prompt": "Your gut bacteria plays a big role in your overall health. Want to learn more?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "stress anxiety management",
+                    "prompt": "Stress and anxiety can be tough to manage, but what are some of the best ways to do so?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "stroke warning signs",
+                    "prompt": "Strokes can be serious, but do you know the warning signs and what to do if you experience them?",
+                    "for_devs": "false"
+                }
+            ]
+        },
+        {
+            "name": "Best Science Prompts for ChatGPT",
+            "prompts": [
+                {
+                    "act": "dark matter detection",
+                    "prompt": "What is dark matter and how is it detected?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "evolution by natural selection",
+                    "prompt": "Can you explain the theory of evolution by natural selection?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "quantum vs classical mechanics",
+                    "prompt": "What is quantum mechanics and how does it differ from classical mechanics?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "photosynthesis vs respiration",
+                    "prompt": "What is the difference between photosynthesis and cellular respiration?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "cloning process",
+                    "prompt": "What is the process of cloning and how does it work?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "structure and function simple",
+                    "prompt": "Can you use simple language to tell me about the structure and function of XYZ?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "climate change causes solutions",
+                    "prompt": "What is the cause of climate change and how can it be addressed?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "nuclear fusion process",
+                    "prompt": "What is the process of nuclear fusion and why is it important?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "vaccine mechanism importance",
+                    "prompt": "How do vaccines work and why are they important for public health?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "renewable vs nonrenewable energy",
+                    "prompt": "What is the difference between renewable and non-renewable energy sources?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "greenhouse effect impact",
+                    "prompt": "Can you explain the greenhouse effect and its impact on the Earth's climate?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "brain information processing",
+                    "prompt": "How does the human brain process and store information?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Big Bang theory",
+                    "prompt": "What is the Big Bang theory and how does it explain the origin of the universe?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "digestion and nutrient absorption",
+                    "prompt": "Can you explain the process of digestion and how the body absorbs nutrients?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "water cycle weather patterns",
+                    "prompt": "What is the water cycle and how does it affect weather patterns?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "photosynthesis in plants",
+                    "prompt": "Can you explain the process of photosynthesis in plants?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "virus vs bacterium vs fungus",
+                    "prompt": "What is the difference between a virus, bacterium, and fungus?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "immune system disease protection",
+                    "prompt": "How does the body's immune system protect against disease?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "atomic vs molecular elements",
+                    "prompt": "What is the difference between atomic and molecular elements?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "transpiration in plants",
+                    "prompt": "Can you explain the process of transpiration in plants?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "physical vs chemical changes",
+                    "prompt": "What is the difference between physical and chemical changes in matter?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "nerve impulse transmission",
+                    "prompt": "How do nerve impulses transmit information in the body?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "osmosis process importance",
+                    "prompt": "What is the process of osmosis and why is it important in biology?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "endothermic vs exothermic reactions",
+                    "prompt": "Can you explain the difference between endothermic and exothermic reactions?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "heart structure function",
+                    "prompt": "What is the structure and function of the heart in the circulatory system?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "adaptation in plants and animals",
+                    "prompt": "How do plants and animals adapt to their environment?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "cell division process",
+                    "prompt": "What is the process of cell division and why is it important?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "respiratory system structure function",
+                    "prompt": "Can you explain the structure and function of the respiratory system?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "photosynthesis energy for life",
+                    "prompt": "What is the process of photosynthesis and how does it provide energy for living organisms?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "positive vs negative feedback",
+                    "prompt": "Can you explain the difference between positive and negative feedback in biological systems?",
+                    "for_devs": "false"
+                }
+            ]
+        },
+        {
+            "name": "Best Technology Prompts for ChatGPT",
+            "prompts": [
+                {
+                    "act": "machine learning vs deep learning",
+                    "prompt": "What is the difference between machine learning and deep learning?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "blockchain technology applications",
+                    "prompt": "How does blockchain technology work and what are its applications?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "future of AI",
+                    "prompt": "What is the future of artificial intelligence and how will it affect our daily lives?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "5G technology implications",
+                    "prompt": "What is 5G technology and what are its implications for the future of communication?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "virtual reality technology uses",
+                    "prompt": "How does virtual reality technology work and what are its practical uses?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Internet of Things impact",
+                    "prompt": "What is the Internet of Things and what impact will it have on our lives?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "cloud computing privacy security",
+                    "prompt": "How do data privacy and security work in cloud computing?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "cybersecurity trends protection",
+                    "prompt": "What are some current trends in cybersecurity and how to stay protected online?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "quantum vs classical computing",
+                    "prompt": "What is quantum computing and how is it different from classical computing?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "drones benefits challenges",
+                    "prompt": "How do drones work and what are the benefits and challenges of using them?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "augmented vs virtual reality",
+                    "prompt": "What is augmented reality and how is it different from virtual reality?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "ML in healthcare",
+                    "prompt": "How can machine learning be used to improve healthcare and medicine?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "future of work technology",
+                    "prompt": "What is the future of work and how will technology impact the job market?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "AI robotics ethics",
+                    "prompt": "What are some ethical considerations in the development and use of AI and robotics?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "blockchain in finance",
+                    "prompt": "What is blockchain and how does it impact the financial industry?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "ML for energy efficiency",
+                    "prompt": "How can machine learning be used to improve energy efficiency and sustainability?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "big data decision making",
+                    "prompt": "What is the role of big data in decision making and how can it be used effectively?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "data management best practices",
+                    "prompt": "What are some best practices for managing and protecting sensitive data in the digital age?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "AI for automation optimization",
+                    "prompt": "What is the role of AI in automating processes and optimizing operations in various industries?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "future of autonomous vehicles",
+                    "prompt": "What is the future of autonomous vehicles and how will it impact transportation and logistics?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "AI job displacement mitigation",
+                    "prompt": "What is the impact of AI on job displacement and how can it be mitigated?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "5G and IoT development",
+                    "prompt": "How does 5G technology impact the development of the Internet of Things?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "ML AI challenges limitations",
+                    "prompt": "What are some of the challenges and limitations of machine learning and AI?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "future of digital identity",
+                    "prompt": "What is the future of digital identity and how will it impact personal privacy and security?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "ML for sustainability",
+                    "prompt": "How can machine learning be used to tackle environmental problems and improve sustainability?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "future of smart cities",
+                    "prompt": "What is the future of smart cities and how will technology transform urban life?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "AI and human creativity",
+                    "prompt": "What is the impact of AI on human creativity and how can it be leveraged for artistic expression?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "ML for education",
+                    "prompt": "How can machine learning be used to improve education and enhance the learning experience?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "future of e-commerce",
+                    "prompt": "What is the future of e-commerce and how will technology impact online shopping and retail?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "ML for global problems",
+                    "prompt": "How can machine learning be used to tackle global problems such as poverty, inequality, and climate change?",
+                    "for_devs": "false"
+                }
+            ]
+        },
+        {
+            "name": "Best Sports Prompts for ChatGPT",
+            "prompts": [
+                {
+                    "act": "greatest basketball player",
+                    "prompt": "Who is the greatest basketball player of all time?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "dominant tennis player",
+                    "prompt": "Who is the most dominant tennis player of the current era?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Ronaldo Messi rivalry",
+                    "prompt": "What makes Ronaldo and Messi's rivalry so special in football?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Lewis Hamilton F1 GOAT",
+                    "prompt": "Can Lewis Hamilton be considered the greatest F1 driver of all time?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Olympics biggest upset",
+                    "prompt": "What is the biggest upset in the history of the Olympics?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Warriors NBA championship",
+                    "prompt": "Can the Golden State Warriors win another NBA championship with their current roster?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "most popular sports",
+                    "prompt": "What are the most popular sports in the world?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "top 5 footballers 21st century",
+                    "prompt": "Who are the top 5 footballers of the 21st century?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Big Three tennis",
+                    "prompt": "What makes Federer, Nadal, and Djokovic the 'Big Three' in tennis?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "World Cup memorable moment",
+                    "prompt": "What is the most memorable moment in the history of the World Cup?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "greatest cricketer",
+                    "prompt": "Who is the greatest cricketer of all time?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "most successful NFL teams",
+                    "prompt": "Who are the most successful NFL teams of all time?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "benefits of playing sports",
+                    "prompt": "What are the benefits of playing sports?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "most-watched sporting event",
+                    "prompt": "What is the most-watched sporting event in the world?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "top 5 gymnasts",
+                    "prompt": "Who are the top 5 gymnasts of all time?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "pickleball for child",
+                    "prompt": "Explain pickleball to a child",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "biggest sports rival",
+                    "prompt": "What is the biggest rival in sports?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "best snowboarders now",
+                    "prompt": "Who are the best snowboarders in the world right now?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Tour de France excitement",
+                    "prompt": "What is the most exciting aspect of the Tour de France?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "top 5 boxers",
+                    "prompt": "Who are the top 5 boxers of all time?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "UEFA Champions League special",
+                    "prompt": "What makes the UEFA Champions League so special in football?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Tiger Woods major",
+                    "prompt": "Can Tiger Woods win another major championship?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Olympic vs professional boxing",
+                    "prompt": "What is the difference between Olympic and professional boxing?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "greatest golfer",
+                    "prompt": "Who is the greatest golfer of all time?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Olympic Games special",
+                    "prompt": "What makes the Olympic Games so special?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "top 5 athletes now",
+                    "prompt": "Who are the top 5 athletes in the world right now?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Wimbledon biggest shock",
+                    "prompt": "What is the biggest shock in the history of the Wimbledon Championships?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "most popular US sport",
+                    "prompt": "What is the most popular sport in the United States?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "best skiers now",
+                    "prompt": "Who are the best skiers in the world right now?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Ryder Cup special",
+                    "prompt": "What makes the Ryder Cup so special in golf?",
+                    "for_devs": "false"
+                }
+            ]
+        },
+        {
+            "name": "Best Travel Prompts for ChatGPT",
+            "prompts": [
+                {
+                    "act": "must-visit Europe",
+                    "prompt": "What are the top must-visit destinations in Europe?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "budget travel Asia",
+                    "prompt": "What are the best budget-friendly travel destinations in Asia?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "USA road trip planning",
+                    "prompt": "How to plan a road trip in the USA?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "safe travel pandemic",
+                    "prompt": "How to travel safely during the pandemic?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "scenic train journeys",
+                    "prompt": "What are the best scenic train journeys in the world?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "cheapest flight tickets",
+                    "prompt": "How to find the cheapest flight tickets?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "adventure travel",
+                    "prompt": "What are the best adventure travel destinations?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "efficient packing",
+                    "prompt": "How to pack efficiently for a long trip?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Instagram spots Australia",
+                    "prompt": "What are the most Instagram-worthy spots in Australia?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "sustainable travel",
+                    "prompt": "How to travel sustainably?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "cultural experiences South America",
+                    "prompt": "What are the best cultural experiences in South America?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "food destinations Italy",
+                    "prompt": "How to find the best food destinations in Italy?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "wildlife Africa",
+                    "prompt": "What are the best wildlife viewing destinations in Africa?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "save money traveling",
+                    "prompt": "How to save money while traveling?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "beach holiday destinations",
+                    "prompt": "What are the best destinations for a beach holiday?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "multi-country Europe trip",
+                    "prompt": "How to plan a multi-country trip in Europe?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "winter sports destinations",
+                    "prompt": "What are the top destinations for winter sports?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "hostels for solo travelers",
+                    "prompt": "How to find the best hostels for solo travelers?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "road trip Canada",
+                    "prompt": "What are the best road trip routes in Canada?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "choose travel insurance",
+                    "prompt": "How to choose the best travel insurance?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "unique accommodations",
+                    "prompt": "What are the most unique accommodations around the world?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "travel with children",
+                    "prompt": "How to travel with children.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "places Middle East",
+                    "prompt": "What are the best places to visit in the Middle East?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "shoestring budget travel",
+                    "prompt": "How to travel on a shoestring budget?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "scenic drives New Zealand",
+                    "prompt": "What are the best scenic drives in New Zealand?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "hidden gems popular destinations",
+                    "prompt": "How to find hidden gems in popular tourist destinations?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "outdoor activities destinations",
+                    "prompt": "What are the top destinations for outdoor activities?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Amazon rainforest trip",
+                    "prompt": "How to plan a trip to the Amazon rainforest?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "romantic destinations couples",
+                    "prompt": "What are the most romantic destinations for couples?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "remote destinations budget",
+                    "prompt": "How to travel to remote destinations without breaking the bank?",
+                    "for_devs": "false"
+                }
+            ]
+        },
+        {
+            "name": "Best Art Prompts for ChatGPT",
+            "prompts": [
+                {
+                    "act": "AI text-to-image prompt",
+                    "prompt": "Give me a detailed prompt for an AI text-to-image generator to produce (the kind of image you want).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Abstract Expressionism impact",
+                    "prompt": "How did the Abstract Expressionism movement change the art world in the mid-20th century?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Impressionism vs Post-Impressionism",
+                    "prompt": "Can you explain the difference between Impressionism and Post-Impressionism?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Renaissance influence modern art",
+                    "prompt": "How did the Renaissance influence the development of modern art?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "color in Fauvism",
+                    "prompt": "Discuss the role of color in the Fauvism movement.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Dada movement challenge",
+                    "prompt": "How did the Dada movement challenge traditional art forms and concepts?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Surrealist art elements",
+                    "prompt": "What are the key elements of Surrealist art and how did it develop?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Pop Art movement impact",
+                    "prompt": "Can you describe the Pop Art movement and its impact on society and culture?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Bauhaus school influence",
+                    "prompt": "How did the Bauhaus school shape the future of art and design?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "cubist style influence",
+                    "prompt": "Can you explain the cubist style and its influence on modern art?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Street Art evolution",
+                    "prompt": "How has Street Art evolved and become a recognized form of expression?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "feminist art role",
+                    "prompt": "Discuss the role of feminist art in shaping cultural and political discourse.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "political activism Public Art",
+                    "prompt": "Can you describe the role of political and social activism in the development of Public Art?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "technology impact art creation",
+                    "prompt": "How has technology changed the way artists create and display their work?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Arts and Crafts movement significance",
+                    "prompt": "What is the significance of the Arts and Crafts movement in the history of art?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Abstract Art impact",
+                    "prompt": "Can you explain the impact of Abstract Art on the development of modern art?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "punk rock art influence",
+                    "prompt": "How did the punk rock movement influence the creation of new forms of art and expression?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "avant-garde role",
+                    "prompt": "Can you describe the role of the avant-garde in the development of modern art?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "African art influence",
+                    "prompt": "Discuss the influence of African art on the modern art world.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Gothic style role",
+                    "prompt": "What role did the Gothic style play in the development of art and architecture?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "digital media portraiture",
+                    "prompt": "How has the use of digital media changed the way artists approach portraiture?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Futurist movement impact",
+                    "prompt": "Can you explain the impact of the Futurist movement on modern art and culture?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "found object modern art",
+                    "prompt": "Discuss the role of the \"found object\" in the creation of modern art.",
+                    "for_devs": "false"
+                }
+            ]
+        },
+        {
+            "name": "Best Food and Cooking Prompts for ChatGPT",
+            "prompts": [
+                {
+                    "act": "recipes with ingredients",
+                    "prompt": "Give me recipes I can make with these ingredients (list ingredients).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "best spices for flavor",
+                    "prompt": "What are the best spices to add to a dish to enhance its flavor?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "perfect steak cooking",
+                    "prompt": "How do you properly cook a steak to achieve the perfect tenderness and flavor?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "healthy pasta alternatives",
+                    "prompt": "What are some healthy and tasty alternatives to traditional pasta dishes?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "classic tomato sauce",
+                    "prompt": "How do you make a classic tomato sauce from scratch?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "essential kitchen tools",
+                    "prompt": "What are the essential tools every kitchen should have?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "quick weeknight meals",
+                    "prompt": "What are some easy and quick meals to make for busy weeknights?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "store fresh herbs",
+                    "prompt": "How do you properly store fresh herbs to keep them from wilting too quickly?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "baking cake mistakes",
+                    "prompt": "What are some common mistakes people make when baking cakes?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "coconut oil health benefits",
+                    "prompt": "What are the health benefits of cooking with coconut oil?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "cast iron pan maintenance",
+                    "prompt": "How do you properly clean and maintain a cast iron pan?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "types of vinegar",
+                    "prompt": "What are the different types of vinegar and how do they differ in taste and use?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "vegan meat dish",
+                    "prompt": "How do you make a vegan version of a traditional meat dish?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "gluten-free misconceptions",
+                    "prompt": "What are some common misconceptions about gluten-free cooking and baking?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "hearty winter soup",
+                    "prompt": "How do you make a hearty and filling soup for a cold winter day?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "high-heat cooking oils",
+                    "prompt": "What are the best oils to use for high-heat cooking?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "creative leftover uses",
+                    "prompt": "What are some unique and interesting ways to use leftovers?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Hollandaise sauce",
+                    "prompt": "How do you make a creamy and smooth Hollandaise sauce?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "vegetable cooking methods",
+                    "prompt": "What are some different ways to prepare and cook vegetables for maximum flavor and nutrition?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "mushroom storage",
+                    "prompt": "How do you properly clean and store fresh mushrooms?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "healthy snack options",
+                    "prompt": "What are some healthy and tasty snack options for work or school?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "fluffy scrambled eggs",
+                    "prompt": "How do you make a delicious and fluffy scrambled egg?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "fresh vs canned ingredients",
+                    "prompt": "What are the benefits of using fresh versus canned ingredients in cooking?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "grilled meat marinade",
+                    "prompt": "How do you make a simple and flavorful marinade for grilled meats?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "global cooking techniques",
+                    "prompt": "What are some common cooking techniques used in different cuisines around the world?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "authentic sushi roll",
+                    "prompt": "How do you make a traditional and authentic sushi roll?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "grilling tips tricks",
+                    "prompt": "What are some tips and tricks for successful grilling and barbecuing?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "flavorful broth stock",
+                    "prompt": "How do you make a flavorful and aromatic broth or stock?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "healthy tofu recipes",
+                    "prompt": "What are some delicious and healthy ways to use tofu in cooking?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "crispy tempura batter",
+                    "prompt": "How do you make a light and crispy tempura batter?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "healthy fish cooking",
+                    "prompt": "What are some different ways to cook and serve fish for a healthy and tasty meal?",
+                    "for_devs": "false"
+                }
+            ]
+        },
+        {
+            "name": "Music Prompts for ChatGPT",
+            "prompts": [
+                {
+                    "act": "song in specific style",
+                    "prompt": "Write a song about X in the style of Y.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "musical score for lyrics",
+                    "prompt": "Write an original musical score to the lyrics listed above.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "jazz instrumental movie",
+                    "prompt": "Create a jazz instrumental inspired by the movie (Insert movie title)",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "song about topic",
+                    "prompt": "Compose a song about (topic).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "human-machine collaboration track",
+                    "prompt": "Produce a track based on the idea of human-machine collaboration.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "melodic theme chorus",
+                    "prompt": "Generate a melodic theme for a song with this chorus (paste in chorus).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "EDM artificial natural instruments",
+                    "prompt": "Write an EDM track with a combination of artificial and natural instruments.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "lyrical phrases topic",
+                    "prompt": "Incorporate lyrical phrases about (topic).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Beatles chord progressions",
+                    "prompt": "Write chord progressions reminiscent of classic Beatles hits.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "rewrite song topic",
+                    "prompt": "Rewrite the song (enter song title) to be about (topic).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "hip-hop beat genre",
+                    "prompt": "Create a hip-hop beat inspired by (genre).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "symphony short story",
+                    "prompt": "Arrange a symphony based on (your favorite short story).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "musical score poem",
+                    "prompt": "Generate a musical score for the following poem (paste in the poem).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "blues song life event",
+                    "prompt": "Produce an original blues song about a life-changing event.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "rock anthem hope resilience",
+                    "prompt": "Craft a rock anthem about hope and resilience.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "classical nature piece",
+                    "prompt": "Compose a classical piece about the beauty of nature.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "concept album instrumental",
+                    "prompt": "Create an intricate instrumental for a concept album about (topic).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "storytelling song",
+                    "prompt": "Write an original song with lyrics that tell a story about (idea or subject).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "soundtrack famous painting",
+                    "prompt": "Generate a soundtrack to accompany the visuals depicted in a painting (enter famous painting title).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "pop track folk inspiration",
+                    "prompt": "Produce a contemporary pop track inspired by traditional folk music.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "video game soundscape",
+                    "prompt": "Design a soundscape for a video game about (topic).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "unique instrumentation film",
+                    "prompt": "Compose a musical score with unique instrumentation for the short film (enter short film title).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "genre homage song",
+                    "prompt": "Write an original song that pays homage to earlier works from the same genre. The genre is XYZ.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "spoken word unity track",
+                    "prompt": "Produce a track featuring spoken word poetry about unity and togetherness.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "house remix existing song",
+                    "prompt": "Create a house remix of an existing song (enter song title).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "dance track classical influences",
+                    "prompt": "Arrange a modern dance track with influences from classical music.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "classic rap inspired beat",
+                    "prompt": "Generate an original beat heavily inspired by classic rap music.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "emotion soundtrack",
+                    "prompt": "Design a unique soundtrack that reflects the emotions of (insert emotion).",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "EDM animation film",
+                    "prompt": "Compose an EDM piece to accompany a short animation film about (topic).",
+                    "for_devs": "false"
+                }
+            ]
+        },
+        {
+            "name": "Gaming Prompts for ChatGPT",
+            "prompts": [
+                {
+                    "act": "Xbox single-player games",
+                    "prompt": "Looking for some great single-player games for your Xbox? Let's explore some options.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "PC multiplayer games",
+                    "prompt": "PC is the ultimate platform for multiplayer games. Let's discover some of the most popular ones.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "hidden gem open-world games",
+                    "prompt": "Not all open-world games get the recognition they deserve. Let's uncover some hidden gems.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "VR immersive games",
+                    "prompt": "Virtual Reality is an immersive experience, and these games make the most of it.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "best survival games",
+                    "prompt": "Survival games can be nail-bitingly tense. Let's count down the best ones of all time.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "addictive mobile games",
+                    "prompt": "Mobile gaming is big business and these games are incredibly addictive.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "best console fighting games",
+                    "prompt": "Console fighting games have come a long way. Let's take a look at the best ones.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Xbox co-op games",
+                    "prompt": "Xbox is perfect for co-op games. Let's find out which ones to play with your friends.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "PC games with friends",
+                    "prompt": "PC gaming is at its best when played with friends. Here are some of the best games to try.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Nintendo Switch RPGs",
+                    "prompt": "Nintendo Switch is a versatile platform and these RPGs are just the ticket.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "challenging puzzle games",
+                    "prompt": "Puzzle games can be fiendishly difficult. Let's find the most challenging ones.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "PS5 racing games",
+                    "prompt": "Racing games are all about speed and style. Here are the best ones for PS5.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Nintendo Switch kids games",
+                    "prompt": "Nintendo Switch is great for kids and these games will keep them entertained.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Xbox stunning graphics games",
+                    "prompt": "Xbox is capable of some stunning graphics, and these games are the proof.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "PC strategy games",
+                    "prompt": "PC is the king of strategy games. Let's explore some of the best ones.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Xbox horror games",
+                    "prompt": "Xbox is the perfect platform for horror games. Let's dive into some of the scariest ones.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "PS4 sports games",
+                    "prompt": "PS4 is home to some great games for sports fans. Let's find the best ones.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Nintendo Switch relaxing games",
+                    "prompt": "Nintendo Switch is a relaxing platform and these games will help you unwind.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "PC educational history games",
+                    "prompt": "PC games can be educational, and these ones are perfect for history buffs.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Xbox space enthusiast games",
+                    "prompt": "Xbox has some great games for space enthusiasts. Let's take a look.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "PS5 action games",
+                    "prompt": "PS5 is packed with action games, and these are the most engaging.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Nintendo Switch adventure games",
+                    "prompt": "Nintendo Switch is perfect for adventure games. Let's find the best ones.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "PC musical games",
+                    "prompt": "PC games can be musical too, and these ones are perfect for music lovers.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Xbox car enthusiast games",
+                    "prompt": "Xbox has some great games for car enthusiasts. Let's discover them.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "PS5 sandbox games",
+                    "prompt": "PS5 is home to some of the most creative sandbox games. List the most popular.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Nintendo Switch animal lover games",
+                    "prompt": "Nintendo Switch has some great games for animal lovers. Let's find them.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "PC visually stunning games",
+                    "prompt": "PC games can be visually stunning, and these ones are proof.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Xbox mystery games",
+                    "prompt": "Xbox has some great games for mystery fans. Let's explore them.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "PS5 book lover games",
+                    "prompt": "PS5 has some great games for book lovers. Let's find the best ones.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Nintendo Switch indie games",
+                    "prompt": "Nintendo Switch is a great platform for indie games, and these are the most innovative.",
+                    "for_devs": "false"
+                }
+            ]
+        },
+        {
+            "name": "Best Pets Prompts for ChatGPT",
+            "prompts": [
+                {
+                    "act": "apartment pet options",
+                    "prompt": "What are some great pet options for those who live in apartments and don't have a lot of free time for maintenance?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "cat discomfort signs",
+                    "prompt": "How can you tell if your feline friend is in discomfort?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "family-friendly dog breeds",
+                    "prompt": "What breeds of dogs make the best companions for families with young kids?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "stop excessive barking",
+                    "prompt": "Can you recommend some strategies for stopping excessive barking in dogs?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "hamster health issues",
+                    "prompt": "What health issues should you be aware of if you have a pet hamster?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "kitten litter training",
+                    "prompt": "How do you effectively litter train a kitten?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "pets for allergies",
+                    "prompt": "Are there any pets that are particularly suitable for people with allergies?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "pet separation anxiety",
+                    "prompt": "What can you do if your pet struggles with separation anxiety?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "fish tank size",
+                    "prompt": "How do you choose the right size fish tank for your new pet fish?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "pet bird considerations",
+                    "prompt": "What are the key factors to keep in mind when thinking of getting a pet bird?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "rabbit food",
+                    "prompt": "What type of food is best for a pet rabbit?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "dog walking frequency",
+                    "prompt": "How often should you take your dog out for walks?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "guinea pig health problems",
+                    "prompt": "What health problems should you watch out for if you have a guinea pig as a pet?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "teach dog tricks",
+                    "prompt": "How can you teach your dog some fun tricks?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "pets for frequent travelers",
+                    "prompt": "What pets are the best option for someone who travels frequently?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "pet cooling hot weather",
+                    "prompt": "How can you make sure your pet stays cool during hot weather?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "pet turtle considerations",
+                    "prompt": "What are the important things to think about before getting a pet turtle?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "prevent cat scratching furniture",
+                    "prompt": "How can you prevent your cat from scratching up your furniture?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "dog breeds for seniors",
+                    "prompt": "What dog breeds are best for seniors?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "ferret health issues",
+                    "prompt": "What health issues should you be aware of if you have a pet ferret?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "pet adjust new home",
+                    "prompt": "How can you help your pet adjust to a new home environment?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "hedgehog food",
+                    "prompt": "What kind of food should you feed your pet hedgehog?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "cat vet checkups",
+                    "prompt": "How often should you take your cat for check-ups at the vet?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "pet snake considerations",
+                    "prompt": "What are the most important things to consider before getting a pet snake?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "stop cat spraying",
+                    "prompt": "How can you stop your cat from spraying inside the house?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "beginner reptile pets",
+                    "prompt": "What pet reptiles are the best for someone who's new to the world of reptile ownership?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "pet fear fireworks",
+                    "prompt": "How can you help your pet deal with their fear of fireworks?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "chinchilla food",
+                    "prompt": "What type of food is best for a pet chinchilla?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "pet cope loss",
+                    "prompt": "How can you help your pet cope with the loss of another pet they were close to?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "beginner invertebrate pets",
+                    "prompt": "What pet invertebrates are the easiest for beginners to care for?",
+                    "for_devs": "false"
+                }
+            ]
+        },
+        {
+            "name": "Best Finance Prompts for ChatGPT",
+            "prompts": [
+                {
+                    "act": "financial investment types",
+                    "prompt": "Can you give me a rundown on the different types of financial investments and what to consider when choosing them?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "long-term financial planning",
+                    "prompt": "I'm trying to plan for my financial future. Can you suggest a good approach to creating a long-term plan?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "stock market breakdown",
+                    "prompt": "Can you break down the stock market for me? I want to understand how it works.",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "bonds vs stocks",
+                    "prompt": "I'm trying to educate myself on investing. Can you help me understand the difference between bonds and stocks?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "mutual funds explanation",
+                    "prompt": "I've heard about mutual funds but I'm not sure what they are. Can you explain it in simple terms?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "index funds recommendation",
+                    "prompt": "Why are index funds so highly recommended for investing?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "savings vs money market account",
+                    "prompt": "I'm trying to choose between a savings account and a money market account. Can you explain the pros and cons of each?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "buy vs lease car",
+                    "prompt": "Should I buy or lease a car? Can you help me weigh the options?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "Roth vs traditional IRA",
+                    "prompt": "Can you explain the differences between a Roth IRA and a traditional IRA?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "inflation investment impact",
+                    "prompt": "I'm worried about inflation affecting my investments. Can you give me some insights on that?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "determine risk tolerance",
+                    "prompt": "I want to start investing, but I don't know how to determine my risk tolerance. Can you help?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "portfolio diversification",
+                    "prompt": "How can I make sure my investment portfolio is diversified?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "financial advisor benefits drawbacks",
+                    "prompt": "I'm considering hiring a financial advisor. Can you explain the benefits and drawbacks?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "buying stock steps",
+                    "prompt": "Can you walk me through the steps of buying a stock?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "401k plan explanation",
+                    "prompt": "Can you explain how a 401(k) plan works?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "life insurance considerations",
+                    "prompt": "What should I know about life insurance before I buy a policy?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "budgeting tips",
+                    "prompt": "Budgeting has never been my strong suit. Can you give me some tips on how to create and stick to a budget?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "compounding interest importance",
+                    "prompt": "Can you explain compounding interest and why it's important for my investments?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "fixed vs variable annuity",
+                    "prompt": "What's the difference between a fixed annuity and a variable annuity?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "traditional vs Roth 401k",
+                    "prompt": "Can you help me understand the pros and cons of a traditional 401(k) vs a Roth 401(k)?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "improve credit score",
+                    "prompt": "I want to improve my credit score. Can you give me some tips on how to do that?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "mortgage interest rate factors",
+                    "prompt": "Can you explain what factors impact the interest rate on a mortgage loan?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "home equity loan process",
+                    "prompt": "I'm considering a home equity loan. Can you walk me through the process?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "reduce debt financial health",
+                    "prompt": "I want to get my finances in order. Can you suggest some strategies for reducing debt and improving my financial health?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "protect investments market volatility",
+                    "prompt": "How can I protect my investments from market ups and downs?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "estate planning will",
+                    "prompt": "Estate planning and creating a will are important, but I don't know where to start. Can you help?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "reverse mortgage explanation",
+                    "prompt": "Can you explain what a reverse mortgage is and how it works?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "college education savings",
+                    "prompt": "I want to save for my child's college education. What are the best options?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "retirement planning",
+                    "prompt": "I'm getting closer to retirement age. Can you help me plan for a secure financial future?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "successful investor tips",
+                    "prompt": "I want to be a smart and successful investor. Can you give me some tips on how to achieve that?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "personal budget instructions",
+                    "prompt": "Please give me step-by-step instructions for making a personal budget.",
+                    "for_devs": "false"
+                }
+            ]
+        },
+        {
+            "name": "Best Health and Fitness Prompts for ChatGPT",
+            "prompts": [
+                {
+                    "act": "strength training benefits",
+                    "prompt": "What are the benefits of incorporating strength training into a fitness routine?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "leg glute toning exercises",
+                    "prompt": "What are the best exercises for toning the legs and glutes?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "healthy diet elements",
+                    "prompt": "What are the key elements of a healthy diet?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "daily water intake",
+                    "prompt": "What is the recommended daily water intake for adults?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "yoga mental physical benefits",
+                    "prompt": "What are the benefits of yoga for mental and physical health?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "healthy sustainable weight loss",
+                    "prompt": "What is the best way to lose weight in a healthy and sustainable manner?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "poor posture health effects",
+                    "prompt": "How does poor posture affect our health and how can it be corrected?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "stress physical mental impact",
+                    "prompt": "What is the impact of stress on our physical and mental health?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "gut health digestive problems",
+                    "prompt": "How can we maintain good gut health and prevent digestive problems?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "chronic pain causes treatment",
+                    "prompt": "What are some common causes of chronic pain and how can it be treated?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "recommended sleep amount",
+                    "prompt": "What is the recommended amount of sleep for adults and children?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "exercise mental health improvement",
+                    "prompt": "How can we improve our mental health through exercise and physical activity?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "sedentary behavior dangers",
+                    "prompt": "What are the dangers of sedentary behavior and how can it be prevented?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "hydration intense activity",
+                    "prompt": "What is the best way to stay hydrated during intense physical activity?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "nutrition immunity illness prevention",
+                    "prompt": "How can proper nutrition boost immunity and prevent illness?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "quit smoking effective ways",
+                    "prompt": "What are the most effective ways to quit smoking?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "alcohol long-term effects",
+                    "prompt": "What are the long-term effects of alcohol consumption on the body?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "balance fall prevention aging",
+                    "prompt": "How can we improve our balance and prevent falls as we age?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "common sports injuries prevention",
+                    "prompt": "What are the most common sports injuries and how can they be prevented?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "nutrition healthy pregnancy",
+                    "prompt": "What is the role of nutrition in maintaining a healthy pregnancy?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "mindfulness meditation mental wellness",
+                    "prompt": "How can we improve our mental wellness through mindfulness and meditation?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "cold therapy recovery pain management",
+                    "prompt": "What are the benefits of cold therapy and how can it be used for recovery and pain management?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "cardiovascular endurance exercises",
+                    "prompt": "What are the best exercises for improving cardiovascular endurance?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "prevent manage type 2 diabetes",
+                    "prompt": "How can we prevent and manage type 2 diabetes through lifestyle changes?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "poor nutrition children development",
+                    "prompt": "What is the impact of poor nutrition on children's growth and development?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "prevent treat lower back pain",
+                    "prompt": "How can we prevent and treat lower back pain?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "flexibility mobility exercises",
+                    "prompt": "What are the best exercises for improving flexibility and mobility?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "posture back pain ergonomics",
+                    "prompt": "How can we improve our posture and reduce back pain through ergonomics?",
+                    "for_devs": "false"
+                },
+                {
+                    "act": "stress management relaxation",
+                    "prompt": "What are the best methods for stress management and relaxation?",
                     "for_devs": "false"
                 }
             ]
