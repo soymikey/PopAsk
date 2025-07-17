@@ -892,17 +892,109 @@ const ChatComp = ({
                 }}
               >
                 {chatMessages.length === 0 ? (
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      height: "100%",
-                      color: "#999",
-                      fontSize: "16px",
-                    }}
-                  >
-                    Start a conversation by typing a message below...
+                  <div>
+                    <div
+                      style={{
+                        opacity: 0.6,
+                        textAlign: "center",
+                      }}
+                    >
+                      <Text style={{ color: "#999", fontSize: "14px" }}>
+                        Shortcuts reference
+                      </Text>
+                    </div>
+                    <div
+                      style={{
+                        display: "grid",
+                        gridTemplateColumns: "1fr 1fr",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        height: "100%",
+                        padding: "20px 20px",
+                        textAlign: "center",
+                        overflow: "auto",
+                        gap: "4px",
+                      }}
+                    >
+                      {[...systemShortcuts, ...promptList]
+                        .filter(
+                          (shortcut) =>
+                            shortcut?.shortcut &&
+                            shortcut?.label &&
+                            shortcut?.value
+                        )
+                        .map((shortcut, index) => (
+                          <Card
+                            key={shortcut.key || shortcut.value}
+                            size="small"
+                            style={{
+                              border: "1px solid #f0f0f0",
+                              borderRadius: "8px",
+                              transition: "all 0.3s ease",
+                              width: "100%",
+                              backgroundColor: "transparent",
+                            }}
+                            bodyStyle={{
+                              display: "flex",
+                              flexDirection: "column",
+                              padding: "6px",
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "flex-start",
+                              }}
+                            >
+                              <div
+                                style={{
+                                  flex: 1,
+                                  fontSize: "12px",
+                                  color: "#666",
+                                }}
+                              >
+                                {shortcut.label}
+                              </div>
+                              {shortcut.shortcut && (
+                                <Tag
+                                  color={TAG_COLORS[index % TAG_COLORS.length]}
+                                  style={{
+                                    fontSize: "12px",
+                                    borderRadius: "4px",
+                                    flexShrink: 0,
+                                  }}
+                                >
+                                  {shortcut.shortcut}
+                                </Tag>
+                              )}
+                            </div>
+                          </Card>
+                        ))}
+                      {/* 
+                    <div
+                      style={{
+                        marginTop: "32px",
+                        padding: "16px",
+                        backgroundColor: "#f8f9fa",
+                        borderRadius: "8px",
+                        border: "1px solid #e9ecef",
+                        maxWidth: "600px",
+                      }}
+                    >
+                      <Text style={{ color: "#666", fontSize: "13px" }}>
+                        💡 <strong>Tip:</strong> Select any text on your screen
+                        and use the shortcuts above to get instant AI
+                        assistance. You can also type directly in the input box
+                        below.
+                      </Text>
+                    </div> */}
+                    </div>
+                    <div style={{ textAlign: "center", marginTop: "16px" }}>
+                      <Text style={{ fontSize: "14px" }}>
+                        Start a conversation by typing a message below...
+                      </Text>
+                    </div>
                   </div>
                 ) : (
                   <div>
