@@ -76,6 +76,7 @@ const { TextArea } = Input;
 const { Title, Text } = Typography;
 
 const ChatComp = ({
+  activeKey,
   setActiveKey,
   promptList,
   setPromptList,
@@ -88,6 +89,15 @@ const ChatComp = ({
   selectedPrompt,
   setSelectedPrompt,
 }) => {
+  const newChatText = `New (${window.config_.isMac ? "Cmd" : "Ctrl"}+N)`;
+
+  const clearChatText = `Clear (${window.config_.isMac ? "Cmd" : "Ctrl"}+K)`;
+  const saveChatText = `Save (${window.config_.isMac ? "Cmd" : "Ctrl"}+S)`;
+
+  const sendPlaceholderText = `(${
+    window.config_.isMac ? "Cmd" : "Ctrl"
+  }+Enter to send) (Shift+Enter to send new chat)`;
+
   const chatHistoryListRef = useRef(chatHistoryList);
   const chatMessagesRef = useRef(chatMessages);
   const selectedPromptRef = useRef(selectedPrompt);
@@ -248,6 +258,8 @@ const ChatComp = ({
       });
       return;
     }
+
+    handleCancelEdit();
 
     // Reset cancellation flag
     isRequestCancelledRef.current = false;
@@ -538,6 +550,58 @@ const ChatComp = ({
   useEffect(() => {
     selectedPromptRef.current = selectedPrompt;
   }, [selectedPrompt]);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      const isCmdOrCtrl = window.config_.isMac ? e.metaKey : e.ctrlKey;
+
+      // Cmd/Ctrl + N: 新对话
+      if (isCmdOrCtrl && e.key === "n") {
+        e.preventDefault();
+        newChatHandler(chatMessages, chatHistoryList);
+      }
+
+      // Cmd/Ctrl + K: 清空聊天
+      if (isCmdOrCtrl && e.key === "k") {
+        e.preventDefault();
+        clearChat();
+      }
+
+      // Cmd/Ctrl + S: 保存聊天记录
+      if (isCmdOrCtrl && e.key === "s") {
+        e.preventDefault();
+        if (chatMessages.length > 0) {
+          saveChatHistory(chatMessages, chatHistoryList);
+        }
+      }
+
+      // Escape: 取消编辑或停止请求
+      if (e.key === "Escape") {
+        if (editingMessageId) {
+          handleCancelEdit();
+        } else if (isAskLoading) {
+          stopRequest();
+        }
+      }
+    };
+
+    // 只在聊天页面激活时监听快捷键
+    if (activeKey === "chat") {
+      document.addEventListener("keydown", handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [
+    selection,
+    isAskLoading,
+    chatMessages,
+    chatHistoryList,
+    editingMessageId,
+    editingContent,
+    showPromptArea,
+  ]);
 
   const dropdownRenderElement = (menu) => {
     const customMenuItem = (
@@ -882,7 +946,7 @@ const ChatComp = ({
                     }}
                   >
                     {chatMessages.length > 0 && (
-                      <Tooltip title="New Chat">
+                      <Tooltip title={newChatText}>
                         <Button
                           type="text"
                           size="small"
@@ -896,7 +960,7 @@ const ChatComp = ({
 
                     {/* 保存聊天记录 */}
                     {chatMessages.length > 0 && (
-                      <Tooltip title="Save">
+                      <Tooltip title={saveChatText}>
                         <Button
                           type="text"
                           size="small"
@@ -909,7 +973,7 @@ const ChatComp = ({
                     )}
                     {/* 删除聊天记录 */}
                     {chatMessages.length > 0 && (
-                      <Tooltip title="Delete">
+                      <Tooltip placement="left" title={clearChatText}>
                         <Button
                           danger
                           type="text"
@@ -1212,7 +1276,7 @@ const ChatComp = ({
                   <TextArea
                     ref={inputRef}
                     autoSize={{ minRows: 3, maxRows: 6 }}
-                    placeholder="(Cmd+Enter to send) (Shift+Enter to send new chat)"
+                    placeholder={sendPlaceholderText}
                     value={selection}
                     onChange={onChangeSelectionHandler}
                     allowClear

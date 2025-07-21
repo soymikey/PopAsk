@@ -112,6 +112,7 @@ const App = () => {
       label: "Chat",
       children: (
         <ChatComp
+          activeKey={activeKey}
           setActiveKey={setActiveKey}
           promptList={promptList}
           setPromptList={setPromptList}
