@@ -35,6 +35,7 @@ import { useEffect, useState, useRef } from "react";
 import {
   EventsOn,
   EventsOff,
+  WindowCenter,
   WindowShow,
   WindowSetAlwaysOnTop,
 } from "../../../wailsjs/runtime/runtime";
@@ -356,8 +357,10 @@ const ChatComp = ({
       const { shortcut, prompt, autoAsking, isOCR, isOpenWindow } = selection;
       let text = selection?.text || "";
       if (config_.isMac) {
+        WindowCenter();
         WindowShow();
       } else {
+        WindowCenter();
         WindowSetAlwaysOnTop(true);
         setTimeout(() => {
           WindowSetAlwaysOnTop(false);
@@ -1095,24 +1098,6 @@ const ChatComp = ({
                             </div>
                           </Card>
                         ))}
-                      {/* 
-                    <div
-                      style={{
-                        marginTop: "32px",
-                        padding: "16px",
-                        backgroundColor: "#f8f9fa",
-                        borderRadius: "8px",
-                        border: "1px solid #e9ecef",
-                        maxWidth: "600px",
-                      }}
-                    >
-                      <Text style={{ color: "#666", fontSize: "13px" }}>
-                        💡 <strong>Tip:</strong> Select any text on your screen
-                        and use the shortcuts above to get instant AI
-                        assistance. You can also type directly in the input box
-                        below.
-                      </Text>
-                    </div> */}
                     </div>
                     <div style={{ textAlign: "center", marginTop: "16px" }}>
                       <Text style={{ fontSize: "14px" }}>

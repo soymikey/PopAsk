@@ -165,7 +165,7 @@ const PromptComp = ({ promptList, setPromptList }) => {
             />
           ) : (
             <Collapse
-              defaultActiveKey={filteredCategories.map((_, index) => index)}
+              defaultActiveKey={[]}
               ghost
               style={{ background: "transparent" }}
             >
