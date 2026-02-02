@@ -437,19 +437,21 @@ const ChatComp = ({
     if (chatMessages.length === 0) {
       return;
     }
-    // 如果当前的chatMessages 存在历史记录中，则不添加
+    // 如果当前的 chatMessages 已存在于历史中，只清空当前对话
     if (
       chatHistoryList.length > 0 &&
       chatHistoryList.some((history) =>
+        history.length === chatMessages.length &&
         history.every(
-          (message, index) => message.content === chatMessages[index].content,
+          (message, index) => message.content === chatMessages[index]?.content,
         ),
       )
     ) {
       setChatMessages([]);
-
       return;
     }
+    // 将当前对话加入历史（放在最前）
+    setChatHistoryList([chatMessages, ...chatHistoryList]);
     setChatMessages([]);
   };
 
