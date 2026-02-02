@@ -8,11 +8,43 @@ import {
 } from "../../../../wailsjs/runtime/runtime";
 import {
   messageGenerator,
-  languageFormate,
+  languageFormat,
   getLocalStorage,
   sleep,
 } from "../../../utils";
-import { DEFAULT_ORC_LANG, ORC_LANG_KEY } from "../../../constant";
+import { DEFAULT_OCR_LANG, OCR_LANG_KEY } from "../../../constant";
+
+const OCR_TIMEOUT_MS = 10000;
+const FOCUS_DELAY_MS = 100;
+
+function focusWindow(isMac) {
+  WindowCenter();
+  if (isMac) {
+    WindowShow();
+  } else {
+    WindowSetAlwaysOnTop(true);
+    setTimeout(() => WindowSetAlwaysOnTop(false), 1000);
+  }
+}
+
+async function runOCRFlow(text, messageApi, setIsLoading) {
+  setIsLoading(true);
+  let timeoutId = setTimeout(() => {
+    messageApi.open({
+      type: "error",
+      content: "OCR failed: Please check your network",
+    });
+    setIsLoading(false);
+  }, OCR_TIMEOUT_MS);
+  const OCRLang = getLocalStorage(OCR_LANG_KEY, DEFAULT_OCR_LANG);
+  const lang =
+    OCRLang?.length > 1 ? OCRLang.join("+") : (OCRLang?.[0] ?? "eng");
+  const { default: Tesseract } = await import("tesseract.js");
+  const result = await Tesseract.recognize(text, lang);
+  clearTimeout(timeoutId);
+  setIsLoading(false);
+  return languageFormat(result?.data?.text || "");
+}
 
 export function useSelectionHandler({
   isMac,
@@ -30,58 +62,36 @@ export function useSelectionHandler({
 }) {
   const onSelectionHandler = useCallback(
     async (selectionData) => {
-      let timeoutId = null;
       try {
         const { shortcut, prompt, autoAsking, isOCR, isOpenWindow } =
-          selectionData;
+          selectionData ?? {};
         const isOpenWindowOnly =
-          shortcut === "Open Window" || (isOpenWindow && !isOCR && !autoAsking);
+          shortcut === "Open Window" ||
+          (isOpenWindow && !isOCR && !autoAsking);
 
-        if (isMac) {
-          WindowCenter();
-          WindowShow();
-        } else {
-          WindowCenter();
-          WindowSetAlwaysOnTop(true);
-          setTimeout(() => WindowSetAlwaysOnTop(false), 1000);
-        }
+        focusWindow(isMac);
         setActiveKey("chat");
 
         if (isOpenWindowOnly) {
-          await sleep(100);
+          await sleep(FOCUS_DELAY_MS);
           inputRef.current?.focus();
           return;
         }
 
-        let text = selectionData?.text || "";
+        let text = selectionData?.text ?? "";
         if (isOCR) {
-          setIsLoading(true);
-          timeoutId = setTimeout(() => {
-            messageApi.open({
-              type: "error",
-              content: "OCR failed: Please check your network",
-            });
-            setIsLoading(false);
-          }, 10000);
-          const ORCLang = getLocalStorage(ORC_LANG_KEY, DEFAULT_ORC_LANG);
-          const lang =
-            ORCLang?.length > 1
-              ? ORCLang.join("+")
-              : (ORCLang?.[0] ?? "eng");
-          const { default: Tesseract } = await import("tesseract.js");
-          const result = await Tesseract.recognize(text, lang);
-          text = languageFormate(result?.data?.text || "");
-          clearTimeout(timeoutId);
-          setIsLoading(false);
+          text = await runOCRFlow(text, messageApi, setIsLoading);
         }
-        if (text.length === 0) return;
-        let prompt_ = prompt;
-        if (isOpenWindow || isOCR) {
-          prompt_ = selectedPrompt;
+        if (text.length === 0) {
+          await sleep(FOCUS_DELAY_MS);
+          inputRef.current?.focus();
+          return;
         }
+
+        const effectivePrompt = isOpenWindow || isOCR ? selectedPrompt : prompt;
         newChatHandler(chatMessages, chatHistoryList);
-        setSelectedPrompt(prompt_);
-        const formattedMessage = messageGenerator(prompt_, text);
+        setSelectedPrompt(effectivePrompt);
+        const formattedMessage = messageGenerator(effectivePrompt, text);
         setSelection(formattedMessage);
         if (autoAsking) {
           setSelection("");
@@ -93,7 +103,7 @@ export function useSelectionHandler({
           content: error?.message || "error",
         });
       } finally {
-        await sleep(100);
+        await sleep(FOCUS_DELAY_MS);
         inputRef.current?.focus();
       }
     },
@@ -110,7 +120,7 @@ export function useSelectionHandler({
       setSelection,
       setIsLoading,
       inputRef,
-    ]
+    ],
   );
 
   useEffect(() => {

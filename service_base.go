@@ -85,45 +85,37 @@ func (b *BaseService) EnvOrDefault(key, def string) string {
 	return def
 }
 
-// IsDevelopment 判断是否为开发环境
 func (b *BaseService) IsDevelopment() bool {
-	// 1. Wails 特有环境变量
-	if os.Getenv("WAILS_ENV") == "development" {
-		return true
+	envChecks := []struct {
+		key string
+		val string
+	}{
+		{"WAILS_ENV", "development"},
+		{"WAILS_BUILD_MODE", "development"},
+		{"DEBUG", "true"},
 	}
-
-	// 2. Wails 构建模式
-	if os.Getenv("WAILS_BUILD_MODE") == "development" {
-		return true
+	for _, c := range envChecks {
+		if os.Getenv(c.key) == c.val {
+			return true
+		}
 	}
-
-	// 3. 通用环境变量
 	if env := os.Getenv("GO_ENV"); env == "development" || env == "dev" {
 		return true
 	}
-
-	// 4. 调试模式
-	if os.Getenv("DEBUG") == "true" {
-		return true
-	}
-
-	// 5. 检查项目文件（开发环境特征）
 	if _, err := os.Stat("go.mod"); err == nil {
 		if _, err := os.Stat("wails.json"); err == nil {
 			return true
 		}
 	}
-
-	// 6. 检查可执行文件位置
 	execPath, err := os.Executable()
 	if err == nil {
-		if filepath.Base(execPath) == "main" || filepath.Base(execPath) == "popask" {
+		name := filepath.Base(execPath)
+		if (name == "main" || name == "popask") {
 			if _, err := os.Stat(filepath.Join(filepath.Dir(execPath), "go.mod")); err == nil {
 				return true
 			}
 		}
 	}
-
 	return false
 }
 

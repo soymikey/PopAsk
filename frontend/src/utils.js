@@ -27,7 +27,7 @@ export const newPromptGenerator = (title, text) => {
             label: `${title}`,
             value: `${title}\n`,
             shortcut: "",
-        };;
+        };
     }
     return {
         label: `${title}`,
@@ -36,7 +36,7 @@ export const newPromptGenerator = (title, text) => {
     };
 };
 
-export const languageFormate = (text) => {
+export const languageFormat = (text) => {
     if (text.length === 0) {
         return text;
     }

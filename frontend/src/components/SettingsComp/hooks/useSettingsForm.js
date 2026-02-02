@@ -5,20 +5,20 @@ import {
   syncShortcutListToBackend,
   validateShortcut,
 } from "../../../utils";
-import { DEFAULT_ORC_LANG, DEFAULT_PROMPT_LIST } from "../../../constant";
+import { DEFAULT_OCR_LANG, DEFAULT_PROMPT_LIST } from "../../../constant";
 
 export function useSettingsForm(activeKey) {
   const promptList = useAppStore((s) => s.promptList);
   const setPromptList = useAppStore((s) => s.setPromptList);
   const systemShortcuts = useAppStore((s) => s.systemShortcuts);
   const setSystemShortcuts = useAppStore((s) => s.setSystemShortcuts);
-  const ORCLang = useAppStore((s) => s.ORCLang);
-  const setORCLang = useAppStore((s) => s.setORCLang);
+  const OCRLang = useAppStore((s) => s.OCRLang);
+  const setOCRLang = useAppStore((s) => s.setOCRLang);
   const openAIKey = useAppStore((s) => s.openAIKey);
   const setOpenAIKey = useAppStore((s) => s.setOpenAIKey);
 
   const [messageApi, contextHolder] = message.useMessage();
-  const [localORCLang, setLocalORCLang] = useState(DEFAULT_ORC_LANG);
+  const [localOCRLang, setLocalOCRLang] = useState(DEFAULT_OCR_LANG);
   const [localOpenAIKey, setLocalOpenAIKey] = useState("");
   const [localPromptList, setLocalPromptList] = useState(DEFAULT_PROMPT_LIST);
   const [localSystemShortcuts, setLocalSystemShortcuts] = useState([]);
@@ -33,19 +33,19 @@ export function useSettingsForm(activeKey) {
   }, [systemShortcuts]);
 
   useEffect(() => {
-    setLocalORCLang(ORCLang);
-  }, [ORCLang]);
+    setLocalOCRLang(OCRLang);
+  }, [OCRLang]);
 
   useEffect(() => {
     if (activeKey === "settings") {
-      setLocalORCLang(ORCLang);
+      setLocalOCRLang(OCRLang);
       setLocalOpenAIKey(openAIKey ?? "");
       setLocalPromptList(promptList);
       setLocalSystemShortcuts(systemShortcuts);
     }
-  }, [activeKey, ORCLang, openAIKey, promptList, systemShortcuts]);
+  }, [activeKey, OCRLang, openAIKey, promptList, systemShortcuts]);
 
-  const onChangeORCHandler = useCallback(
+  const onChangeOCRHandler = useCallback(
     (value) => {
       if (value.length > 5) {
         messageApi.open({
@@ -54,7 +54,7 @@ export function useSettingsForm(activeKey) {
         });
         return;
       }
-      setLocalORCLang(value);
+      setLocalOCRLang(value);
     },
     [messageApi]
   );
@@ -65,7 +65,7 @@ export function useSettingsForm(activeKey) {
       messageApi.open({ type: "error", content: result.message });
       return;
     }
-    setORCLang(localORCLang);
+    setOCRLang(localOCRLang);
     setOpenAIKey(localOpenAIKey);
     setPromptList(localPromptList);
     setSystemShortcuts(localSystemShortcuts);
@@ -75,11 +75,11 @@ export function useSettingsForm(activeKey) {
       content: "Settings saved successfully",
     });
   }, [
-    localORCLang,
+    localOCRLang,
     localOpenAIKey,
     localPromptList,
     localSystemShortcuts,
-    setORCLang,
+    setOCRLang,
     setOpenAIKey,
     setPromptList,
     setSystemShortcuts,
@@ -122,8 +122,8 @@ export function useSettingsForm(activeKey) {
 
   return {
     contextHolder,
-    localORCLang,
-    setLocalORCLang,
+    localOCRLang,
+    setLocalOCRLang,
     localOpenAIKey,
     setLocalOpenAIKey,
     localPromptList,
@@ -132,7 +132,7 @@ export function useSettingsForm(activeKey) {
     setLocalSystemShortcuts,
     newlyAddedPromptId,
     setNewlyAddedPromptId,
-    onChangeORCHandler,
+    onChangeOCRHandler,
     handleSave,
     handleDragEnd,
     addCustomPrompt,

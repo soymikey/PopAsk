@@ -24,8 +24,8 @@ function SettingsComp({ activeKey, isMac = false }) {
 
   const {
     contextHolder,
-    localORCLang,
-    setLocalORCLang,
+    localOCRLang,
+    setLocalOCRLang,
     localOpenAIKey,
     setLocalOpenAIKey,
     localPromptList,
@@ -34,7 +34,7 @@ function SettingsComp({ activeKey, isMac = false }) {
     setLocalSystemShortcuts,
     newlyAddedPromptId,
     setNewlyAddedPromptId,
-    onChangeORCHandler,
+    onChangeOCRHandler,
     handleSave,
     handleDragEnd,
     addCustomPrompt,
@@ -91,8 +91,8 @@ function SettingsComp({ activeKey, isMac = false }) {
             mode="multiple"
             className={styles.settingsCompSelectFull}
             options={OCR_LANGUAGE_OPTIONS}
-            value={localORCLang}
-            onChange={onChangeORCHandler}
+            value={localOCRLang}
+            onChange={onChangeOCRHandler}
             placeholder="Select a language for more accurate OCR"
             maxTagCount={3}
             showSearch

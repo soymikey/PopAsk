@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/go-vgo/robotgo"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -27,79 +26,46 @@ func (w *WindowService) GetMousePosition() (interface{}, error) {
 	return map[string]interface{}{"x": x, "y": y}, nil
 }
 
-// ShowPopWindow 显示弹出窗口
+const popWindowWidth = 100
+const popWindowHeight = 100
+
+func clampPositionToDisplay(mouseX, mouseY, displayX, displayY, displayW, displayH int) (x, y int) {
+	x, y = mouseX, mouseY
+	if x < displayX {
+		x = displayX
+	}
+	if x+popWindowWidth > displayX+displayW {
+		x = displayX + displayW - popWindowWidth
+	}
+	if y < displayY {
+		y = displayY
+	}
+	if y+popWindowHeight > displayY+displayH {
+		y = displayY + displayH - popWindowHeight
+	}
+	return x, y
+}
+
 func (w *WindowService) ShowPopWindow() {
-	// 获取鼠标位置
 	mouseX, mouseY := robotgo.Location()
-	println("Mouse Position:", mouseX, mouseY)
-
-	// 获取屏幕数量
 	num := robotgo.DisplaysNum()
-	println("\nTotal Displays:", num)
-
-	// 获取所有屏幕信息
-	println("\nDisplay Information:")
-	println("-------------------")
 	for i := 0; i < num; i++ {
 		x, y, width, height := robotgo.GetDisplayBounds(i)
-		println(fmt.Sprintf("Display %d:", i))
-		println(fmt.Sprintf("  Position: (%d, %d)", x, y))
-		println(fmt.Sprintf("  Size: %dx%d", width, height))
-		println(fmt.Sprintf("  Is Mouse Inside: %v", mouseX >= x && mouseX < x+width && mouseY >= y && mouseY < y+height))
-		println("-------------------")
-
-		// 检查鼠标是否在当前屏幕内
 		if mouseX >= x && mouseX < x+width && mouseY >= y && mouseY < y+height {
-			println(fmt.Sprintf("\nSelected Display: %d", i))
-
-			// 窗口尺寸
-			windowWidth := 100
-			windowHeight := 100
-
-			// 在鼠标右上方显示
-			finalX := mouseX
-			finalY := mouseY
-
-			println("\nWindow Position Calculation:")
-			println(fmt.Sprintf("  Initial Position: (%d, %d)", finalX, finalY))
-
-			// 确保窗口在当前屏幕范围内
-			if finalX < x {
-				finalX = x
-			}
-			if finalX+windowWidth > x+width {
-				finalX = x + width - windowWidth
-			}
-			if finalY < y {
-				finalY = y
-			}
-			if finalY+windowHeight > y+height {
-				finalY = y + height - windowHeight
-			}
-
-			println(fmt.Sprintf("  Final Position: (%d, %d)", finalX, finalY))
-
-			// 先隐藏窗口
+			finalX, finalY := clampPositionToDisplay(mouseX, mouseY, x, y, width, height)
 			runtime.WindowHide(w.ctx)
-
-			// 设置窗口位置和大小
-			runtime.WindowSetSize(w.ctx, windowWidth, windowHeight)
+			runtime.WindowSetSize(w.ctx, popWindowWidth, popWindowHeight)
 			runtime.WindowSetPosition(w.ctx, finalX, finalY)
-
-			// 强制窗口显示在正确的显示器上
 			runtime.WindowShow(w.ctx)
 			return
 		}
 	}
 }
 
-// 保持向后兼容的方法
 func (a *App) GetMousePosition() (interface{}, error) {
-	windowSvc := NewWindowService(a.ctx, a)
-	return windowSvc.GetMousePosition()
+	return a.windowSvc.GetMousePosition()
 }
 
 func (a *App) ShowPopWindow() {
-	windowSvc := NewWindowService(a.ctx, a)
-	windowSvc.ShowPopWindow()
+	a.windowSvc.ShowPopWindow()
 }

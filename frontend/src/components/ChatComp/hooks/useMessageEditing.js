@@ -20,10 +20,24 @@ export function useMessageEditing({
   }, []);
 
   const handleChatWithEdit = useCallback(
-    (...args) => {
+    (messages, optionsOrIsNewChat, isEdit, isRegenerate, messageIndex) => {
       setEditingMessageId(null);
       setEditingContent("");
-      handleChat(...args);
+      if (messageIndex !== undefined) {
+        handleChat(messages, {
+          isNewChat: !!optionsOrIsNewChat,
+          isEdit: !!isEdit,
+          isRegenerate: !!isRegenerate,
+          messageIndex,
+        });
+      } else {
+        handleChat(
+          messages,
+          typeof optionsOrIsNewChat === "object" && optionsOrIsNewChat !== null
+            ? optionsOrIsNewChat
+            : { isNewChat: !!optionsOrIsNewChat },
+        );
+      }
     },
     [handleChat],
   );
@@ -38,20 +52,17 @@ export function useMessageEditing({
       (msg) => msg.id === editingMessageId,
     );
     if (messageIndex === -1) return;
-    await handleChatWithEdit(
-      editingContent.trim(),
-      false,
-      true,
-      false,
-      messageIndex,
-    );
     setEditingMessageId(null);
     setEditingContent("");
+    await handleChat(editingContent.trim(), {
+      isEdit: true,
+      messageIndex,
+    });
   }, [
     editingContent,
     editingMessageId,
     chatMessages,
-    handleChatWithEdit,
+    handleChat,
     messageApi,
   ]);
 
@@ -65,15 +76,12 @@ export function useMessageEditing({
       const prevUserMessage = chatMessages[messageIndex - 1];
       if (!prevUserMessage || prevUserMessage.type !== "user") return;
       handleCancelEdit();
-      await handleChatWithEdit(
-        prevUserMessage.content,
-        false,
-        false,
-        true,
+      await handleChat(prevUserMessage.content, {
+        isRegenerate: true,
         messageIndex,
-      );
+      });
     },
-    [isAskLoading, chatMessages, handleChatWithEdit, handleCancelEdit],
+    [isAskLoading, chatMessages, handleChat, handleCancelEdit],
   );
 
   return {

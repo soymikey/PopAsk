@@ -28,14 +28,7 @@ func main() {
 
 	// Create application with options
 	err := wails.Run(&options.App{
-		Title: "PopAsk",
-		// Width:             1024,
-		// Height:            768,
-		// MinWidth:          1024,
-		// MinHeight:         768,
-		// MaxWidth:          1280,
-		// MaxHeight:         800,
-
+		Title:             "PopAsk",
 		MinHeight:         DefaultWindowMinHeight,
 		MinWidth:          DefaultWindowMinWidth,
 		Width:             DefaultWindowWidth,
@@ -57,20 +50,16 @@ func main() {
 		OnBeforeClose:    app.beforeClose,
 		OnShutdown:       app.shutdown,
 		WindowStartState: options.Normal,
-		// AlwaysOnTop:      true,
 		Bind: []interface{}{
 			app,
 		},
-		// Windows platform specific options
 		Windows: &windows.Options{
 			WebviewIsTransparent: false,
 			WindowIsTranslucent:  false,
 			DisableWindowIcon:    false,
-			// DisableFramelessWindowDecorations: false,
-			WebviewUserDataPath: "",
+			WebviewUserDataPath:  "",
 			ZoomFactor:          1.0,
 		},
-		// Mac platform specific options
 		Mac: &mac.Options{
 			TitleBar: &mac.TitleBar{
 				TitlebarAppearsTransparent: false,
@@ -81,8 +70,6 @@ func main() {
 				HideToolbarSeparator:       true,
 			},
 			Appearance: mac.DefaultAppearance,
-			// WebviewIsTransparent: true,
-			// WindowIsTranslucent:  true,
 			About: &mac.AboutInfo{
 				Title:   "PopAsk",
 				Message: "",

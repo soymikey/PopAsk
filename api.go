@@ -7,10 +7,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"time"
 )
 
-// Request/Response structs
 type ChatRequest struct {
 	Message string `json:"message"`
 }
@@ -52,7 +50,6 @@ type ChatResponse struct {
 	Data interface{} `json:"data"`
 }
 
-// APIService API服务
 type APIService struct {
 	BaseService
 	client *http.Client
@@ -70,74 +67,89 @@ func NewAPIService(ctx context.Context, app *App) *APIService {
 	return service
 }
 
-// HTTP request helper functions
-func (api *APIService) makeRequest(requestType, url, token string, payload []byte) ([]byte, error) {
-	api.logSvc.Info("Making %s request to: %s", requestType, url)
-	if api.IsDevelopment() && len(payload) > 0 {
-		api.logSvc.Info("Request body: %s", string(payload))
+type HTTPRequestOptions struct {
+	Method  string
+	URL     string
+	Token   string
+	Payload []byte
+}
+
+func (api *APIService) buildHTTPRequest(opts HTTPRequestOptions) (*http.Request, error) {
+	var body io.Reader
+	if len(opts.Payload) > 0 {
+		body = bytes.NewReader(opts.Payload)
 	}
-
-	var request *http.Request
-	var errReq error
-
-	if payload != nil {
-		requestBody := bytes.NewReader(payload)
-		request, errReq = http.NewRequest(requestType, url, requestBody)
-	} else {
-		request, errReq = http.NewRequest(requestType, url, nil)
-	}
-	if errReq != nil {
-		api.logSvc.Error("NewRequest failed: %v", errReq)
-		return nil, fmt.Errorf("new request: %w", errReq)
-	}
-
-	request.Header.Add("Content-Type", "application/json")
-
-	if token != "" {
-		request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
-	}
-
-	response, err := api.client.Do(request)
+	req, err := http.NewRequest(opts.Method, opts.URL, body)
 	if err != nil {
-		api.logSvc.Error("HTTP request failed: %v", err)
+		return nil, fmt.Errorf("new request: %w", err)
+	}
+	req.Header.Add("Content-Type", "application/json")
+	if opts.Token != "" {
+		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", opts.Token))
+	}
+	return req, nil
+}
+
+func (api *APIService) doRequest(req *http.Request) ([]byte, error) {
+	response, err := api.client.Do(req)
+	if err != nil {
 		return nil, fmt.Errorf("request failed: %w", err)
 	}
 	defer response.Body.Close()
-
 	body, err := io.ReadAll(response.Body)
 	if err != nil {
-		api.logSvc.Error("Read body failed: %v", err)
 		return nil, fmt.Errorf("read body: %w", err)
+	}
+	if response.StatusCode >= 400 {
+		return nil, fmt.Errorf("HTTP %d: %s", response.StatusCode, string(body))
+	}
+	return body, nil
+}
+
+func (api *APIService) makeRequest(opts HTTPRequestOptions) ([]byte, error) {
+	api.logSvc.Info("Making %s request to: %s", opts.Method, opts.URL)
+	if api.IsDevelopment() && len(opts.Payload) > 0 {
+		api.logSvc.Info("Request body: %s", string(opts.Payload))
+	}
+	req, err := api.buildHTTPRequest(opts)
+	if err != nil {
+		api.logSvc.Error("NewRequest failed: %v", err)
+		return nil, err
+	}
+	body, err := api.doRequest(req)
+	if err != nil {
+		api.logSvc.Error("HTTP request failed: %v", err)
+		return nil, err
 	}
 	api.logSvc.Info("HTTP request completed successfully, response size: %d bytes", len(body))
 	if api.IsDevelopment() {
 		api.logSvc.Info("Response body: %s", string(body))
 	}
-
-	if response.StatusCode >= 400 {
-		api.logSvc.Error("HTTP error status: %d", response.StatusCode)
-		return nil, fmt.Errorf("HTTP %d: %s", response.StatusCode, string(body))
-	}
-
 	return body, nil
 }
 
 func (api *APIService) MakeGetRequest(url string, token string) ([]byte, error) {
-	return api.makeRequest("GET", url, token, nil)
+	return api.makeRequest(HTTPRequestOptions{Method: "GET", URL: url, Token: token})
 }
 
 func (api *APIService) MakePostRequest(url, token string, payload []byte) ([]byte, error) {
-	return api.makeRequest("POST", url, token, payload)
+	return api.makeRequest(HTTPRequestOptions{Method: "POST", URL: url, Token: token, Payload: payload})
 }
 
-// chatCompletions calls an OpenAI-compatible chat completions endpoint and returns the first choice content.
-func (api *APIService) chatCompletions(url, token string, messages []map[string]interface{}, model string) (string, error) {
-	req := BianxieChatRequest{Messages: messages, Model: model, Stream: false}
+type ChatCompletionsOptions struct {
+	URL     string
+	Token   string
+	Model   string
+	Messages []map[string]interface{}
+}
+
+func (api *APIService) chatCompletions(opts ChatCompletionsOptions) (string, error) {
+	req := BianxieChatRequest{Messages: opts.Messages, Model: opts.Model, Stream: false}
 	requestBody, err := json.Marshal(req)
 	if err != nil {
 		return "", fmt.Errorf("marshal request: %w", err)
 	}
-	response, err := api.MakePostRequest(url, token, requestBody)
+	response, err := api.MakePostRequest(opts.URL, opts.Token, requestBody)
 	if err != nil {
 		return "", err
 	}
@@ -157,7 +169,6 @@ func (api *APIService) chatCompletions(url, token string, messages []map[string]
 	return resp.Choices[0].Message.Content, nil
 }
 
-// API functions
 func (api *APIService) ChatAPI(message string) (ChatResponse, error) {
 	api.logSvc.Info("Calling ChatAPI with message length: %d", len(message))
 
@@ -199,7 +210,9 @@ func (api *APIService) CustomOpenAIAPI(messages string, apiKey string) (ChatResp
 		api.logSvc.Error("CustomOpenAIAPI unmarshal messages failed: %v", err)
 		return ChatResponse{Code: 400, Data: err.Error()}, fmt.Errorf("unmarshal messages: %w", err)
 	}
-	content, err := api.chatCompletions("https://api.openai.com/v1/chat/completions", apiKey, parsedMessages, "gpt-3.5-turbo")
+	content, err := api.chatCompletions(ChatCompletionsOptions{
+		URL: "https://api.openai.com/v1/chat/completions", Token: apiKey, Model: "gpt-3.5-turbo", Messages: parsedMessages,
+	})
 	if err != nil {
 		api.logSvc.Error("CustomOpenAIAPI failed: %v", err)
 		return ChatResponse{Code: 500, Data: err.Error()}, err
@@ -217,7 +230,7 @@ func (api *APIService) AIBianxieAPI(messages string) (ChatResponse, error) {
 	}
 	url := fmt.Sprintf("%s/v1/chat/completions", api.EnvOrDefault("BIANXIE_URL", "https://api.bianxie.ai"))
 	token := api.EnvOrDefault("BIANXIE_API_KEY", "")
-	content, err := api.chatCompletions(url, token, parsedMessages, "gpt-3.5-turbo")
+	content, err := api.chatCompletions(ChatCompletionsOptions{URL: url, Token: token, Model: "gpt-3.5-turbo", Messages: parsedMessages})
 	if err != nil {
 		api.logSvc.Error("AIBianxieAPI failed: %v", err)
 		return ChatResponse{Code: 500, Data: err.Error()}, err
@@ -235,7 +248,7 @@ func (api *APIService) AIOpenHubAPI(messages string) (ChatResponse, error) {
 	}
 	url := fmt.Sprintf("%s/v1/chat/completions", api.EnvOrDefault("OPENHUB_URL", "https://api.openai-hub.com"))
 	token := api.EnvOrDefault("OPENHUB_API_KEY", "")
-	content, err := api.chatCompletions(url, token, parsedMessages, "gpt-3.5-turbo")
+	content, err := api.chatCompletions(ChatCompletionsOptions{URL: url, Token: token, Model: "gpt-3.5-turbo", Messages: parsedMessages})
 	if err != nil {
 		api.logSvc.Error("AIOpenHubAPI failed: %v", err)
 		return ChatResponse{Code: 500, Data: err.Error()}, err

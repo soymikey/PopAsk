@@ -42,26 +42,26 @@ function ShortcutComp({
   });
   const shortcut = localPrompt?.shortcut ?? "";
   const lastPlusIndex = shortcut.lastIndexOf("+");
-  const defaultP1 =
+  const shortcutModifier =
     lastPlusIndex >= 0
       ? shortcut.substring(0, lastPlusIndex)
       : shortcut || (isMac ? "cmd+shift" : "ctrl+shift");
-  const defaultP2 =
+  const shortcutKey =
     lastPlusIndex >= 0 ? shortcut.substring(lastPlusIndex + 1) : "";
 
-  const handleP1Change = (value) => {
+  const handleModifierChange = (value) => {
     updatePromptShortcut(value);
   };
 
-  const handleChange = (e) => {
+  const handleKeyChange = (e) => {
     const inputValue = e.target.value;
     if (inputValue.length === 0) {
-      updatePromptShortcut(defaultP1);
+      updatePromptShortcut(shortcutModifier);
       return;
     }
     const lastChar = inputValue.slice(-1).toLowerCase();
     if (/^[a-zA-Z0-9]$/.test(lastChar)) {
-      updatePromptShortcut(`${defaultP1}+${lastChar}`);
+      updatePromptShortcut(`${shortcutModifier}+${lastChar}`);
     }
   };
 
@@ -104,27 +104,35 @@ function ShortcutComp({
     setIsEditing(true);
   };
 
+  const removeNewEmptyCustom = () => {
+    setLocalPromptList(localPromptList.filter((_, i) => i !== index));
+  };
+
+  const revertToSnapshotAndExitEdit = () => {
+    setLocalPromptList(
+      localPromptList.map((prompt, i) =>
+        i === index
+          ? {
+              ...prompt,
+              label: editSnapshot.label,
+              value: editSnapshot.value,
+              shortcut: editSnapshot.shortcut,
+            }
+          : prompt,
+      ),
+    );
+    setIsEditing(false);
+  };
+
   const handleCancel = () => {
     const isNewEmptyCustom =
       localPrompt?.id?.startsWith?.("custom_") &&
       !editSnapshot.label?.trim() &&
       !editSnapshot.value?.trim();
     if (isNewEmptyCustom) {
-      setLocalPromptList(localPromptList.filter((_, i) => i !== index));
+      removeNewEmptyCustom();
     } else {
-      setLocalPromptList(
-        localPromptList.map((prompt, i) =>
-          i === index
-            ? {
-                ...prompt,
-                label: editSnapshot.label,
-                value: editSnapshot.value,
-                shortcut: editSnapshot.shortcut,
-              }
-            : prompt,
-        ),
-      );
-      setIsEditing(false);
+      revertToSnapshotAndExitEdit();
     }
   };
 
@@ -155,8 +163,8 @@ function ShortcutComp({
 
   const selectBefore = (
     <Select
-      value={defaultP1}
-      onChange={handleP1Change}
+      value={shortcutModifier}
+      onChange={handleModifierChange}
       className={styles.shortcutCompSelectBefore}
       size="middle"
     >
@@ -249,9 +257,9 @@ function ShortcutComp({
             <Text type="secondary" className={styles.shortcutCompShortcutLabel}>
               Shortcut:
             </Text>
-            {defaultP2 && (
+            {shortcutKey && (
               <Tag color="blue" className={styles.shortcutCompTag}>
-                {formatShortcutDisplay(`${defaultP1}+${defaultP2}`)}
+                {formatShortcutDisplay(`${shortcutModifier}+${shortcutKey}`)}
               </Tag>
             )}
           </div>
@@ -261,8 +269,8 @@ function ShortcutComp({
               disabled={!isEditing}
               className={styles.shortcutCompInputShortcut}
               addonBefore={selectBefore}
-              value={defaultP2}
-              onChange={handleChange}
+              value={shortcutKey}
+              onChange={handleKeyChange}
               placeholder="key"
               size="middle"
             />

@@ -38,6 +38,14 @@ import { formatShortcutDisplay } from "../../utils";
 const { TextArea } = Input;
 const { Title, Text } = Typography;
 
+function getOptionSearchText(option) {
+  const label =
+    option?.label?.props?.children?.[0]?.props?.children?.[0]?.props
+      ?.children ?? "";
+  const value = option?.value ?? "";
+  return `${label} ${value}`.trim();
+}
+
 const ChatComp = ({
   activeKey,
   setActiveKey,
@@ -242,16 +250,11 @@ const ChatComp = ({
                   options={promptSelectOptions}
                   value={selectedPrompt}
                   showSearch
-                  filterOption={(input, option) => {
-                    const label =
-                      option.label?.props?.children?.[0]?.props?.children?.[0]
-                        ?.props?.children || "";
-                    const value = option.value || "";
-                    return (
-                      label.toLowerCase().includes(input.toLowerCase()) ||
-                      value.toLowerCase().includes(input.toLowerCase())
-                    );
-                  }}
+                  filterOption={(input, option) =>
+                    getOptionSearchText(option)
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
                 />
               </div>
               <div className={styles.recentPromptsRow}>

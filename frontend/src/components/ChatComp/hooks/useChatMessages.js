@@ -9,8 +9,6 @@ import {
 } from "../../../utils";
 import { DEFAULT_DAILY_LIMIT } from "../../../constant";
 
-// Normalize backend response.data to display string. Handles both plain string
-// and stringified JSON like {"role":"assistant","content":"..."}.
 function normalizeResponseData(data) {
   if (data == null) return "";
   if (typeof data === "string") {
@@ -25,6 +23,43 @@ function normalizeResponseData(data) {
   if (typeof data === "object" && typeof data.content === "string")
     return data.content;
   return String(data);
+}
+
+function validateChatRequest(messages, isAskLoading, usageInfo, messageApi) {
+  if (isAskLoading) {
+    messageApi.open({
+      type: "warning",
+      content: "Please wait for the current request to complete",
+    });
+    return false;
+  }
+  if (!messages.trim()) {
+    messageApi.open({ type: "warning", content: "Please enter a message" });
+    return false;
+  }
+  if (!usageInfo.canUse) {
+    messageApi.open({
+      type: "warning",
+      content: `Daily usage limit reached (${usageInfo.limit} times), please try again tomorrow`,
+    });
+    return false;
+  }
+  return true;
+}
+
+function buildChatMessages(currentMessages, messages, options) {
+  const { isNewChat, isEdit, isRegenerate, messageIndex } = options;
+  if (isNewChat) return [userMessageGenerator(messages)];
+  if (isEdit && messageIndex !== -1) {
+    return [
+      ...currentMessages.slice(0, messageIndex),
+      userMessageGenerator(messages),
+    ];
+  }
+  if (isRegenerate && messageIndex != null && messageIndex >= 0) {
+    return [...currentMessages.slice(0, messageIndex)];
+  }
+  return [...currentMessages, userMessageGenerator(messages)];
 }
 
 export function useChatMessages(chatMessages, setChatMessages, messageApi) {
@@ -53,71 +88,45 @@ export function useChatMessages(chatMessages, setChatMessages, messageApi) {
   const stopRequest = useCallback(() => {
     isRequestCancelledRef.current = true;
     setIsAskLoading(false);
-    messageApi.open({
-      type: "info",
-      content: "Request stopped",
-    });
+    messageApi.open({ type: "info", content: "Request stopped" });
   }, [messageApi]);
 
   const handleChat = useCallback(
-    async (
-      messages,
-      isNewChat = false,
-      isEdit = false,
-      isRegenerate = false,
-      messageIndex = null
-    ) => {
-      if (isAskLoading) {
-        messageApi.open({
-          type: "warning",
-          content: "Please wait for the current request to complete",
-        });
-        return;
-      }
-      if (!messages.trim()) {
-        messageApi.open({
-          type: "warning",
-          content: "Please enter a message",
-        });
-        return;
-      }
+    async (messages, options = {}) => {
+      const {
+        isNewChat = false,
+        isEdit = false,
+        isRegenerate = false,
+        messageIndex = null,
+      } = typeof options === "object" && options !== null
+        ? options
+        : { isNewChat: !!options };
 
       const usageInfo = checkDailyUsageLimit(DEFAULT_DAILY_LIMIT);
-      if (!usageInfo.canUse) {
-        messageApi.open({
-          type: "warning",
-          content: `Daily usage limit reached (${usageInfo.limit} times), please try again tomorrow`,
-        });
+      if (
+        !validateChatRequest(
+          messages,
+          isAskLoading,
+          usageInfo,
+          messageApi,
+        )
+      ) {
         return;
       }
 
       isRequestCancelledRef.current = false;
-
-      let newChatMessages = [];
-      if (isNewChat) {
-        newChatMessages = [userMessageGenerator(messages)];
-      } else if (isEdit) {
-        if (messageIndex === -1) return;
-        newChatMessages = [
-          ...chatMessagesRef.current.slice(0, messageIndex),
-          userMessageGenerator(messages),
-        ];
-      } else if (isRegenerate) {
-        if (messageIndex == null || messageIndex < 0) return;
-        newChatMessages = [...chatMessagesRef.current.slice(0, messageIndex)];
-      } else {
-        newChatMessages = [
-          ...chatMessagesRef.current,
-          userMessageGenerator(messages),
-        ];
-      }
+      const newChatMessages = buildChatMessages(
+        chatMessagesRef.current,
+        messages,
+        { isNewChat, isEdit, isRegenerate, messageIndex },
+      );
       setChatMessages(newChatMessages);
       setIsAskLoading(true);
 
       try {
-        const params = newChatMessages.map((message) => ({
-          role: message.type,
-          content: message.content,
+        const params = newChatMessages.map((m) => ({
+          role: m.type,
+          content: m.content,
         }));
         const key = openAIKeyRef.current?.trim() ?? "";
         const response =
@@ -131,33 +140,28 @@ export function useChatMessages(chatMessages, setChatMessages, messageApi) {
         if (response.code === 200) {
           const newCount = incrementDailyUsageCount();
           const content = normalizeResponseData(response.data);
-          const assistantMessage = assistantMessageGenerator(content);
-          setChatMessages((prev) => [...prev, assistantMessage]);
+          setChatMessages((prev) => [...prev, assistantMessageGenerator(content)]);
 
           const prompt = promptList.find(
-            (p) => p.value === selectedPromptRef.current
+            (p) => p.value === selectedPromptRef.current,
           );
           if (prompt) {
             setRecentPrompts((prev) => {
-              const filteredPrompts = prev.filter(
-                (p) => p.label !== prompt.label
-              );
-              return [prompt, ...filteredPrompts].slice(0, 12);
+              const filtered = prev.filter((p) => p.label !== prompt.label);
+              return [prompt, ...filtered].slice(0, 12);
             });
           }
-
-          const remainingCount = DEFAULT_DAILY_LIMIT - newCount;
-          if (remainingCount <= 2) {
+          const remaining = DEFAULT_DAILY_LIMIT - newCount;
+          if (remaining <= 2) {
             messageApi.open({
               type: "info",
-              content: `Remaining daily usage: ${remainingCount} times`,
+              content: `Remaining daily usage: ${remaining} times`,
             });
           }
         } else {
-          const errContent = normalizeResponseData(response.data);
           messageApi.open({
             type: "error",
-            content: errContent,
+            content: normalizeResponseData(response.data),
           });
         }
       } catch (error) {
@@ -175,7 +179,7 @@ export function useChatMessages(chatMessages, setChatMessages, messageApi) {
       setChatMessages,
       promptList,
       setRecentPrompts,
-    ]
+    ],
   );
 
   return { handleChat, isAskLoading, stopRequest };

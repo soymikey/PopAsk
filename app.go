@@ -10,11 +10,9 @@ import (
 const COMMAND_KEY_CODE = 3675
 const SPACE_KEY_CODE = 57
 
-// App struct
 type App struct {
-	ctx         context.Context
-	hardwareSvc *HardwareService
-	// 服务字段
+	ctx           context.Context
+	hardwareSvc   *HardwareService
 	screenshotSvc *ScreenshotService
 	promptSvc     *PromptService
 	clipboardSvc  *ClipboardService
@@ -32,39 +30,19 @@ func NewApp() *App {
 	}
 }
 
-// startup is called at application startup
-func (a *App) startup(ctx context.Context) {
-	a.logSvc.Info("Starting PopAsk application=========")
+func (a *App) initServices(ctx context.Context) {
 	a.ctx = ctx
-
-	a.logSvc.Info("Initializing services...")
 	a.hardwareSvc = NewHardwareService(ctx, a)
-	a.logSvc.Info("HardwareService initialized")
-
-	// 初始化服务
 	a.screenshotSvc = NewScreenshotService(ctx, a)
-	a.logSvc.Info("ScreenshotService initialized")
-
 	a.promptSvc = NewPromptService(ctx, a)
-	a.logSvc.Info("PromptService initialized")
-
 	a.clipboardSvc = NewClipboardService(ctx, a)
-	a.logSvc.Info("ClipboardService initialized")
-
 	a.shortcutSvc = NewShortcutService(ctx, a)
-	a.logSvc.Info("ShortcutService initialized")
-
 	a.apiSvc = NewAPIService(ctx, a)
-	a.logSvc.Info("APIService initialized")
-
 	a.windowSvc = NewWindowService(ctx, a)
-	a.logSvc.Info("WindowService initialized")
-
 	a.networkSvc = NewNetworkService(ctx, a)
-	a.logSvc.Info("NetworkService initialized")
+}
 
-	a.logSvc.Info("All services initialized successfully")
-
+func (a *App) registerSyncShortcutList(ctx context.Context) {
 	runtime.EventsOn(ctx, "syncShortcutList", func(data ...interface{}) {
 		if len(data) > 0 {
 			if s, ok := data[0].(string); ok {
@@ -74,7 +52,13 @@ func (a *App) startup(ctx context.Context) {
 			}
 		}
 	})
+}
 
+func (a *App) startup(ctx context.Context) {
+	a.logSvc.Info("Starting PopAsk application")
+	a.initServices(ctx)
+	a.logSvc.Info("All services initialized successfully")
+	a.registerSyncShortcutList(ctx)
 	a.logSvc.Info("PopAsk application startup completed")
 }
 
@@ -82,13 +66,7 @@ func (a *App) startup(ctx context.Context) {
 func (a *App) domReady(ctx context.Context) {
 }
 
-// beforeClose is called when the application is about to quit,
-// either by clicking the window close button or calling runtime.Quit.
-// Returning true will cause the application to continue, false will continue shutdown as normal.
 func (a *App) beforeClose(ctx context.Context) (prevent bool) {
-	// 隐藏窗口而不是关闭应用
-	// runtime.WindowHide(ctx)
-	// return true // 阻止窗口关闭
 	return false
 }
 
