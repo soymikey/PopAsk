@@ -223,21 +223,6 @@ func (api *APIService) AIOpenHubAPI(messages string) (ChatResponse, error) {
 	return ChatResponse{Code: 200, Data: openHubResp.Choices[0].Message.Content}, nil
 }
 
-// 保持向后兼容的方法
-func makeRequest(requestType, url, token string, payload []byte) ([]byte, error) {
-	apiSvc := NewAPIService(context.Background(), nil)
-	return apiSvc.makeRequest(requestType, url, token, payload)
-}
-
-func MakeGetRequest(url string, token string) ([]byte, error) {
-	apiSvc := NewAPIService(context.Background(), nil)
-	return apiSvc.MakeGetRequest(url, token)
-}
-
-func MakePostRequest(url, token string, payload []byte) ([]byte, error) {
-	apiSvc := NewAPIService(context.Background(), nil)
-	return apiSvc.MakePostRequest(url, token, payload)
-}
 
 func (a *App) ChatAPI(message string) (ChatResponse, error) {
 	apiSvc := NewAPIService(a.ctx, a)
