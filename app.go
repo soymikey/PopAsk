@@ -34,7 +34,7 @@ func NewApp() *App {
 
 // startup is called at application startup
 func (a *App) startup(ctx context.Context) {
-	a.logSvc.Info("Starting PopAsk application")
+	a.logSvc.Info("Starting PopAsk application=========")
 	a.ctx = ctx
 
 	a.logSvc.Info("Initializing services...")

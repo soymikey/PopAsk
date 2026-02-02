@@ -24,9 +24,11 @@ import {
 } from "./constant";
 import { useEffect, useState } from "react";
 import { EventsEmit } from "../wailsjs/runtime/runtime";
+import { IsMac } from "../wailsjs/go/main/App";
 import "./app.css";
 
 const App = () => {
+  const [isMac, setIsMac] = useState(false);
   const [promptList, setPromptList] = useLocalStorage(
     PROMPT_LIST_KEY,
     DEFAULT_PROMPT_OPTIONS,
@@ -35,6 +37,14 @@ const App = () => {
     SYSTEM_SHORTCUT_KEY,
     DEFAULT_SHORTCUT_LIST,
   );
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window?.go?.main?.App?.IsMac) {
+      IsMac()
+        .then(setIsMac)
+        .catch(() => setIsMac(false));
+    }
+  }, []);
 
   // history
   const [historyList, setHistoryList] = useLocalStorage(
@@ -163,6 +173,7 @@ const App = () => {
       children: (
         <SettingsComp
           activeKey={activeKey}
+          isMac={isMac}
           promptList={promptList}
           setPromptList={setPromptList}
           systemShortcuts={systemShortcuts}

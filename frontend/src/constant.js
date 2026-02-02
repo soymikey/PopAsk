@@ -108,16 +108,17 @@ export const OCR_LANGUAGE_OPTIONS = OCR_LANGUAGE.map((item) => ({
     label: item.lang,
 }));
 
+// 预设不绑定快捷键，避免与浏览器等冲突；用户可在设置中自行定义
 export const DEFAULT_PROMPT_OPTIONS = [
-    { label: "翻译成中文", value: "请将以下文本翻译成中文，保持原文的语气和风格：\n", shortcut: "ctrl+shift+1" },
-    { label: "语法检查与润色", value: "请检查并改进以下文本的语法、用词和表达，使其更清晰流畅：\n", shortcut: "ctrl+shift+2" },
-    { label: "代码解释", value: "请详细解释以下代码的功能和逻辑，包括每个重要部分的作用：\n", shortcut: "ctrl+shift+3" },
-    { label: "邮件回复", value: "请帮我写一封专业的邮件回复，语气礼貌得体：\n", shortcut: "ctrl+shift+4" },
-    { label: "内容总结", value: "请对以下内容进行简洁的总结，提取关键信息：\n", shortcut: "ctrl+shift+5" },
-    { label: "问题回答", value: "请详细准确地回答以下问题：\n", shortcut: "ctrl+shift+6" },
-    { label: "创意写作", value: "请根据以下主题或材料创作创意内容：\n", shortcut: "ctrl+shift+7" },
-    { label: "数据分析", value: "请分析以下数据并提供见解和建议：\n", shortcut: "ctrl+shift+8" },
-    { label: "学习指导", value: "请为以下学习内容提供详细的学习指导和重点总结：\n", shortcut: "ctrl+shift+9" },
+    { label: "翻译成中文", value: "请将以下文本翻译成中文，保持原文的语气和风格：\n", shortcut: "" },
+    // { label: "语法检查与润色", value: "请检查并改进以下文本的语法、用词和表达，使其更清晰流畅：\n", shortcut: "" },
+    // { label: "代码解释", value: "请详细解释以下代码的功能和逻辑，包括每个重要部分的作用：\n", shortcut: "" },
+    // { label: "邮件回复", value: "请帮我写一封专业的邮件回复，语气礼貌得体：\n", shortcut: "" },
+    // { label: "内容总结", value: "请对以下内容进行简洁的总结，提取关键信息：\n", shortcut: "" },
+    // { label: "问题回答", value: "请详细准确地回答以下问题：\n", shortcut: "" },
+    // { label: "创意写作", value: "请根据以下主题或材料创作创意内容：\n", shortcut: "" },
+    // { label: "数据分析", value: "请分析以下数据并提供见解和建议：\n", shortcut: "" },
+    // { label: "学习指导", value: "请为以下学习内容提供详细的学习指导和重点总结：\n", shortcut: "" },
 ]
 
 export const DEFAULT_PROMPT_OPTIONS_VALUE = DEFAULT_PROMPT_OPTIONS[0].value;
@@ -168,17 +169,8 @@ export const DEFAULT_PROMPT_LIST = [];
 export const SELECTED_PROMPT_KEY = "selectedPrompt";
 export const SYSTEM_SHORTCUT_KEY = "systemShortcuts";
 export const DEFAULT_SHORTCUT_LIST = [
-    {
-        label: "Open Window",
-        value: "Open Window",
-        shortcut: "ctrl+shift+q",
-    },
-    {
-        label: "ORC",
-        value: "ORC",
-        shortcut: "ctrl+shift+o",
-    },
-
+    { label: "Open Window", value: "Open Window", shortcut: "" },
+    { label: "ORC", value: "ORC", shortcut: "" },
 ];
 
 export const HISTORY_LIST_KEY = "historyList";

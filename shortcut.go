@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	goRuntime "runtime"
 	"strings"
 	"time"
 
@@ -53,10 +54,17 @@ func (s *ShortcutService) RegisterKeyboardShortcut() {
 
 	// Start new hook listener
 	s.hookChan = make(chan hook.Event)
-	seenShortcut := make(map[string]bool) // 同一快捷键只注册一次，避免触发两次
+	seenShortcut := make(map[string]bool)
+	var registeredList, skippedList []string
 	for _, prompt := range s.shortcutList {
 		shortcutStr, ok := prompt["shortcut"].(string)
 		if !ok || shortcutStr == "" {
+			continue
+		}
+		// Mac 上只监听 cmd，不监听 ctrl（大小写不敏感）
+		if goRuntime.GOOS == "darwin" && strings.Contains(strings.ToLower(shortcutStr), "ctrl") {
+			s.logSvc.Info("Skipping ctrl shortcut on macOS: %s", shortcutStr)
+			skippedList = append(skippedList, shortcutStr)
 			continue
 		}
 		if seenShortcut[shortcutStr] {
@@ -68,8 +76,27 @@ func (s *ShortcutService) RegisterKeyboardShortcut() {
 		if !ok {
 			continue
 		}
-		shortcut := strings.Split(shortcutStr, "+")
-		s.logSvc.Info("Registering shortcut: %s for action: %s", shortcutStr, valueStr)
+		parts := strings.Split(shortcutStr, "+")
+		shortcut := make([]string, 0, len(parts))
+		for _, p := range parts {
+			if k := strings.TrimSpace(p); k != "" {
+				shortcut = append(shortcut, k)
+			}
+		}
+		if len(shortcut) == 0 {
+			s.logSvc.Info("Skipping empty shortcut: %s", shortcutStr)
+			continue
+		}
+		// Windows/Linux 无 Command 键，配置里的 cmd 映射为 ctrl
+		if goRuntime.GOOS != "darwin" {
+			for i, k := range shortcut {
+				if strings.ToLower(k) == "cmd" {
+					shortcut[i] = "ctrl"
+				}
+			}
+		}
+		s.logSvc.Info("Registering shortcut: %s -> hook keys: %v for action: %s", shortcutStr, shortcut, valueStr)
+		registeredList = append(registeredList, shortcutStr)
 
 		// 创建局部变量避免闭包问题（类型已校验）
 		shortcutKey := shortcutStr
@@ -149,7 +176,11 @@ func (s *ShortcutService) RegisterKeyboardShortcut() {
 		})
 	}
 
-	s.logSvc.Info("Successfully registered %d keyboard shortcuts", len(s.shortcutList))
+	s.logSvc.Info("Shortcuts listened (registered): %v", registeredList)
+	if len(skippedList) > 0 {
+		s.logSvc.Info("Shortcuts skipped on macOS (ctrl): %v", skippedList)
+	}
+	s.logSvc.Info("Successfully registered %d keyboard shortcuts", len(registeredList))
 	// Start processing in a goroutine to avoid blocking
 	go func() {
 		s := hook.Start()

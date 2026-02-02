@@ -1,5 +1,7 @@
-import { Input, Select, Card, Space, Typography, Tag } from "antd";
+import { Input, Select, Card, Space, Typography, Tag, Button, message, Modal } from "antd";
 const { Option } = Select;
+const { TextArea } = Input;
+import { EditOutlined, CheckOutlined, CloseOutlined, DeleteOutlined } from "@ant-design/icons";
 import React, { useEffect, useState } from "react";
 
 const { Text } = Typography;
@@ -9,8 +11,16 @@ function ShortcutComp({
   setLocalPromptList,
   localPromptList,
   isShowDragIcon,
+  isMac = false,
+  index = 0,
+  initialEditMode = false,
+  onEditModeConsumed,
 }) {
-  const [defaultP1, setDefaultP1] = useState("ctrl+shift");
+  const [isEditing, setIsEditing] = useState(false);
+  const [editSnapshot, setEditSnapshot] = useState({ label: "", value: "" });
+  const [defaultP1, setDefaultP1] = useState(
+    isMac ? "cmd+shift" : "ctrl+shift",
+  );
   const [defaultP2, setDefaultP2] = useState("");
 
   const handleP1Change = (value) => {
@@ -37,12 +47,70 @@ function ShortcutComp({
     }
   };
 
-  const updatePromptShortcut = (shortcut) => {
+  const updatePrompt = (field, value) => {
     setLocalPromptList(
-      localPromptList.map((prompt) =>
-        prompt.value === localPrompt.value ? { ...prompt, shortcut } : prompt
-      )
+      localPromptList.map((prompt, i) =>
+        i === index ? { ...prompt, [field]: value } : prompt,
+      ),
     );
+  };
+
+  const updatePromptShortcut = (shortcut) => {
+    updatePrompt("shortcut", shortcut);
+  };
+
+  const handleDone = () => {
+    const name = (localPrompt?.label ?? "").trim();
+    const content = (localPrompt?.value ?? "").trim();
+    if (!name) {
+      message.warning("Name is required.");
+      return;
+    }
+    if (!content) {
+      message.warning("Prompt content is required.");
+      return;
+    }
+    setIsEditing(false);
+  };
+
+  const handleStartEdit = () => {
+    setEditSnapshot({
+      label: localPrompt?.label ?? "",
+      value: localPrompt?.value ?? "",
+    });
+    setIsEditing(true);
+  };
+
+  const handleCancel = () => {
+    const isNewEmptyCustom =
+      localPrompt?.id?.startsWith?.("custom_") &&
+      !editSnapshot.label?.trim() &&
+      !editSnapshot.value?.trim();
+    if (isNewEmptyCustom) {
+      setLocalPromptList(localPromptList.filter((_, i) => i !== index));
+    } else {
+      setLocalPromptList(
+        localPromptList.map((prompt, i) =>
+          i === index
+            ? { ...prompt, label: editSnapshot.label, value: editSnapshot.value }
+            : prompt,
+        ),
+      );
+      setIsEditing(false);
+    }
+  };
+
+  const handleDelete = () => {
+    Modal.confirm({
+      title: "Delete this prompt?",
+      content: "This action cannot be undone.",
+      okText: "Delete",
+      okType: "danger",
+      cancelText: "Cancel",
+      onOk: () => {
+        setLocalPromptList(localPromptList.filter((_, i) => i !== index));
+      },
+    });
   };
 
   useEffect(() => {
@@ -52,8 +120,21 @@ function ShortcutComp({
       const p2 = localPrompt.shortcut.substring(lastPlusIndex + 1);
       setDefaultP1(p1);
       setDefaultP2(p2);
+    } else {
+      setDefaultP1(isMac ? "cmd+shift" : "ctrl+shift");
     }
-  }, [localPrompt]);
+  }, [localPrompt, isMac]);
+
+  useEffect(() => {
+    if (initialEditMode) {
+      setIsEditing(true);
+      setEditSnapshot({
+        label: localPrompt?.label ?? "",
+        value: localPrompt?.value ?? "",
+      });
+      onEditModeConsumed?.();
+    }
+  }, [initialEditMode]);
 
   const selectBefore = (
     <Select
@@ -62,8 +143,17 @@ function ShortcutComp({
       style={{ width: "120px" }}
       size="middle"
     >
-      <Option value="ctrl+shift">Ctrl+Shift</Option>
-      <Option value="ctrl">Ctrl</Option>
+      {isMac ? (
+        <>
+          <Option value="cmd+shift">⌘+Shift</Option>
+          <Option value="cmd">⌘</Option>
+        </>
+      ) : (
+        <>
+          <Option value="ctrl+shift">Ctrl+Shift</Option>
+          <Option value="ctrl">Ctrl</Option>
+        </>
+      )}
     </Select>
   );
 
@@ -89,29 +179,76 @@ function ShortcutComp({
         style={{ width: "100%", justifyContent: "space-between" }}
         size="small"
       >
-        {/* Title and Description */}
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <div>
-            <Text
-              strong
-              style={{
-                fontSize: "14px",
-                display: "block",
-                marginBottom: "4px",
-              }}
-            >
-              {localPrompt?.label}
-            </Text>
-            <Text
-              type="secondary"
-              style={{
-                fontSize: "12px",
-                lineHeight: "1.4",
-              }}
-            >
-              {localPrompt?.value}
-            </Text>
-          </div>
+        {/* Title and Description - view / edit mode */}
+        <div style={{ flex: 1, minWidth: 0 }}>
+          {isEditing ? (
+            <>
+              <Input
+                value={localPrompt?.label ?? ""}
+                onChange={(e) => updatePrompt("label", e.target.value)}
+                placeholder="Name"
+                style={{ marginBottom: "8px", fontWeight: 600 }}
+              />
+              <TextArea
+                value={localPrompt?.value ?? ""}
+                onChange={(e) => updatePrompt("value", e.target.value)}
+                placeholder="Prompt content"
+                autoSize={{ minRows: 2, maxRows: 6 }}
+                style={{ fontSize: "12px", marginBottom: "8px" }}
+              />
+              <Space>
+                <Button
+                  type="primary"
+                  size="small"
+                  icon={<CheckOutlined />}
+                  onClick={handleDone}
+                >
+                  Done
+                </Button>
+                <Button
+                  size="small"
+                  icon={<CloseOutlined />}
+                  onClick={handleCancel}
+                >
+                  Cancel
+                </Button>
+              </Space>
+            </>
+          ) : (
+            <div style={{ display: "flex", alignItems: "flex-start", gap: "8px" }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <Text
+                  strong
+                  style={{ fontSize: "14px", display: "block", marginBottom: "4px" }}
+                >
+                  {localPrompt?.label || "—"}
+                </Text>
+                <Text
+                  type="secondary"
+                  style={{ fontSize: "12px", lineHeight: "1.4", whiteSpace: "pre-wrap" }}
+                >
+                  {localPrompt?.value || "—"}
+                </Text>
+              </div>
+              <Space size="small">
+                <Button
+                  type="text"
+                  size="small"
+                  icon={<EditOutlined />}
+                  onClick={handleStartEdit}
+                  title="Edit"
+                />
+                <Button
+                  type="text"
+                  size="small"
+                  danger
+                  icon={<DeleteOutlined />}
+                  onClick={handleDelete}
+                  title="Delete"
+                />
+              </Space>
+            </div>
+          )}
         </div>
 
         {/* Shortcut Input */}

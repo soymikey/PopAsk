@@ -17,7 +17,7 @@ import {
   DEFAULT_PROMPT_LIST,
 } from "../../constant";
 import { OCR_LANGUAGE_OPTIONS } from "../../constant";
-import { InfoCircleOutlined, SaveOutlined } from "@ant-design/icons";
+import { InfoCircleOutlined, SaveOutlined, PlusOutlined } from "@ant-design/icons";
 import { checkDailyUsageLimit } from "../../utils";
 
 const { Title, Text } = Typography;
@@ -33,11 +33,13 @@ function SettingsComp({
   ORCLang,
   setORCLang,
   activeKey,
+  isMac = false,
 }) {
   const [localORCLang, setLocalORCLang] = useState(DEFAULT_ORC_LANG);
 
   const [localPromptList, setLocalPromptList] = useState(DEFAULT_PROMPT_LIST);
   const [localSystemShortcuts, setLocalSystemShortcuts] = useState([]);
+  const [newlyAddedPromptId, setNewlyAddedPromptId] = useState(null);
 
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -96,11 +98,21 @@ function SettingsComp({
     const items = Array.from(localPromptList);
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
-    // 如果顺序没有变化，则不更新
-    if (JSON.stringify(items) === JSON.stringify(localPromptList)) {
+    if (JSON.stringify(items) === JSON.stringify(localPromptList)) return;
+    setLocalPromptList(items);
+  };
+
+  const addCustomPrompt = () => {
+    const hasIncompleteCustom = localPromptList.some(
+      (p) => p?.id?.startsWith?.("custom_") && (!p.label?.trim() || !p.value?.trim()),
+    );
+    if (hasIncompleteCustom) {
+      messageApi.warning("Finish editing the current custom prompt (name and content) first.");
       return;
     }
-    setLocalPromptList(items);
+    const newItem = { id: `custom_${Date.now()}`, label: "", value: "", shortcut: "" };
+    setNewlyAddedPromptId(newItem.id);
+    setLocalPromptList([newItem, ...localPromptList]);
   };
 
   useEffect(() => {
@@ -128,12 +140,18 @@ function SettingsComp({
   }, [activeKey]);
 
   return (
-    <div>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+        minHeight: 0,
+      }}
+    >
       {contextHolder}
 
-      <div style={{ width: "100%", position: "relative" }}>
+      <div style={{ flex: 1, overflowY: "auto", minHeight: 0 }}>
         {/* Usage Statistics */}
-
         <Card
           title={
             <Space>
@@ -227,9 +245,11 @@ function SettingsComp({
             {localSystemShortcuts.map((item, index) => (
               <ShortcutComp
                 isShowDragIcon={false}
+                isMac={isMac}
                 localPrompt={item}
                 setLocalPromptList={setLocalSystemShortcuts}
                 localPromptList={localSystemShortcuts}
+                index={index}
                 key={index}
               />
             ))}
@@ -256,6 +276,11 @@ function SettingsComp({
               </span>
             </Space>
           }
+          extra={
+            <Button type="dashed" size="small" icon={<PlusOutlined />} onClick={addCustomPrompt}>
+              Add custom prompt
+            </Button>
+          }
           size="small"
         >
           <DragDropContext onDragEnd={handleDragEnd}>
@@ -269,8 +294,8 @@ function SettingsComp({
                   >
                     {localPromptList.map((prompt, index) => (
                       <Draggable
-                        key={prompt.value || index}
-                        draggableId={prompt.value || index.toString()}
+                        key={prompt.id || prompt.value || index}
+                        draggableId={String(prompt.id || prompt.value || index)}
                         index={index}
                       >
                         {(provided, snapshot) => (
@@ -285,9 +310,13 @@ function SettingsComp({
                           >
                             <ShortcutComp
                               isShowDragIcon={true}
+                              isMac={isMac}
                               localPrompt={prompt}
                               setLocalPromptList={setLocalPromptList}
                               localPromptList={localPromptList}
+                              index={index}
+                              initialEditMode={prompt?.id === newlyAddedPromptId}
+                              onEditModeConsumed={() => setNewlyAddedPromptId(null)}
                             />
                           </div>
                         )}
@@ -308,21 +337,20 @@ function SettingsComp({
             </Droppable>
           </DragDropContext>
         </Card>
+      </div>
 
-        {/* Save Button */}
-        <div
-          style={{
-            position: "sticky",
-            bottom: 0,
-            padding: "16px 0",
-            marginTop: "16px",
-            textAlign: "center",
-            zIndex: 10,
-            display: "flex",
-            justifyContent: "space-evenly",
-            backgroundColor: "#f5f5f5",
-          }}
-        >
+      {/* Save Button - pinned to bottom */}
+      <div
+        style={{
+          flexShrink: 0,
+          padding: "16px 0",
+          marginTop: "16px",
+          textAlign: "center",
+          display: "flex",
+          justifyContent: "space-evenly",
+          backgroundColor: "#f5f5f5",
+        }}
+      >
           <Button type="default" onClick={showShortcutGuide}>
             📋 View Shortcut Guide
           </Button>
@@ -335,7 +363,7 @@ function SettingsComp({
             Save Settings
           </Button>
         </div>
-      </div>
+   
     </div>
   );
 }

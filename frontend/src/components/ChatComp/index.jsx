@@ -7,7 +7,6 @@ import {
   Spin,
   Tag,
   Tooltip,
-  Divider,
   Space,
   Modal,
   Form,
@@ -76,6 +75,12 @@ dayjs.extend(relativeTime);
 const { TextArea } = Input;
 const { Title, Text } = Typography;
 
+// 快捷键展示：cmd -> ⌘，便于 Mac 用户识别
+const formatShortcutDisplay = (str) => {
+  if (!str || typeof str !== "string") return str;
+  return str.replace(/\bcmd\b/gi, "⌘").replace(/\bshift\b/gi, "Shift").replace(/\bctrl\b/gi, "Ctrl");
+};
+
 const ChatComp = ({
   activeKey,
   setActiveKey,
@@ -139,27 +144,6 @@ const ChatComp = ({
     scrollToBottom();
   }, [chatMessages]);
 
-  const addPrompt = (newPrompt, newPromptTitle) => {
-    const newPrompt_ = newPromptGenerator(newPromptTitle, newPrompt);
-    if (!newPrompt_) {
-      messageApi.open({
-        type: "error",
-        content: "Please enter prompt title and prompt",
-      });
-      return;
-    }
-    setPromptList([...promptList, newPrompt_]);
-
-    setIsModalVisible(false);
-    setIsEditMode(false);
-    setEditingPrompt(null);
-    form.resetFields();
-    messageApi.open({
-      type: "success",
-      content: "Prompt added successfully",
-    });
-  };
-
   const editPrompt = (promptId, newPrompt, newPromptTitle) => {
     const newPrompt_ = newPromptGenerator(newPromptTitle, newPrompt);
     if (!newPrompt_) {
@@ -186,12 +170,6 @@ const ChatComp = ({
     });
   };
 
-  const handleAddPromptClick = () => {
-    setIsEditMode(false);
-    setEditingPrompt(null);
-    setIsModalVisible(true);
-  };
-
   const handleEditPromptClick = (prompt) => {
     setIsEditMode(true);
     setEditingPrompt(prompt);
@@ -213,8 +191,6 @@ const ChatComp = ({
     form.validateFields().then((values) => {
       if (isEditMode && editingPrompt) {
         editPrompt(editingPrompt.value, values.prompt, values.title);
-      } else {
-        addPrompt(values.prompt, values.title);
       }
     });
   };
@@ -606,34 +582,6 @@ const ChatComp = ({
     showPromptArea,
   ]);
 
-  const dropdownRenderElement = (menu) => {
-    const customMenuItem = (
-      <>
-        <Divider style={{ margin: "8px 0" }} />
-        <div
-          style={{
-            padding: "0 8px 4px",
-            display: "flex",
-            justifyContent: "center",
-          }}
-        >
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={handleAddPromptClick}
-          >
-            Add Prompt
-          </Button>
-        </div>
-      </>
-    );
-    return (
-      <>
-        {menu} {customMenuItem}
-      </>
-    );
-  };
-
   const renderPromptOptions = (items) => {
     const options = items.map((item, index) => ({
       label: (
@@ -671,7 +619,7 @@ const ChatComp = ({
                   marginTop: "2px",
                 }}
               >
-                <Tag size="small" color="blue">{`${item?.shortcut}`}</Tag>
+                <Tag size="small" color="blue">{formatShortcutDisplay(item.shortcut)}</Tag>
               </div>
             )}
           </div>
@@ -1013,7 +961,7 @@ const ChatComp = ({
                 style={{
                   flex: 1,
                   padding: "16px",
-                  backgroundColor: "#fafafa",
+                  // backgroundColor: "#fafafa",
                   borderRadius: "8px",
                   minHeight: 0,
                 }}
@@ -1046,9 +994,7 @@ const ChatComp = ({
                       {[...systemShortcuts, ...promptList]
                         .filter(
                           (shortcut) =>
-                            shortcut?.shortcut &&
-                            shortcut?.label &&
-                            shortcut?.value,
+                            shortcut?.label && shortcut?.value,
                         )
                         .map((shortcut, index) => (
                           <Card
@@ -1083,7 +1029,7 @@ const ChatComp = ({
                               >
                                 {shortcut.label}
                               </div>
-                              {shortcut.shortcut && (
+                              {shortcut.shortcut ? (
                                 <Tag
                                   color={TAG_COLORS[index % TAG_COLORS.length]}
                                   style={{
@@ -1092,7 +1038,11 @@ const ChatComp = ({
                                     flexShrink: 0,
                                   }}
                                 >
-                                  {shortcut.shortcut}
+                                  {formatShortcutDisplay(shortcut.shortcut)}
+                                </Tag>
+                              ) : (
+                                <Tag style={{ fontSize: "12px", flexShrink: 0, color: "#999" }}>
+                                  Set in Settings
                                 </Tag>
                               )}
                             </div>
@@ -1166,7 +1116,6 @@ const ChatComp = ({
                 <Select
                   style={{ width: "100%" }}
                   placeholder="Select a prompt template"
-                  dropdownRender={dropdownRenderElement}
                   onSelect={onSelectPromptHandler}
                   options={renderPromptOptions(promptList)}
                   value={selectedPrompt}
@@ -1340,11 +1289,11 @@ const ChatComp = ({
         </div>
 
         <Modal
-          title={isEditMode ? "Edit Prompt" : "Add New Prompt"}
+          title="Edit Prompt"
           open={isModalVisible}
           onOk={handleModalOk}
           onCancel={handleModalCancel}
-          okText={isEditMode ? "Update" : "Add"}
+          okText="Update"
           cancelText="Cancel"
           destroyOnClose
           width={600}

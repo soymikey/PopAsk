@@ -3,11 +3,14 @@
 }
 .ant-tabs-content-holder {
   height: calc(100vh - 46px) !important;
-  overflow-y: scroll;
-  /* hide scrollbar */
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  &::-webkit-scrollbar {
-    display: none;
-  }
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.ant-tabs-content {
+  height: 100%;
+}
+.ant-tabs-tabpane {
+  height: 100%;
+  overflow: hidden;
 }

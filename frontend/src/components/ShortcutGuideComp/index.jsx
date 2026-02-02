@@ -16,27 +16,29 @@ import {
 const { Text, Title } = Typography;
 
 const ShortcutGuideComp = ({ visible, onClose, onNeverShow }) => {
-  // 使用constant.js中的数据
-  const systemShortcuts = DEFAULT_SHORTCUT_LIST.map((item) => ({
-    key: item.shortcut,
+  const systemShortcuts = DEFAULT_SHORTCUT_LIST.map((item, index) => ({
+    key: item.value || `sys-${index}`,
+    shortcut: item.shortcut,
     desc: item.label,
     icon: item.value === "Open Window" ? <RobotOutlined /> : <CameraOutlined />,
   }));
 
   const promptShortcuts = DEFAULT_PROMPT_OPTIONS.map((item, index) => ({
-    key: item.shortcut,
+    key: item.value || `prompt-${index}`,
+    shortcut: item.shortcut,
     desc: item.label,
     color: SHORTCUT_COLORS[index] || "default",
   }));
 
   const renderShortcutItem = (
-    shortcut,
+    uniqueKey,
+    shortcutDisplay,
     desc,
     icon = null,
     color = "default"
   ) => (
     <div
-      key={shortcut}
+      key={uniqueKey}
       style={{
         display: "flex",
         alignItems: "center",
@@ -50,7 +52,7 @@ const ShortcutGuideComp = ({ visible, onClose, onNeverShow }) => {
         <Text>{desc}</Text>
       </div>
       <Tag color={color} style={{ fontFamily: "monospace", fontSize: "12px" }}>
-        {shortcut}
+        {shortcutDisplay || "Set in Settings"}
       </Tag>
     </div>
   );
@@ -131,7 +133,7 @@ const ShortcutGuideComp = ({ visible, onClose, onNeverShow }) => {
             }}
           >
             {systemShortcuts.map((item) =>
-              renderShortcutItem(item.key, item.desc, item.icon, "blue")
+              renderShortcutItem(item.key, item.shortcut, item.desc, item.icon, "blue")
             )}
           </div>
         </div>
@@ -160,7 +162,7 @@ const ShortcutGuideComp = ({ visible, onClose, onNeverShow }) => {
             }}
           >
             {promptShortcuts.map((item) =>
-              renderShortcutItem(item.key, item.desc, null, item.color)
+              renderShortcutItem(item.key, item.shortcut, item.desc, null, item.color)
             )}
           </div>
         </div>
