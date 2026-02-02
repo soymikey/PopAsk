@@ -20,15 +20,12 @@ import {
   PlusOutlined,
   DeleteOutlined,
   SendOutlined,
-  UserOutlined,
   RobotOutlined,
   SettingOutlined,
   LinkOutlined,
   SaveOutlined,
   StopOutlined,
   EditOutlined,
-  CheckOutlined,
-  CloseOutlined,
 } from "@ant-design/icons";
 import { useEffect, useState, useRef } from "react";
 import {
@@ -38,7 +35,6 @@ import {
   WindowShow,
   WindowSetAlwaysOnTop,
 } from "../../../wailsjs/runtime/runtime";
-import Tesseract from "tesseract.js";
 import {
   AIBianxieAPI,
   OpenAIAPI,
@@ -58,20 +54,14 @@ import {
   incrementDailyUsageCount,
   sleep,
 } from "../../utils";
-import useLocalStorage from "../../hooks/useLocalStorage";
 import "./index.css";
+import { useAppStore } from "../../store";
 import {
   DEFAULT_ORC_LANG,
-  RECENT_PROMPTS_KEY,
   ORC_LANG_KEY,
-  IS_SHOW_PROMPT_AREA_KEY,
-  IS_SHOW_PROMPT_AREA_VALUE,
   DEFAULT_DAILY_LIMIT,
 } from "../../constant";
-import { MarkDownComp } from "../MarkDownComp";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-dayjs.extend(relativeTime);
+import ChatMessageItem from "./ChatMessageItem";
 
 const { TextArea } = Input;
 const { Title, Text } = Typography;
@@ -124,10 +114,11 @@ const ChatComp = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isAskLoading, setIsAskLoading] = useState(false);
 
-  const [recentPrompts, setRecentPrompts] = useLocalStorage(
-    RECENT_PROMPTS_KEY,
-    [],
-  );
+  const recentPrompts = useAppStore((s) => s.recentPrompts);
+  const setRecentPrompts = useAppStore((s) => s.setRecentPrompts);
+  const showPromptArea = useAppStore((s) => s.showPromptArea);
+  const setShowPromptArea = useAppStore((s) => s.setShowPromptArea);
+
   const askRef = useRef(null);
   const inputRef = useRef(null);
   const messagesEndRef = useRef(null);
@@ -135,10 +126,6 @@ const ChatComp = ({
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [editingPrompt, setEditingPrompt] = useState(null);
-  const [showPromptArea, setShowPromptArea] = useLocalStorage(
-    IS_SHOW_PROMPT_AREA_KEY,
-    IS_SHOW_PROMPT_AREA_VALUE,
-  );
 
   const [editingMessageId, setEditingMessageId] = useState(null);
   const [editingContent, setEditingContent] = useState("");
@@ -268,7 +255,6 @@ const ChatComp = ({
         userMessageGenerator(messages),
       ];
     }
-    console.log("newChatMessages", newChatMessages);
     setChatMessages(newChatMessages);
     setIsAskLoading(true);
 
@@ -367,6 +353,7 @@ const ChatComp = ({
         }, 10000);
         const ORCLang = getLocalStorage(ORC_LANG_KEY, DEFAULT_ORC_LANG);
         const lang = ORCLang.length > 1 ? ORCLang.join("+") : ORCLang[0];
+        const { default: Tesseract } = await import("tesseract.js");
         const result = await Tesseract.recognize(text, lang);
         text = languageFormate(result?.data?.text || "");
         clearTimeout(timeoutId);
@@ -389,7 +376,6 @@ const ChatComp = ({
         await handleChat(formattedMessage, true);
       }
     } catch (error) {
-      console.log("error", error);
       messageApi.open({
         type: "error",
         content: error?.message || "error",
@@ -521,7 +507,6 @@ const ChatComp = ({
 
   useEffect(() => {
     EventsOn("GET_SELECTION", (event) => {
-      console.log("GET_SELECTION event:", event);
       onSelectionHandler(event);
     });
 
@@ -677,194 +662,19 @@ const ChatComp = ({
     return options;
   };
 
-  const renderMessage = (message) => {
-    const isUser = message.type === "user";
-    const isEditing = editingMessageId === message.id;
-
-    return (
-      <div
-        key={message.id}
-        style={{
-          display: "flex",
-          marginBottom: "16px",
-          justifyContent: isUser ? "flex-end" : "flex-start",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "flex-start",
-            maxWidth: "80%",
-            gap: "8px",
-          }}
-        >
-          {!isUser && (
-            <Avatar
-              icon={<RobotOutlined />}
-              style={{
-                backgroundColor: "#1890ff",
-                marginTop: "4px",
-                flexShrink: 0,
-                minWidth: "24px",
-                minHeight: "24px",
-              }}
-              size="small"
-            />
-          )}
-          <div
-            style={{
-              backgroundColor: isUser ? "#1890ff" : "#f5f5f5",
-              color: isUser ? "white" : "black",
-              padding: "12px 16px",
-              borderRadius: "12px",
-              maxWidth: "100%",
-              wordWrap: "break-word",
-              position: "relative",
-            }}
-            className="message-container"
-          >
-            <div style={{ marginBottom: "4px" }}>
-              <Text
-                style={{
-                  fontSize: "12px",
-                  color: isUser ? "rgba(255,255,255,0.8)" : "#999",
-                }}
-              >
-                {dayjs(message.timestamp).fromNow()}
-              </Text>
-            </div>
-
-            {isEditing ? (
-              <div
-                style={{
-                  backgroundColor: "rgba(255, 255, 255, 0.95)",
-                  borderRadius: "8px",
-                  padding: "12px",
-                  border: "2px solid #1890ff",
-                  marginBottom: "8px",
-                  boxShadow: "0 4px 12px rgba(24, 144, 255, 0.15)",
-                }}
-              >
-                <TextArea
-                  value={editingContent}
-                  onChange={(e) => setEditingContent(e.target.value)}
-                  autoSize={{ minRows: 2, maxRows: 8 }}
-                  style={{
-                    backgroundColor: "white",
-                    color: "black",
-                    marginBottom: "12px",
-                    border: "1px solid #d9d9d9",
-                    borderRadius: "6px",
-                    fontSize: "14px",
-                  }}
-                  placeholder="Edit your message here..."
-                  onPressEnter={(e) => {
-                    if (e.ctrlKey || e.metaKey) {
-                      e.preventDefault();
-                      handleSaveEdit();
-                    }
-                  }}
-                />
-                <div
-                  style={{
-                    display: "flex",
-                    gap: "8px",
-                    justifyContent: "flex-end",
-                    alignItems: "center",
-                  }}
-                >
-                  <Button
-                    size="small"
-                    icon={<CloseOutlined />}
-                    onClick={handleCancelEdit}
-                    style={{ borderRadius: "6px" }}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    type="primary"
-                    size="small"
-                    icon={<CheckOutlined />}
-                    onClick={handleSaveEdit}
-                    style={{ borderRadius: "6px" }}
-                  >
-                    Save & Send
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <>
-                {isUser ? (
-                  <div style={{ whiteSpace: "pre-wrap" }}>
-                    {message.content}
-                  </div>
-                ) : (
-                  <MarkDownComp>{message.content}</MarkDownComp>
-                )}
-
-                {/* 操作按钮 - 只在悬停时显示 */}
-                <div
-                  className="message-actions"
-                  style={{
-                    display: "flex",
-                    gap: "4px",
-                    opacity: 0,
-                    transition: "opacity 0.2s ease",
-                    pointerEvents: "none",
-                  }}
-                >
-                  {isUser && (
-                    <Button
-                      type="text"
-                      size="small"
-                      icon={<EditOutlined />}
-                      onClick={() =>
-                        handleEditMessage(message.id, message.content)
-                      }
-                      style={{
-                        color: "#666",
-                        padding: "2px 4px",
-                        height: "auto",
-                        pointerEvents: "auto",
-                      }}
-                    />
-                  )}
-                  {!isUser && (
-                    <Button
-                      type="text"
-                      size="small"
-                      icon={<SendOutlined />}
-                      onClick={() => handleRegenerateResponse(message.id)}
-                      style={{
-                        color: "#666",
-                        padding: "2px 4px",
-                        height: "auto",
-                        pointerEvents: "auto",
-                      }}
-                      title="Regenerate response"
-                    />
-                  )}
-                </div>
-              </>
-            )}
-          </div>
-          {isUser && (
-            <Avatar
-              icon={<UserOutlined />}
-              size="small"
-              style={{
-                backgroundColor: "#52c41a",
-                marginTop: "4px",
-                flexShrink: 0,
-                minWidth: "24px",
-                minHeight: "24px",
-              }}
-            />
-          )}
-        </div>
-      </div>
-    );
-  };
+  const renderMessage = (message) => (
+    <ChatMessageItem
+      key={message.id}
+      message={message}
+      isEditing={editingMessageId === message.id}
+      editingContent={editingContent}
+      onEditingContentChange={setEditingContent}
+      onSaveEdit={handleSaveEdit}
+      onCancelEdit={handleCancelEdit}
+      onEditMessage={handleEditMessage}
+      onRegenerateResponse={handleRegenerateResponse}
+    />
+  );
 
   return (
     <div>

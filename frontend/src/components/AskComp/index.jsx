@@ -23,7 +23,6 @@ import {
   EventsOff,
   WindowShow,
 } from "../../../wailsjs/runtime/runtime";
-import Tesseract from "tesseract.js";
 import { ChatAPI } from "../../../wailsjs/go/main/App";
 import { DEFAULT_PROMPT_OPTIONS, TAG_COLORS } from "../../constant";
 import {
@@ -34,13 +33,12 @@ import {
   historyGenerator,
 } from "../../utils";
 import useLocalStorage from "../../hooks/useLocalStorage";
+import { useAppStore } from "../../store";
 import "./index.css";
 import {
   DEFAULT_ORC_LANG,
-  RECENT_PROMPTS_KEY,
   SELECTED_PROMPT_KEY,
   ORC_LANG_KEY,
-  IS_OPEN_RECENT_PROMPTS_KEY,
   IS_OPEN_RECENT_PROMPTS_VALUE,
 } from "../../constant";
 import { MarkDownComp } from "../MarkDownComp";
@@ -68,16 +66,12 @@ const AskComp = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isAskLoading, setIsAskLoading] = useState(false);
 
-  const [recentPrompts, setRecentPrompts] = useLocalStorage(
-    RECENT_PROMPTS_KEY,
-    []
-  );
-  const askRef = useRef(null);
+  const recentPrompts = useAppStore((s) => s.recentPrompts);
+  const setRecentPrompts = useAppStore((s) => s.setRecentPrompts);
+  const recentPromptsActiveKey = useAppStore((s) => s.recentPromptsActiveKey);
+  const setRecentPromptsActiveKey = useAppStore((s) => s.setRecentPromptsActiveKey);
 
-  const [recentPromptsActiveKey, setRecentPromptsActiveKey] = useLocalStorage(
-    IS_OPEN_RECENT_PROMPTS_KEY,
-    IS_OPEN_RECENT_PROMPTS_VALUE
-  );
+  const askRef = useRef(null);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -118,10 +112,8 @@ const AskComp = ({
   const handleChat = async (message) => {
     setChatResponse(null);
     setIsAskLoading(true);
-    console.log("message", message);
     const response = await ChatAPI(message);
     setIsAskLoading(false);
-    console.log("response", response);
     if (response.code === 200) {
       setChatResponse(response.data);
       setHistoryList([
@@ -152,7 +144,6 @@ const AskComp = ({
         isOCR,
         isOpenWindow,
       } = selection;
-      console.log("selection", selection);
       let text = selectionText;
       WindowShow();
       setActiveKey("ask");
@@ -161,6 +152,7 @@ const AskComp = ({
       if (isOCR) {
         const ORCLang = getLocalStorage(ORC_LANG_KEY, DEFAULT_ORC_LANG);
         const lang = ORCLang.length > 1 ? ORCLang.join("+") : ORCLang[0];
+        const { default: Tesseract } = await import("tesseract.js");
         const result = await Tesseract.recognize(text, lang);
         text = languageFormate(result?.data?.text || "");
       }
@@ -180,7 +172,6 @@ const AskComp = ({
         handleChat(messageGenerator(prompt_, text));
       }
     } catch (error) {
-      console.log("error", error);
       messageApi.open({
         type: "error",
         content: error?.message || "error",
@@ -204,8 +195,6 @@ const AskComp = ({
 
   useEffect(() => {
     EventsOn("GET_SELECTION", (event) => {
-      console.log("GET_SELECTION event:", event);
-
       onSelectionHandler(event);
     });
 
@@ -334,10 +323,6 @@ const AskComp = ({
     }));
     return options;
   };
-
-  useEffect(() => {
-    console.log("AskComp");
-  }, []);
 
   return (
     <div style={{ paddingTop: "12px", paddingBottom: "12px" }}>

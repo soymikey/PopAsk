@@ -126,9 +126,6 @@ function SettingsComp({
     setLocalORCLang(localORCLang);
   }, [ORCLang]);
 
-  useEffect(() => {
-    console.log("SettingsComp");
-  }, []);
 
   useEffect(() => {
     if (activeKey === "settings") {

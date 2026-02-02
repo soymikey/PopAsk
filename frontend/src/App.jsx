@@ -1,43 +1,34 @@
-import { Layout, Tabs } from "antd";
-import AskComp from "./components/AskComp";
-import ChatComp from "./components/ChatComp";
-import SettingsComp from "./components/SettingsComp";
-import HistoryComp from "./components/HistoryComp";
-import ChatHistoryComp from "./components/ChatHistoryComp";
-import ShortcutGuideComp from "./components/ShortcutGuideComp";
-import PromptComp from "./components/PromptComp";
-import useLocalStorage from "./hooks/useLocalStorage";
-import {
-  PROMPT_LIST_KEY,
-  SYSTEM_SHORTCUT_KEY,
-  DEFAULT_SHORTCUT_LIST,
-  HISTORY_LIST_KEY,
-  DEFAULT_HISTORY_LIST,
-  CHAT_HISTORY_LIST_KEY,
-  DEFAULT_CHAT_HISTORY_LIST,
-  HARDWARE_FINGERPRINT_KEY,
-  SELECTED_PROMPT_KEY,
-  DEFAULT_PROMPT_OPTIONS,
-  DEFAULT_PROMPT_OPTIONS_VALUE,
-  ORC_LANG_KEY,
-  DEFAULT_ORC_LANG,
-  OPENAI_API_KEY_KEY,
-} from "./constant";
-import { useEffect, useState } from "react";
+import { Layout, Spin, Tabs } from "antd";
+import { useAppStore } from "./store";
+import { DEFAULT_PROMPT_OPTIONS, DEFAULT_SHORTCUT_LIST } from "./constant";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { EventsEmit } from "../wailsjs/runtime/runtime";
 import { IsMac } from "../wailsjs/go/main/App";
+
+import ChatComp from "./components/ChatComp";
+import PromptComp from "./components/PromptComp";
+import ChatHistoryComp from "./components/ChatHistoryComp";
+import SettingsComp from "./components/SettingsComp";
+import ShortcutGuideComp from "./components/ShortcutGuideComp";
 import "./app.css";
 
 const App = () => {
   const [isMac, setIsMac] = useState(false);
-  const [promptList, setPromptList] = useLocalStorage(
-    PROMPT_LIST_KEY,
-    DEFAULT_PROMPT_OPTIONS,
-  );
-  const [systemShortcuts, setSystemShortcuts] = useLocalStorage(
-    SYSTEM_SHORTCUT_KEY,
-    DEFAULT_SHORTCUT_LIST,
-  );
+
+  const promptList = useAppStore((s) => s.promptList);
+  const setPromptList = useAppStore((s) => s.setPromptList);
+  const systemShortcuts = useAppStore((s) => s.systemShortcuts);
+  const setSystemShortcuts = useAppStore((s) => s.setSystemShortcuts);
+  const chatHistoryList = useAppStore((s) => s.chatHistoryList);
+  const setChatHistoryList = useAppStore((s) => s.setChatHistoryList);
+  const selectedPrompt = useAppStore((s) => s.selectedPrompt);
+  const setSelectedPrompt = useAppStore((s) => s.setSelectedPrompt);
+  const showShortcutGuide = useAppStore((s) => s.showShortcutGuide);
+  const setShowShortcutGuide = useAppStore((s) => s.setShowShortcutGuide);
+  const ORCLang = useAppStore((s) => s.ORCLang);
+  const setORCLang = useAppStore((s) => s.setORCLang);
+  const openAIKey = useAppStore((s) => s.openAIKey);
+  const setOpenAIKey = useAppStore((s) => s.setOpenAIKey);
 
   useEffect(() => {
     if (typeof window !== "undefined" && window?.go?.main?.App?.IsMac) {
@@ -47,151 +38,126 @@ const App = () => {
     }
   }, []);
 
-  // history
-  const [historyList, setHistoryList] = useLocalStorage(
-    HISTORY_LIST_KEY,
-    DEFAULT_HISTORY_LIST,
-  );
-
-  // chat history
-  const [chatHistoryList, setChatHistoryList] = useLocalStorage(
-    CHAT_HISTORY_LIST_KEY,
-    DEFAULT_CHAT_HISTORY_LIST,
-  );
-
-  // current chat messages
+  // current chat messages (not persisted)
   const [chatMessages, setChatMessages] = useState([]);
-
-  const [selectedPrompt, setSelectedPrompt] = useLocalStorage(
-    SELECTED_PROMPT_KEY,
-    DEFAULT_PROMPT_OPTIONS_VALUE,
-  );
-
   const [activeKey, setActiveKey] = useState("chat");
 
-  // Shortcut guide state
-  const [showShortcutGuide, setShowShortcutGuide] = useLocalStorage(
-    "showShortcutGuide",
-    true,
-  );
-
-  const [ORCLang, setORCLang] = useLocalStorage(ORC_LANG_KEY, DEFAULT_ORC_LANG);
-  const [openAIKey, setOpenAIKey] = useLocalStorage(OPENAI_API_KEY_KEY, "");
-
-  const onChange = (key) => {
+  const onChange = useCallback((key) => {
     setActiveKey(key);
-  };
+  }, []);
 
-  const syncShortcutList = (promptList, systemShortcuts) => {
+  const syncShortcutList = useCallback((promptList, systemShortcuts) => {
     EventsEmit(
       "syncShortcutList",
       JSON.stringify([...promptList, ...systemShortcuts]),
     );
-  };
+  }, []);
 
-  const handleCloseShortcutGuide = () => {
+  const handleCloseShortcutGuide = useCallback(() => {
     setShowShortcutGuide(false);
-  };
+  }, [setShowShortcutGuide]);
 
-  const handleNeverShowShortcutGuide = () => {
+  const handleNeverShowShortcutGuide = useCallback(() => {
     setShowShortcutGuide(false);
-  };
+  }, [setShowShortcutGuide]);
 
-  const resetShortcut = () => {
+  const handleShowShortcutGuide = useCallback(() => {
+    setShowShortcutGuide(true);
+  }, [setShowShortcutGuide]);
+
+  const resetShortcut = useCallback(() => {
     setSystemShortcuts(DEFAULT_SHORTCUT_LIST);
     setPromptList(DEFAULT_PROMPT_OPTIONS);
     syncShortcutList(DEFAULT_PROMPT_OPTIONS, DEFAULT_SHORTCUT_LIST);
-  };
+  }, [setSystemShortcuts, setPromptList, syncShortcutList]);
 
-  const items = [
-    // {
-    //   key: "ask",
-    //   label: "Ask",
-    //   children: (
-    //     <AskComp
-    //       setActiveKey={setActiveKey}
-    //       promptList={promptList}
-    //       setPromptList={setPromptList}
-    //       systemShortcuts={systemShortcuts}
-    //       syncShortcutList={syncShortcutList}
-    //       historyList={historyList}
-    //       setHistoryList={setHistoryList}
-    //     />
-    //   ),
-    // },
-    {
-      key: "chat",
-      label: "Chat",
-      children: (
-        <ChatComp
-          activeKey={activeKey}
-          setActiveKey={setActiveKey}
-          promptList={promptList}
-          setPromptList={setPromptList}
-          systemShortcuts={systemShortcuts}
-          syncShortcutList={syncShortcutList}
-          chatHistoryList={chatHistoryList}
-          setChatHistoryList={setChatHistoryList}
-          chatMessages={chatMessages}
-          setChatMessages={setChatMessages}
-          selectedPrompt={selectedPrompt}
-          setSelectedPrompt={setSelectedPrompt}
-          openAIKey={openAIKey}
-        />
-      ),
-    },
-    // {
-    //   key: "history",
-    //   label: "History",
-    //   children: (
-    //     <HistoryComp
-    //       historyList={historyList}
-    //       setHistoryList={setHistoryList}
-    //     />
-    //   ),
-    // },
-    {
-      key: "prompt",
-      label: "Prompt",
-      children: (
-        <PromptComp promptList={promptList} setPromptList={setPromptList} />
-      ),
-    },
-    {
-      key: "chatHistory",
-      label: "Chat History",
-      children: (
-        <ChatHistoryComp
-          chatHistoryList={chatHistoryList}
-          setChatHistoryList={setChatHistoryList}
-          setActiveKey={setActiveKey}
-          setChatMessages={setChatMessages}
-        />
-      ),
-    },
-
-    {
-      key: "settings",
-      label: "Settings",
-      children: (
-        <SettingsComp
-          activeKey={activeKey}
-          isMac={isMac}
-          promptList={promptList}
-          setPromptList={setPromptList}
-          systemShortcuts={systemShortcuts}
-          setSystemShortcuts={setSystemShortcuts}
-          syncShortcutList={syncShortcutList}
-          showShortcutGuide={() => setShowShortcutGuide(true)}
-          resetShortcut={resetShortcut}
-          ORCLang={ORCLang}
-          setORCLang={setORCLang}
-          openAIKey={openAIKey}
-          setOpenAIKey={setOpenAIKey}
-        />
-      ),
-    },
-  ];
+  const items = useMemo(
+    () => [
+      {
+        key: "chat",
+        label: "Chat",
+        children: (
+          <ChatComp
+            activeKey={activeKey}
+            setActiveKey={setActiveKey}
+            promptList={promptList}
+            setPromptList={setPromptList}
+            systemShortcuts={systemShortcuts}
+            syncShortcutList={syncShortcutList}
+            chatHistoryList={chatHistoryList}
+            setChatHistoryList={setChatHistoryList}
+            chatMessages={chatMessages}
+            setChatMessages={setChatMessages}
+            selectedPrompt={selectedPrompt}
+            setSelectedPrompt={setSelectedPrompt}
+            openAIKey={openAIKey}
+          />
+        ),
+      },
+      {
+        key: "prompt",
+        label: "Prompt",
+        children: (
+          <PromptComp promptList={promptList} setPromptList={setPromptList} />
+        ),
+      },
+      {
+        key: "chatHistory",
+        label: "Chat History",
+        children: (
+          <ChatHistoryComp
+            chatHistoryList={chatHistoryList}
+            setChatHistoryList={setChatHistoryList}
+            setActiveKey={setActiveKey}
+            setChatMessages={setChatMessages}
+          />
+        ),
+      },
+      {
+        key: "settings",
+        label: "Settings",
+        children: (
+          <SettingsComp
+            activeKey={activeKey}
+            isMac={isMac}
+            promptList={promptList}
+            setPromptList={setPromptList}
+            systemShortcuts={systemShortcuts}
+            setSystemShortcuts={setSystemShortcuts}
+            syncShortcutList={syncShortcutList}
+            showShortcutGuide={handleShowShortcutGuide}
+            resetShortcut={resetShortcut}
+            ORCLang={ORCLang}
+            setORCLang={setORCLang}
+            openAIKey={openAIKey}
+            setOpenAIKey={setOpenAIKey}
+          />
+        ),
+      },
+    ],
+    [
+      activeKey,
+      chatMessages,
+      chatHistoryList,
+      isMac,
+      openAIKey,
+      ORCLang,
+      promptList,
+      selectedPrompt,
+      systemShortcuts,
+      setActiveKey,
+      setChatHistoryList,
+      setChatMessages,
+      setORCLang,
+      setOpenAIKey,
+      setPromptList,
+      setSelectedPrompt,
+      setSystemShortcuts,
+      syncShortcutList,
+      handleShowShortcutGuide,
+      resetShortcut,
+    ],
+  );
   useEffect(() => {
     syncShortcutList(promptList, systemShortcuts);
     const getLocationInfo = async () => {
@@ -211,19 +177,33 @@ const App = () => {
         paddingBottom: 8,
       }}
     >
-      <Tabs
-        defaultActiveKey={activeKey}
-        activeKey={activeKey}
-        items={items}
-        onChange={onChange}
-      />
+      <Suspense
+        fallback={
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              minHeight: 200,
+            }}
+          >
+            <Spin size="large" />
+          </div>
+        }
+      >
+        <Tabs
+          defaultActiveKey={activeKey}
+          activeKey={activeKey}
+          items={items}
+          onChange={onChange}
+        />
 
-      {/* Shortcut Guide Modal */}
-      <ShortcutGuideComp
-        visible={showShortcutGuide}
-        onClose={handleCloseShortcutGuide}
-        onNeverShow={handleNeverShowShortcutGuide}
-      />
+        <ShortcutGuideComp
+          visible={showShortcutGuide}
+          onClose={handleCloseShortcutGuide}
+          onNeverShow={handleNeverShowShortcutGuide}
+        />
+      </Suspense>
     </Layout>
   );
 };
