@@ -54,17 +54,22 @@ func (s *ShortcutService) RegisterKeyboardShortcut() {
 	// Start new hook listener
 	s.hookChan = make(chan hook.Event)
 	for _, prompt := range s.shortcutList {
-		if prompt["shortcut"] == "" {
+		shortcutStr, ok := prompt["shortcut"].(string)
+		if !ok || shortcutStr == "" {
 			continue
 		}
-		shortcut := strings.Split(prompt["shortcut"].(string), "+")
-		s.logSvc.Info("Registering shortcut: %s for action: %s", prompt["shortcut"].(string), prompt["value"].(string))
+		valueStr, ok := prompt["value"].(string)
+		if !ok {
+			continue
+		}
+		shortcut := strings.Split(shortcutStr, "+")
+		s.logSvc.Info("Registering shortcut: %s for action: %s", shortcutStr, valueStr)
 
-		// 创建局部变量避免闭包问题
-		currentPrompt := prompt
+		// 创建局部变量避免闭包问题（类型已校验）
+		shortcutKey := shortcutStr
+		promptValue := valueStr
 		hook.Register(hook.KeyDown, shortcut, func(e hook.Event) {
 			// 检查是否在3秒内已经触发过
-			shortcutKey := currentPrompt["shortcut"].(string)
 			if lastTime, exists := s.lastTrigger[shortcutKey]; exists {
 				if time.Since(lastTime) < 3*time.Second {
 					s.logSvc.Info("Shortcut %s triggered too frequently, ignoring", shortcutKey)
@@ -79,8 +84,8 @@ func (s *ShortcutService) RegisterKeyboardShortcut() {
 			autoAsking := true
 			text := ""
 			err := error(nil)
-			isOpenWindowShortcut := currentPrompt["value"].(string) == "Open Window"
-			isOrcShortcut := currentPrompt["value"].(string) == "ORC"
+			isOpenWindowShortcut := promptValue == "Open Window"
+			isOrcShortcut := promptValue == "ORC"
 
 			if isOpenWindowShortcut || isOrcShortcut {
 				autoAsking = false
@@ -124,8 +129,8 @@ func (s *ShortcutService) RegisterKeyboardShortcut() {
 			s.logSvc.Info("Emitting GET_SELECTION event with text length: %d", len(text))
 			runtime.EventsEmit(s.GetContext(), "GET_SELECTION", map[string]interface{}{
 				"text":         text,
-				"shortcut":     currentPrompt["shortcut"].(string),
-				"prompt":       currentPrompt["value"].(string),
+				"shortcut":     shortcutKey,
+				"prompt":       promptValue,
 				"autoAsking":   autoAsking,
 				"isOCR":        isOrcShortcut,
 				"isOpenWindow": isOpenWindowShortcut,
