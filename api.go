@@ -70,6 +70,9 @@ func NewAPIService(ctx context.Context, app *App) *APIService {
 // HTTP request helper functions
 func (api *APIService) makeRequest(requestType, url, token string, payload []byte) ([]byte, error) {
 	api.logSvc.Info("Making %s request to: %s", requestType, url)
+	if len(payload) > 0 {
+		api.logSvc.Info("Request body: %s", string(payload))
+	}
 
 	var request *http.Request
 
@@ -94,6 +97,7 @@ func (api *APIService) makeRequest(requestType, url, token string, payload []byt
 
 	body, _ := io.ReadAll(response.Body)
 	api.logSvc.Info("HTTP request completed successfully, response size: %d bytes", len(body))
+	api.logSvc.Info("Response body: %s", string(body))
 
 	return body, nil
 }
@@ -110,48 +114,49 @@ func (api *APIService) MakePostRequest(url, token string, payload []byte) ([]byt
 func (api *APIService) ChatAPI(message string) (ChatResponse, error) {
 	api.logSvc.Info("Calling ChatAPI with message length: %d", len(message))
 
-	var chatResponse ChatResponse
-
 	requestBody, err := json.Marshal(ChatRequest{Message: message})
 	if err != nil {
 		api.logSvc.Error("ChatAPI marshal failed: %v", err)
 		return ChatResponse{}, fmt.Errorf("marshal request: %w", err)
 	}
-	url := fmt.Sprintf("%s/ai-translator/openai", api.EnvOrDefault("SERVER_URL", "https://extension.migaox.com"))
-	response, err := api.MakePostRequest(url, "", requestBody)
+	url := fmt.Sprintf("%s/pop-ask", api.EnvOrDefault("SERVER_URL", "https://beaptmqzdyznkhktjntq.functions.supabase.co"))
+	token := api.EnvOrDefault("SUPABASE_ANON_KEY", "")
+	response, err := api.MakePostRequest(url, token, requestBody)
 	if err != nil {
 		api.logSvc.Error("ChatAPI failed: %v", err)
 		return ChatResponse{}, err
 	}
+	var chatResponse ChatResponse
 	if err := json.Unmarshal(response, &chatResponse); err != nil {
 		api.logSvc.Error("ChatAPI unmarshal failed: %v", err)
-		return ChatResponse{}, fmt.Errorf("unmarshal response: %w", err)
+		return ChatResponse{Code: 500, Data: string(response)}, fmt.Errorf("unmarshal response: %w", err)
 	}
 	api.logSvc.Info("ChatAPI completed successfully, response code: %d", chatResponse.Code)
 	return chatResponse, nil
 }
 
-func (api *APIService) ChatAPIV2(messages string) (ChatResponse, error) {
-	api.logSvc.Info("Calling ChatAPIV2 with messages length: %d", len(messages))
+func (api *APIService) OpenAIAPI(messages string) (ChatResponse, error) {
+	api.logSvc.Info("Calling OpenAIAPI with messages length: %d", len(messages))
 
-	var chatResponse ChatResponse
-
-	requestBody, err := json.Marshal(ChatRequestV2{Messages: messages})
+	// pop-ask accepts single "message"; send messages string as message
+	requestBody, err := json.Marshal(ChatRequest{Message: messages})
 	if err != nil {
-		api.logSvc.Error("ChatAPIV2 marshal failed: %v", err)
+		api.logSvc.Error("OpenAIAPI marshal failed: %v", err)
 		return ChatResponse{}, fmt.Errorf("marshal request: %w", err)
 	}
-	url := fmt.Sprintf("%s/ai-translator/openai/chat", api.EnvOrDefault("SERVER_URL", "https://extension.migaox.com"))
-	response, err := api.MakePostRequest(url, "", requestBody)
+	url := fmt.Sprintf("%s/pop-ask", api.EnvOrDefault("SERVER_URL", "https://beaptmqzdyznkhktjntq.functions.supabase.co"))
+	token := api.EnvOrDefault("SUPABASE_ANON_KEY", "")
+	response, err := api.MakePostRequest(url, token, requestBody)
 	if err != nil {
-		api.logSvc.Error("ChatAPIV2 failed: %v", err)
+		api.logSvc.Error("OpenAIAPI failed: %v", err)
 		return ChatResponse{}, err
 	}
+	var chatResponse ChatResponse
 	if err := json.Unmarshal(response, &chatResponse); err != nil {
-		api.logSvc.Error("ChatAPIV2 unmarshal failed: %v", err)
-		return ChatResponse{}, fmt.Errorf("unmarshal response: %w", err)
+		api.logSvc.Error("OpenAIAPI unmarshal failed: %v", err)
+		return ChatResponse{Code: 500, Data: string(response)}, fmt.Errorf("unmarshal response: %w", err)
 	}
-	api.logSvc.Info("ChatAPIV2 completed successfully, response code: %d", chatResponse.Code)
+	api.logSvc.Info("OpenAIAPI completed successfully, response code: %d", chatResponse.Code)
 	return chatResponse, nil
 }
 
@@ -223,15 +228,14 @@ func (api *APIService) AIOpenHubAPI(messages string) (ChatResponse, error) {
 	return ChatResponse{Code: 200, Data: openHubResp.Choices[0].Message.Content}, nil
 }
 
-
 func (a *App) ChatAPI(message string) (ChatResponse, error) {
 	apiSvc := NewAPIService(a.ctx, a)
 	return apiSvc.ChatAPI(message)
 }
 
-func (a *App) ChatAPIV2(messages string) (ChatResponse, error) {
+func (a *App) OpenAIAPI(messages string) (ChatResponse, error) {
 	apiSvc := NewAPIService(a.ctx, a)
-	return apiSvc.ChatAPIV2(messages)
+	return apiSvc.OpenAIAPI(messages)
 }
 
 func (a *App) AIBianxieAPI(messages string) (ChatResponse, error) {

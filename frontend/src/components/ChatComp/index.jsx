@@ -42,7 +42,7 @@ import {
 import Tesseract from "tesseract.js";
 import {
   AIBianxieAPI,
-  ChatAPIV2,
+  OpenAIAPI,
   AIOpenHubAPI,
 } from "../../../wailsjs/go/main/App";
 import { TAG_COLORS } from "../../constant";
@@ -114,7 +114,7 @@ const ChatComp = ({
 
   const [recentPrompts, setRecentPrompts] = useLocalStorage(
     RECENT_PROMPTS_KEY,
-    []
+    [],
   );
   const askRef = useRef(null);
   const inputRef = useRef(null);
@@ -125,7 +125,7 @@ const ChatComp = ({
   const [editingPrompt, setEditingPrompt] = useState(null);
   const [showPromptArea, setShowPromptArea] = useLocalStorage(
     IS_SHOW_PROMPT_AREA_KEY,
-    IS_SHOW_PROMPT_AREA_VALUE
+    IS_SHOW_PROMPT_AREA_VALUE,
   );
 
   const [editingMessageId, setEditingMessageId] = useState(null);
@@ -171,7 +171,7 @@ const ChatComp = ({
     }
 
     const updatedPromptList = promptList.map((prompt) =>
-      prompt.value === promptId ? newPrompt_ : prompt
+      prompt.value === promptId ? newPrompt_ : prompt,
     );
     setPromptList(updatedPromptList);
     syncShortcutList(updatedPromptList, systemShortcuts);
@@ -233,7 +233,7 @@ const ChatComp = ({
     isNewChat = false,
     isEdit = false,
     isRegenerate = false,
-    messageIndex = null
+    messageIndex = null,
   ) => {
     if (isAskLoading) {
       messageApi.open({
@@ -294,7 +294,7 @@ const ChatComp = ({
         role: message.type,
         content: message.content,
       }));
-      const response = await AIOpenHubAPI(JSON.stringify(params));
+      const response = await OpenAIAPI(JSON.stringify(params));
 
       // Check if request was cancelled
       if (isRequestCancelledRef.current) {
@@ -311,12 +311,12 @@ const ChatComp = ({
         setChatMessages((prev) => [...prev, assistantMessage]);
 
         const prompt = promptList.find(
-          (p) => p.value === selectedPromptRef.current
+          (p) => p.value === selectedPromptRef.current,
         );
         if (prompt) {
           setRecentPrompts((prev) => {
             const filteredPrompts = prev.filter(
-              (p) => p.label !== prompt.label
+              (p) => p.label !== prompt.label,
             );
             const newPrompts = [prompt, ...filteredPrompts];
             return newPrompts.slice(0, 12);
@@ -455,8 +455,8 @@ const ChatComp = ({
       chatHistoryList.length > 0 &&
       chatHistoryList.some((history) =>
         history.every(
-          (message, index) => message.content === chatMessages[index].content
-        )
+          (message, index) => message.content === chatMessages[index].content,
+        ),
       )
     ) {
       setChatMessages([]);
@@ -495,7 +495,7 @@ const ChatComp = ({
     if (!editingMessageId) return;
     // 找到要编辑的消息索引
     const messageIndex = chatMessages.findIndex(
-      (msg) => msg.id === editingMessageId
+      (msg) => msg.id === editingMessageId,
     );
     if (messageIndex === -1) return;
 
@@ -696,7 +696,7 @@ const ChatComp = ({
                 e.stopPropagation();
 
                 const newPromptList = items.filter(
-                  (i) => i.value !== item.value
+                  (i) => i.value !== item.value,
                 );
                 setPromptList(newPromptList);
                 syncShortcutList(newPromptList, systemShortcuts);
@@ -1048,7 +1048,7 @@ const ChatComp = ({
                           (shortcut) =>
                             shortcut?.shortcut &&
                             shortcut?.label &&
-                            shortcut?.value
+                            shortcut?.value,
                         )
                         .map((shortcut, index) => (
                           <Card
@@ -1210,7 +1210,7 @@ const ChatComp = ({
                       onClose={(e) => {
                         e.stopPropagation();
                         setRecentPrompts(
-                          recentPrompts.filter((_, i) => i !== index)
+                          recentPrompts.filter((_, i) => i !== index),
                         );
                       }}
                       color={TAG_COLORS[index % TAG_COLORS.length]}

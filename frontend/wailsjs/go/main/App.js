@@ -18,10 +18,6 @@ export function ChatAPI(arg1) {
   return window['go']['main']['App']['ChatAPI'](arg1);
 }
 
-export function ChatAPIV2(arg1) {
-  return window['go']['main']['App']['ChatAPIV2'](arg1);
-}
-
 export function CreateScreenshot(arg1) {
   return window['go']['main']['App']['CreateScreenshot'](arg1);
 }
@@ -68,6 +64,10 @@ export function LoadPromptsCSV() {
 
 export function LoadPromptsJSON() {
   return window['go']['main']['App']['LoadPromptsJSON']();
+}
+
+export function OpenAIAPI(arg1) {
+  return window['go']['main']['App']['OpenAIAPI'](arg1);
 }
 
 export function RegisterKeyboardShortcut(arg1) {

@@ -11,8 +11,6 @@ export function CanAccessGoogle():Promise<boolean>;
 
 export function ChatAPI(arg1:string):Promise<main.ChatResponse>;
 
-export function ChatAPIV2(arg1:string):Promise<main.ChatResponse>;
-
 export function CreateScreenshot(arg1:context.Context):Promise<string>;
 
 export function CreateScreenshotMac(arg1:context.Context):Promise<string>;
@@ -36,6 +34,8 @@ export function IsUserInChina():Promise<boolean>;
 export function LoadPromptsCSV():Promise<Array<main.Prompt>>;
 
 export function LoadPromptsJSON():Promise<Array<main.PromptCategory>>;
+
+export function OpenAIAPI(arg1:string):Promise<main.ChatResponse>;
 
 export function RegisterKeyboardShortcut(arg1:context.Context):Promise<void>;
 
