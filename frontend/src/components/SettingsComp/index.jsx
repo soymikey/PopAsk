@@ -9,16 +9,14 @@ import {
   Card,
   Space,
   Typography,
-  Progress,
+  Input,
 } from "antd";
 import {
   DEFAULT_ORC_LANG,
-  DEFAULT_DAILY_LIMIT,
   DEFAULT_PROMPT_LIST,
 } from "../../constant";
 import { OCR_LANGUAGE_OPTIONS } from "../../constant";
 import { InfoCircleOutlined, SaveOutlined, PlusOutlined } from "@ant-design/icons";
-import { checkDailyUsageLimit } from "../../utils";
 
 const { Title, Text } = Typography;
 
@@ -32,19 +30,19 @@ function SettingsComp({
   resetShortcut,
   ORCLang,
   setORCLang,
+  openAIKey,
+  setOpenAIKey,
   activeKey,
   isMac = false,
 }) {
   const [localORCLang, setLocalORCLang] = useState(DEFAULT_ORC_LANG);
+  const [localOpenAIKey, setLocalOpenAIKey] = useState("");
 
   const [localPromptList, setLocalPromptList] = useState(DEFAULT_PROMPT_LIST);
   const [localSystemShortcuts, setLocalSystemShortcuts] = useState([]);
   const [newlyAddedPromptId, setNewlyAddedPromptId] = useState(null);
 
   const [messageApi, contextHolder] = message.useMessage();
-
-  // Get current usage information
-  const usageInfo = checkDailyUsageLimit(DEFAULT_DAILY_LIMIT);
 
   const onChangeORCHandler = (value) => {
     if (value.length > 5) {
@@ -83,6 +81,7 @@ function SettingsComp({
       return;
     }
     setORCLang(localORCLang);
+    setOpenAIKey(localOpenAIKey);
     setPromptList(localPromptList);
     setSystemShortcuts(localSystemShortcuts);
     syncShortcutList(localPromptList, localSystemShortcuts);
@@ -134,6 +133,7 @@ function SettingsComp({
   useEffect(() => {
     if (activeKey === "settings") {
       setLocalORCLang(ORCLang);
+      setLocalOpenAIKey(openAIKey ?? "");
       setLocalPromptList(promptList);
       setLocalSystemShortcuts(systemShortcuts);
     }
@@ -151,50 +151,29 @@ function SettingsComp({
       {contextHolder}
 
       <div style={{ flex: 1, overflowY: "auto", minHeight: 0 }}>
-        {/* Usage Statistics */}
+        {/* OpenAI API Key */}
         <Card
           title={
             <Space>
               <Title level={4} style={{ margin: 0 }}>
-                Usage Statistics
+                OpenAI API Key
               </Title>
-              <Tooltip title="Daily usage statistics" placement="top">
+              <Tooltip title="Your key is stored locally and never sent to our servers" placement="top">
                 <InfoCircleOutlined style={{ color: "#1890ff" }} />
               </Tooltip>
             </Space>
           }
           size="small"
         >
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <div>
-              <Text strong>Used today: {usageInfo.used} times</Text>
-              <br />
-              <Text type="secondary">
-                Remaining: {usageInfo.remaining} times
-              </Text>
-            </div>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-              }}
-            >
-              <Text type="secondary">Daily limit: {usageInfo.limit} times</Text>
-
-              <Progress
-                type="circle"
-                percent={Math.round((usageInfo.used / usageInfo.limit) * 100)}
-                width={80}
-              />
-            </div>
-          </div>
+          <Input.Password
+            placeholder="sk-..."
+            value={localOpenAIKey}
+            onChange={(e) => setLocalOpenAIKey(e.target.value)}
+            allowClear
+          />
+          <Text type="secondary" style={{ fontSize: "12px", display: "block", marginTop: "8px" }}>
+            Optional. Leave empty to use the default service.
+          </Text>
         </Card>
 
         {/* OCR Settings */}

@@ -21,6 +21,7 @@ import {
   DEFAULT_PROMPT_OPTIONS_VALUE,
   ORC_LANG_KEY,
   DEFAULT_ORC_LANG,
+  OPENAI_API_KEY_KEY,
 } from "./constant";
 import { useEffect, useState } from "react";
 import { EventsEmit } from "../wailsjs/runtime/runtime";
@@ -75,6 +76,7 @@ const App = () => {
   );
 
   const [ORCLang, setORCLang] = useLocalStorage(ORC_LANG_KEY, DEFAULT_ORC_LANG);
+  const [openAIKey, setOpenAIKey] = useLocalStorage(OPENAI_API_KEY_KEY, "");
 
   const onChange = (key) => {
     setActiveKey(key);
@@ -134,6 +136,7 @@ const App = () => {
           setChatMessages={setChatMessages}
           selectedPrompt={selectedPrompt}
           setSelectedPrompt={setSelectedPrompt}
+          openAIKey={openAIKey}
         />
       ),
     },
@@ -183,6 +186,8 @@ const App = () => {
           resetShortcut={resetShortcut}
           ORCLang={ORCLang}
           setORCLang={setORCLang}
+          openAIKey={openAIKey}
+          setOpenAIKey={setOpenAIKey}
         />
       ),
     },

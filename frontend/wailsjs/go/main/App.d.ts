@@ -17,6 +17,8 @@ export function CreateScreenshotMac(arg1:context.Context):Promise<string>;
 
 export function CreateScreenshotWindows(arg1:context.Context):Promise<string>;
 
+export function CustomOpenAIAPI(arg1:string,arg2:string):Promise<main.ChatResponse>;
+
 export function GetMousePosition():Promise<any>;
 
 export function GetPromptsCSV():Promise<string>;

@@ -160,6 +160,44 @@ func (api *APIService) OpenAIAPI(messages string) (ChatResponse, error) {
 	return chatResponse, nil
 }
 
+// CustomOpenAIAPI calls OpenAI API directly with the user's API key.
+func (api *APIService) CustomOpenAIAPI(messages string, apiKey string) (ChatResponse, error) {
+	api.logSvc.Info("Calling CustomOpenAIAPI with messages length: %d", len(messages))
+	if apiKey == "" {
+		api.logSvc.Error("CustomOpenAIAPI: apiKey is empty")
+		return ChatResponse{Code: 400, Data: "API key is required"}, nil
+	}
+
+	parsedMessages := []map[string]interface{}{}
+	if err := json.Unmarshal([]byte(messages), &parsedMessages); err != nil {
+		api.logSvc.Error("CustomOpenAIAPI unmarshal messages failed: %v", err)
+		return ChatResponse{Code: 400, Data: err.Error()}, fmt.Errorf("unmarshal messages: %w", err)
+	}
+	requestBody, err := json.Marshal(BianxieChatRequest{Messages: parsedMessages, Model: "gpt-3.5-turbo", Stream: false})
+	if err != nil {
+		api.logSvc.Error("CustomOpenAIAPI marshal failed: %v", err)
+		return ChatResponse{Code: 500, Data: err.Error()}, fmt.Errorf("marshal request: %w", err)
+	}
+	url := "https://api.openai.com/v1/chat/completions"
+	response, err := api.MakePostRequest(url, apiKey, requestBody)
+	if err != nil {
+		api.logSvc.Error("CustomOpenAIAPI failed: %v", err)
+		return ChatResponse{Code: 500, Data: err.Error()}, err
+	}
+
+	var openAIResp OpenHubChatResponse
+	if err := json.Unmarshal(response, &openAIResp); err != nil {
+		api.logSvc.Error("CustomOpenAIAPI unmarshal response failed: %v", err)
+		return ChatResponse{Code: 500, Data: string(response)}, fmt.Errorf("unmarshal response: %w", err)
+	}
+	if len(openAIResp.Choices) == 0 {
+		api.logSvc.Error("CustomOpenAIAPI empty choices")
+		return ChatResponse{Code: 502, Data: "empty choices from API"}, fmt.Errorf("empty choices from API")
+	}
+	api.logSvc.Info("CustomOpenAIAPI completed successfully")
+	return ChatResponse{Code: 200, Data: openAIResp.Choices[0].Message.Content}, nil
+}
+
 func (api *APIService) AIBianxieAPI(messages string) (ChatResponse, error) {
 	api.logSvc.Info("Calling AIBianxieAPI with messages length: %d", len(messages))
 
@@ -236,6 +274,11 @@ func (a *App) ChatAPI(message string) (ChatResponse, error) {
 func (a *App) OpenAIAPI(messages string) (ChatResponse, error) {
 	apiSvc := NewAPIService(a.ctx, a)
 	return apiSvc.OpenAIAPI(messages)
+}
+
+func (a *App) CustomOpenAIAPI(messages string, apiKey string) (ChatResponse, error) {
+	apiSvc := NewAPIService(a.ctx, a)
+	return apiSvc.CustomOpenAIAPI(messages, apiKey)
 }
 
 func (a *App) AIBianxieAPI(messages string) (ChatResponse, error) {

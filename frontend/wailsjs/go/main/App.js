@@ -30,6 +30,10 @@ export function CreateScreenshotWindows(arg1) {
   return window['go']['main']['App']['CreateScreenshotWindows'](arg1);
 }
 
+export function CustomOpenAIAPI(arg1, arg2) {
+  return window['go']['main']['App']['CustomOpenAIAPI'](arg1, arg2);
+}
+
 export function GetMousePosition() {
   return window['go']['main']['App']['GetMousePosition']();
 }

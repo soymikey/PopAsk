@@ -42,6 +42,7 @@ import Tesseract from "tesseract.js";
 import {
   AIBianxieAPI,
   OpenAIAPI,
+  CustomOpenAIAPI,
   AIOpenHubAPI,
 } from "../../../wailsjs/go/main/App";
 import { TAG_COLORS } from "../../constant";
@@ -94,6 +95,7 @@ const ChatComp = ({
   setChatMessages,
   selectedPrompt,
   setSelectedPrompt,
+  openAIKey,
 }) => {
   const newChatText = `New (${window.config_.isMac ? "Cmd" : "Ctrl"}+N)`;
 
@@ -107,7 +109,12 @@ const ChatComp = ({
   const chatHistoryListRef = useRef(chatHistoryList);
   const chatMessagesRef = useRef(chatMessages);
   const selectedPromptRef = useRef(selectedPrompt);
+  const openAIKeyRef = useRef(openAIKey);
   const isRequestCancelledRef = useRef(false);
+
+  useEffect(() => {
+    openAIKeyRef.current = openAIKey;
+  }, [openAIKey]);
 
   const [messageApi, contextHolder] = message.useMessage();
   const [form] = Form.useForm();
@@ -270,7 +277,11 @@ const ChatComp = ({
         role: message.type,
         content: message.content,
       }));
-      const response = await OpenAIAPI(JSON.stringify(params));
+      const key = openAIKeyRef.current?.trim() ?? "";
+      const response =
+        key !== ""
+          ? await CustomOpenAIAPI(JSON.stringify(params), key)
+          : await OpenAIAPI(JSON.stringify(params));
 
       // Check if request was cancelled
       if (isRequestCancelledRef.current) {
