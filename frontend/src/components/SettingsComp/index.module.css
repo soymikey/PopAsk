@@ -11,8 +11,9 @@
   min-height: 0;
 }
 
-.settingsCompCardTitle {
-  margin: 0;
+/* 提高特异性以覆盖 Ant Design Typography 默认样式 */
+.settingsCompCardTitle:global(.ant-typography) {
+  margin: 0 !important;
 }
 
 .settingsCompInfoIcon {
