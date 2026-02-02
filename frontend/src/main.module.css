@@ -1,0 +1,11 @@
+.errorFallback {
+  padding: 24px;
+  text-align: center;
+  font-family: sans-serif;
+}
+
+.errorFallbackPre {
+  text-align: left;
+  overflow: auto;
+  margin: 16px 0;
+}

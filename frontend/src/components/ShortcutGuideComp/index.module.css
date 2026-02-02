@@ -1,0 +1,89 @@
+.shortcutGuideTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.shortcutGuideIcon {
+  color: var(--color-primary);
+}
+
+.shortcutGuideFooterTip {
+  font-size: var(--font-size-small);
+}
+
+.shortcutGuideFooterLink {
+  font-size: var(--font-size-small);
+}
+
+.shortcutGuideBody {
+  padding: 16px 0;
+}
+
+.shortcutGuideItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.shortcutGuideItemLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.shortcutGuideTag {
+  font-family: monospace;
+  font-size: var(--font-size-small);
+}
+
+.shortcutGuideTipsBox {
+  background-color: #e6f7ff;
+  border: 1px solid #91d5ff;
+  padding: 16px;
+  border-radius: 8px;
+  margin-top: 16px;
+}
+
+.shortcutGuideTipsRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.shortcutGuideTipsIcon {
+  color: var(--color-primary);
+  margin-top: 2px;
+}
+
+.shortcutGuideTipsTitle {
+  color: var(--color-primary);
+}
+
+.shortcutGuideTipsList {
+  margin: 8px 0 0 0;
+  padding-left: 16px;
+}
+
+.shortcutGuideSection {
+  margin-bottom: 24px;
+}
+
+.shortcutGuideSectionTitle {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.shortcutGuideSectionIconOrange {
+  color: #fa8c16;
+}
+
+.shortcutGuideBox {
+  background-color: #fafafa;
+  padding: 12px;
+  border-radius: 8px;
+}

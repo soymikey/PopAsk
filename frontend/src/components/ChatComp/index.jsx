@@ -19,7 +19,7 @@ import {
 } from "@ant-design/icons";
 import { useEffect, useRef, useState } from "react";
 import { TAG_COLORS } from "../../constant";
-import "./index.css";
+import styles from "./index.module.css";
 import { useAppStore } from "../../store";
 import { useShortcutLabels } from "../../hooks/useShortcutLabels";
 import { useChatMessages } from "./hooks/useChatMessages";
@@ -32,7 +32,8 @@ import { useSelectionHandler } from "./hooks/useSelectionHandler";
 import ChatMessageList from "./ChatMessageList";
 import ChatInput from "./ChatInput";
 import { getPromptSelectOptions } from "../../utils/getPromptSelectOptions";
-import ShortcutCards, { formatShortcutDisplay } from "./ShortcutCards";
+import ShortcutCards from "./ShortcutCards";
+import { formatShortcutDisplay } from "../../utils";
 
 const { TextArea } = Input;
 const { Title, Text } = Typography;
@@ -156,15 +157,15 @@ const ChatComp = ({
     <div>
       {contextHolder}
       <Spin spinning={isLoading}>
-        <div className="chat-comp-root">
-          <div className="chat-comp-body">
+        <div className={styles.chatCompRoot}>
+          <div className={styles.chatCompBody}>
             <Card
               size="small"
-              className="chat-comp-card"
+              className={styles.chatCompCard}
               title={
-                <Title level={4} className="chat-comp-card-title">
+                <Title level={4} className={styles.chatCompCardTitle}>
                   <span>Chat</span>
-                  <div className="chat-comp-card-actions">
+                  <div className={styles.chatCompCardActions}>
                     {chatMessages.length > 0 && (
                       <Tooltip title={shortcutLabels.newChatText}>
                         <Button
@@ -204,7 +205,7 @@ const ChatComp = ({
                 </Title>
               }
             >
-              <div className="chat-comp-card-body-inner">
+              <div className={styles.chatCompCardBodyInner}>
                 {chatMessages.length === 0 ? (
                   <ShortcutCards
                     systemShortcuts={systemShortcuts}
@@ -230,12 +231,12 @@ const ChatComp = ({
 
           {showPromptArea && (
             <Card size="small" title={null}>
-              <div className="prompt-area-row">
-                <Text strong className="prompt-area-label">
+              <div className={styles.promptAreaRow}>
+                <Text strong className={styles.promptAreaLabel}>
                   Prompt:
                 </Text>
                 <Select
-                  style={{ width: "100%" }}
+                  className={styles.promptSelectFull}
                   placeholder="Select a prompt template"
                   onSelect={onSelectPromptHandler}
                   options={promptSelectOptions}
@@ -253,12 +254,12 @@ const ChatComp = ({
                   }}
                 />
               </div>
-              <div className="recent-prompts recent-prompts-row">
+              <div className={styles.recentPromptsRow}>
                 {recentPrompts?.map((prompt, index) => (
                   <div
                     key={prompt?.value}
                     onClick={() => onSelectPromptHandler(prompt?.value)}
-                    className="recent-prompt-item recent-prompt-tag"
+                    className={styles.recentPromptTag}
                     title={prompt?.value}
                   >
                     <Tag
@@ -272,7 +273,7 @@ const ChatComp = ({
                       }}
                       color={TAG_COLORS[index % TAG_COLORS.length]}
                     >
-                      <span className="recent-prompt-tag-inner">
+                      <span className={styles.recentPromptTagInner}>
                         {prompt?.label || prompt?.value}
                       </span>
                     </Tag>

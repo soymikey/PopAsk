@@ -24,7 +24,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { MarkDownComp } from "../MarkDownComp";
 import { useAppStore } from "../../store";
-import "./index.css";
+import styles from "./index.module.css";
 dayjs.extend(relativeTime);
 
 const { Text, Title } = Typography;
@@ -87,56 +87,28 @@ const ChatHistoryComp = ({ setActiveKey, setChatMessages }) => {
     return (
       <div
         key={message.id}
-        style={{
-          display: "flex",
-          marginBottom: "12px",
-          justifyContent: isUser ? "flex-end" : "flex-start",
-        }}
+        className={`${styles.msgRow} ${isUser ? styles.msgRowUser : styles.msgRowAssistant}`}
       >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "flex-start",
-            maxWidth: "80%",
-            gap: "6px",
-          }}
-        >
+        <div className={styles.msgInner}>
           {!isUser && (
             <Avatar
               icon={<RobotOutlined />}
-              style={{
-                backgroundColor: "#1890ff",
-                marginTop: "2px",
-                flexShrink: 0,
-                minWidth: "20px",
-                minHeight: "20px",
-              }}
+              className={`${styles.msgAvatar} ${styles.msgAvatarAssistant}`}
               size="small"
             />
           )}
           <div
-            style={{
-              backgroundColor: isUser ? "#1890ff" : "#f5f5f5",
-              color: isUser ? "white" : "black",
-              padding: "8px 12px",
-              borderRadius: "8px",
-              maxWidth: "100%",
-              wordWrap: "break-word",
-              fontSize: "13px",
-            }}
+            className={`${styles.msgBubble} ${isUser ? styles.msgBubbleUser : styles.msgBubbleAssistant}`}
           >
-            <div style={{ marginBottom: "2px" }}>
+            <div className={styles.msgTimestamp}>
               <Text
-                style={{
-                  fontSize: "10px",
-                  color: isUser ? "rgba(255,255,255,0.8)" : "#999",
-                }}
+                className={`${styles.msgTimestampText} ${isUser ? styles.msgTimestampUser : styles.msgTimestampAssistant}`}
               >
                 {message.timestamp}
               </Text>
             </div>
             {isUser ? (
-              <div style={{ whiteSpace: "pre-wrap" }}>
+              <div className={styles.msgContentPre}>
                 {message.content.length > 100
                   ? `${message.content.substring(0, 100)}...`
                   : message.content}
@@ -152,7 +124,7 @@ const ChatHistoryComp = ({ setActiveKey, setChatMessages }) => {
           {isUser && (
             <Avatar
               icon={<UserOutlined />}
-              style={{ backgroundColor: "#52c41a", marginTop: "2px" }}
+              className={`${styles.msgAvatar} ${styles.msgAvatarUser}`}
               size="small"
             />
           )}
@@ -175,34 +147,15 @@ const ChatHistoryComp = ({ setActiveKey, setChatMessages }) => {
       <Card
         key={index}
         size="small"
-        style={{
-          marginBottom: "12px",
-          cursor: "pointer",
-          transition: "all 0.2s",
-          border: "1px solid #f0f0f0",
-        }}
-        className="history-card"
+        className={styles.historyCard}
         onClick={() => handleHistoryClick(index)}
         hoverable
       >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-start",
-          }}
-        >
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                marginBottom: "4px",
-              }}
-            >
-              <MessageOutlined style={{ color: "#1890ff" }} />
-              <Text strong style={{ fontSize: "14px" }}>
+        <div className={styles.historyCardHeader}>
+          <div className={styles.historyCardContent}>
+            <div className={styles.historyCardHeaderRow}>
+              <MessageOutlined className={styles.historyCardIcon} />
+              <Text strong className={styles.historyCardTitle}>
                 Chat #{index + 1}
               </Text>
               <Tag size="small" color="blue">
@@ -210,15 +163,15 @@ const ChatHistoryComp = ({ setActiveKey, setChatMessages }) => {
               </Tag>
             </div>
 
-            <div style={{ marginBottom: "8px" }}>
-              <Text type="secondary" style={{ fontSize: "12px" }}>
-                <ClockCircleOutlined style={{ marginRight: "4px" }} />
+            <div className={styles.historyCardTime}>
+              <Text type="secondary" className={styles.historyCardTimeText}>
+                <ClockCircleOutlined className={styles.historyCardTimeIcon} />
                 {formatTime(lastMessage?.timestamp)}
               </Text>
             </div>
 
-            <div style={{ marginBottom: "8px" }}>
-              <Text style={{ fontSize: "13px", color: "#666" }}>
+            <div className={styles.historyCardPreview}>
+              <Text className={styles.historyCardPreviewText}>
                 {firstUserMessage?.content?.length > 80
                   ? `${firstUserMessage.content.substring(0, 80)}...`
                   : firstUserMessage?.content || "Empty chat"}
@@ -234,7 +187,7 @@ const ChatHistoryComp = ({ setActiveKey, setChatMessages }) => {
                 icon={<DeleteOutlined />}
                 danger
                 onClick={(e) => handleDeleteHistory(index, e)}
-                style={{ padding: "4px" }}
+                className={styles.historyCardDeleteBtn}
               />
             </Tooltip>
           </Space>
@@ -242,7 +195,7 @@ const ChatHistoryComp = ({ setActiveKey, setChatMessages }) => {
 
         <Collapse
           ghost
-          style={{ marginTop: "12px" }}
+          className={styles.historyCardCollapse}
           onChange={(keys) => {
             if (keys.includes(index.toString())) {
               setExpandedKeys([...expandedKeys, index.toString()]);
@@ -256,25 +209,18 @@ const ChatHistoryComp = ({ setActiveKey, setChatMessages }) => {
         >
           <Panel
             header={
-              <Text style={{ fontSize: "12px", color: "#1890ff" }}>
+              <Text className={styles.historyCardLink}>
                 {expandedKeys.includes(index.toString())
                   ? "Hide messages"
                   : "Show messages"}
               </Text>
             }
             key={index.toString()}
-            style={{ padding: 0 }}
+            className={styles.historyCardPanel}
             onClick={(e) => e.stopPropagation()}
           >
             <div
-              style={{
-                backgroundColor: "#fafafa",
-                borderRadius: "6px",
-                padding: "12px",
-                maxHeight: "300px",
-                overflowY: "auto",
-                border: "1px solid #f0f0f0",
-              }}
+              className={styles.historyCardMessages}
               onClick={(e) => e.stopPropagation()}
             >
               {history.map(renderMessage)}
@@ -286,82 +232,48 @@ const ChatHistoryComp = ({ setActiveKey, setChatMessages }) => {
   };
 
   return (
-    <div
-      style={{
-        height: "calc(100vh - 46px)",
-        display: "flex",
-        flexDirection: "column",
-        paddingTop: "12px",
-        paddingBottom: "12px",
-        gap: "8px",
-      }}
-    >
+    <div className={styles.root}>
       <Card
         size="small"
+        className={styles.card}
         title={
-          <Title
-            level={4}
-            style={{
-              margin: 0,
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-            }}
-          >
+          <Title level={4} className={styles.cardTitle}>
             <MessageOutlined />
             Chat History
           </Title>
         }
-        style={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-        }}
-        bodyStyle={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          padding: "12px",
-          overflowY: "auto",
-        }}
       >
-        <div
-          style={{
-            flex: 1,
-            overflowY: "auto",
-            padding: "8px",
-          }}
-        >
+        <div className={styles.cardInner}>
           {/* Search Bar */}
-          <div style={{ marginBottom: "16px", padding: "0 8px" }}>
+          <div className={styles.searchWrap}>
             <Input
               placeholder="Search in chat history..."
               prefix={<SearchOutlined />}
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
               allowClear
-              style={{ borderRadius: "6px" }}
+              className={styles.searchInput}
             />
           </div>
 
           {filteredChatHistory.length === 0 ? (
             <Empty
               description={
-                <div style={{ textAlign: "center" }}>
+                <div className={styles.emptyWrap}>
                   <Text type="secondary">
                     {chatHistoryList.length === 0
                       ? "No chat history yet"
                       : "No matching chat history found"}
                   </Text>
                   <br />
-                  <Text type="secondary" style={{ fontSize: "12px" }}>
+                  <Text type="secondary" className={styles.emptyText}>
                     {chatHistoryList.length === 0
                       ? "Start a conversation in the Chat tab to see history here"
                       : "Try adjusting your search terms"}
                   </Text>
                 </div>
               }
-              style={{ marginTop: "60px" }}
+              className={styles.emptyRoot}
             />
           ) : (
             <div>

@@ -1,0 +1,264 @@
+.historyCard {
+  transition: all 0.2s ease-in-out;
+  margin-bottom: 12px;
+  cursor: pointer;
+  border: 1px solid var(--color-border);
+}
+
+.historyCard:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: var(--color-primary);
+}
+
+.historyCard :global(.ant-card-body) {
+  padding: 12px;
+}
+
+.historyCard :global(.ant-collapse) {
+  border: none;
+  background: transparent;
+}
+
+.historyCard :global(.ant-collapse-item) {
+  border: none;
+}
+
+.historyCard :global(.ant-collapse-header) {
+  padding: 0 !important;
+  background: transparent;
+}
+
+.historyCard :global(.ant-collapse-content) {
+  border: none;
+  background: transparent;
+}
+
+.historyCard :global(.ant-collapse-content-box) {
+  padding: 0 !important;
+}
+
+.historyCard :global(.ant-tag) {
+  margin: 0;
+}
+
+.historyCard :global(.ant-avatar) {
+  flex-shrink: 0;
+}
+
+.historyCard :global(.ant-btn-text) {
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.historyCard:hover :global(.ant-btn-text) {
+  opacity: 1;
+}
+
+.historyCard :global(.ant-btn-text):hover {
+  background-color: rgba(255, 77, 79, 0.1);
+}
+
+.root {
+  height: calc(100vh - 46px);
+  display: flex;
+  flex-direction: column;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  gap: 8px;
+}
+
+.card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.card :global(.ant-card-body) {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  overflow-y: auto;
+}
+
+.cardTitle {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cardInner {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.searchWrap {
+  margin-bottom: 16px;
+  padding: 0 8px;
+}
+
+.searchInput {
+  border-radius: 6px;
+}
+
+.emptyWrap {
+  text-align: center;
+}
+
+.emptyText {
+  font-size: 12px;
+}
+
+.emptyRoot {
+  margin-top: 60px;
+}
+
+.historyCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.historyCardContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.historyCardHeaderRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.historyCardIcon {
+  color: var(--color-primary);
+}
+
+.historyCardLink {
+  font-size: 12px;
+  color: var(--color-primary);
+}
+
+.historyCardTitle {
+  font-size: 14px;
+}
+
+.historyCardTime {
+  margin-bottom: 8px;
+}
+
+.historyCardTimeText {
+  font-size: 12px;
+}
+
+.historyCardTimeIcon {
+  margin-right: 4px;
+}
+
+.historyCardPreview {
+  margin-bottom: 8px;
+}
+
+.historyCardPreviewText {
+  font-size: 13px;
+  color: var(--color-text-tertiary);
+}
+
+.historyCardDeleteBtn {
+  padding: 4px;
+}
+
+.historyCardCollapse {
+  margin-top: 12px;
+}
+
+.historyCardPanel {
+  padding: 0;
+}
+
+.historyCardMessages {
+  background-color: #fafafa;
+  border-radius: 6px;
+  padding: 12px;
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid var(--color-border);
+}
+
+.msgRow {
+  display: flex;
+  margin-bottom: 12px;
+  justify-content: flex-end;
+}
+
+.msgRowUser {
+  justify-content: flex-end;
+}
+
+.msgRowAssistant {
+  justify-content: flex-start;
+}
+
+.msgInner {
+  display: flex;
+  align-items: flex-start;
+  max-width: 80%;
+  gap: 6px;
+}
+
+.msgAvatar {
+  margin-top: 2px;
+  flex-shrink: 0;
+  min-width: 20px;
+  min-height: 20px;
+}
+
+.msgAvatarAssistant {
+  background-color: var(--color-primary);
+}
+
+.msgAvatarUser {
+  background-color: #52c41a;
+}
+
+.msgBubble {
+  padding: 8px 12px;
+  border-radius: 8px;
+  max-width: 100%;
+  word-wrap: break-word;
+  font-size: 13px;
+}
+
+.msgBubbleUser {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.msgBubbleAssistant {
+  background-color: #f5f5f5;
+  color: black;
+}
+
+.msgTimestamp {
+  margin-bottom: 2px;
+}
+
+.msgTimestampText {
+  font-size: 10px;
+}
+
+.msgTimestampUser {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.msgTimestampAssistant {
+  color: var(--color-text-muted);
+}
+
+.msgContentPre {
+  white-space: pre-wrap;
+}

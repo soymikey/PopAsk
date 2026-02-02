@@ -24,7 +24,7 @@ import { getPromptSelectOptions } from "../../utils/getPromptSelectOptions";
 import { useAskChat } from "./hooks/useAskChat";
 import { useAddPromptModal } from "./hooks/useAddPromptModal";
 import { useAskSelectionHandler } from "./hooks/useAskSelectionHandler";
-import "./index.css";
+import styles from "./index.module.css";
 import {
   IS_OPEN_RECENT_PROMPTS_VALUE,
   SELECTED_PROMPT_KEY,
@@ -46,7 +46,7 @@ const AskComp = ({
   const [selection, setSelection] = useState("");
   const [selectedPrompt, setSelectedPrompt] = useLocalStorage(
     SELECTED_PROMPT_KEY,
-    DEFAULT_PROMPT_OPTIONS[0].value
+    DEFAULT_PROMPT_OPTIONS[0].value,
   );
   const [isLoading, setIsLoading] = useState(false);
 
@@ -54,20 +54,19 @@ const AskComp = ({
   const setRecentPrompts = useAppStore((s) => s.setRecentPrompts);
   const recentPromptsActiveKey = useAppStore((s) => s.recentPromptsActiveKey);
   const setRecentPromptsActiveKey = useAppStore(
-    (s) => s.setRecentPromptsActiveKey
+    (s) => s.setRecentPromptsActiveKey,
   );
 
   const askRef = useRef(null);
 
-  const { chatResponse, setChatResponse, isAskLoading, handleChat } = useAskChat(
-    {
+  const { chatResponse, setChatResponse, isAskLoading, handleChat } =
+    useAskChat({
       promptList,
       selectedPrompt,
       historyList,
       setHistoryList,
       messageApi,
-    }
-  );
+    });
 
   const {
     isModalVisible,
@@ -109,7 +108,10 @@ const AskComp = ({
     for (const prompt of promptList) {
       if (selection.startsWith(prompt.value)) {
         setSelection(
-          messageGenerator(selectedPrompt, selection.slice(prompt.value.length))
+          messageGenerator(
+            selectedPrompt,
+            selection.slice(prompt.value.length),
+          ),
         );
         return;
       }
@@ -120,8 +122,8 @@ const AskComp = ({
   const dropdownRenderElement = (menu) => (
     <>
       {menu}
-      <Divider style={{ margin: "8px 0" }} />
-      <div className="ask-comp-prompt-dropdown-footer">
+      <Divider className={styles.divider} />
+      <div className={styles.askCompPromptDropdownFooter}>
         <Button
           type="primary"
           icon={<PlusOutlined />}
@@ -135,7 +137,7 @@ const AskComp = ({
 
   const promptSelectOptions = getPromptSelectOptions(promptList, {
     renderExtra: (item, items) => (
-      <div style={{ marginLeft: "8px" }}>
+      <div className={styles.extraBtnWrap}>
         <Button
           type="text"
           size="small"
@@ -144,7 +146,7 @@ const AskComp = ({
             e.preventDefault();
             e.stopPropagation();
             const newPromptList = (items || []).filter(
-              (i) => i.value !== item.value
+              (i) => i.value !== item.value,
             );
             setPromptList(newPromptList);
             syncShortcutList(newPromptList, systemShortcuts);
@@ -159,18 +161,18 @@ const AskComp = ({
   });
 
   return (
-    <div style={{ paddingTop: "12px", paddingBottom: "12px" }}>
+    <div className={styles.root}>
       {contextHolder}
       <Spin spinning={isLoading}>
-        <Space direction="vertical" size="small" style={{ width: "100%" }}>
+        <Space direction="vertical" size="small" className={styles.spaceFull}>
           {/* Prompt Selection */}
           <Card size="small" title={null}>
-            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-              <Text strong style={{ minWidth: "55px" }}>
+            <div className={styles.promptRow}>
+              <Text strong className={styles.promptLabel}>
                 Prompt:
               </Text>
               <Select
-                style={{ minWidth: 350 }}
+                className={styles.promptSelect}
                 placeholder="Select a prompt template"
                 dropdownRender={dropdownRenderElement}
                 onSelect={onSelectPromptHandler}
@@ -188,32 +190,25 @@ const AskComp = ({
               accordion
               bordered={false}
               size="small"
-              style={{ marginTop: "12px" }}
+              className={styles.collapse}
               activeKey={recentPromptsActiveKey}
               onChange={(key) => {
                 setRecentPromptsActiveKey(
                   key === IS_OPEN_RECENT_PROMPTS_VALUE
                     ? IS_OPEN_RECENT_PROMPTS_VALUE
-                    : ""
+                    : "",
                 );
               }}
             >
               <Panel header="Recent Prompts" key={IS_OPEN_RECENT_PROMPTS_VALUE}>
-                <div
-                  style={{
-                    display: "flex",
-                    gap: "8px",
-                    flexWrap: "wrap",
-                  }}
-                  className="recent-prompts"
-                >
+                <div className={styles.recentPrompts}>
                   {recentPrompts?.map((prompt, index) => (
                     <div
                       key={prompt?.value}
                       onClick={(e) => {
                         onSelectPromptHandler(prompt?.value);
                       }}
-                      className="recent-prompt-item"
+                      className={styles.recentPromptItem}
                       title={prompt?.value}
                     >
                       <Tag
@@ -222,26 +217,13 @@ const AskComp = ({
                         onClose={(e) => {
                           e.stopPropagation();
                           setRecentPrompts(
-                            recentPrompts.filter((_, i) => i !== index)
+                            recentPrompts.filter((_, i) => i !== index),
                           );
                         }}
                         color={TAG_COLORS[index % TAG_COLORS.length]}
-                        style={{
-                          maxWidth: "200px",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          cursor: "pointer",
-                        }}
+                        className={styles.recentPromptTag}
                       >
-                        <div
-                          style={{
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            whiteSpace: "nowrap",
-                            flex: 1,
-                          }}
-                        >
+                        <div className={styles.recentPromptItemInner}>
                           {prompt?.label || prompt?.value}
                         </div>
                       </Tag>
@@ -256,19 +238,19 @@ const AskComp = ({
           <Card
             size="small"
             title={
-              <Title level={4} style={{ margin: 0 }}>
+              <Title level={4} className={styles.cardTitle}>
                 Ask Question
               </Title>
             }
           >
-            <Space direction="vertical" style={{ width: "100%" }} size="middle">
+            <Space direction="vertical" className={styles.spaceFull} size="middle">
               <TextArea
                 autoSize={{ minRows: 4, maxRows: 12 }}
                 placeholder="Enter your question or paste text here..."
                 value={`${selection}`}
                 onChange={onChangeSelectionHandler}
                 allowClear
-                style={{ fontSize: "14px" }}
+                className={styles.textarea}
                 onPressEnter={(e) => {
                   if (e.metaKey) {
                     e.preventDefault();
@@ -276,7 +258,7 @@ const AskComp = ({
                   }
                 }}
               />
-              <div style={{ display: "flex", justifyContent: "flex-end" }}>
+              <div className={styles.actionsRow}>
                 <Button
                   title="Cmd+Enter to send"
                   ref={askRef}
@@ -286,7 +268,7 @@ const AskComp = ({
                   onClick={() => {
                     handleChat(messageGenerator(selectedPrompt, selection));
                   }}
-                  style={{ minWidth: "100px" }}
+                  className={styles.sendBtn}
                 >
                   {isAskLoading ? "Thinking..." : "Send"}
                 </Button>
@@ -299,13 +281,13 @@ const AskComp = ({
             <Card
               size="small"
               title={
-                <Title level={4} style={{ margin: 0 }}>
+                <Title level={4} className={styles.cardTitle}>
                   Response
                 </Title>
               }
-              style={{ borderColor: "#d9d9d9" }}
+              className={styles.responseCard}
             >
-              <div style={{ maxHeight: "500px", overflowY: "auto" }}>
+              <div className={styles.responseBody}>
                 <MarkDownComp>{chatResponse}</MarkDownComp>
               </div>
             </Card>

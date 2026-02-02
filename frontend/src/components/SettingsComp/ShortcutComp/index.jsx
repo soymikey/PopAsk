@@ -18,6 +18,9 @@ import {
   DeleteOutlined,
 } from "@ant-design/icons";
 import React, { useEffect, useState } from "react";
+import { VALIDATION_MSGS } from "../../../constant";
+import { formatShortcutDisplay } from "../../../utils";
+import styles from "./index.module.css";
 
 const { Text } = Typography;
 
@@ -37,31 +40,27 @@ function ShortcutComp({
     value: "",
     shortcut: "",
   });
-  const [defaultP1, setDefaultP1] = useState(
-    isMac ? "cmd+shift" : "ctrl+shift",
-  );
-  const [defaultP2, setDefaultP2] = useState("");
+  const shortcut = localPrompt?.shortcut ?? "";
+  const lastPlusIndex = shortcut.lastIndexOf("+");
+  const defaultP1 =
+    lastPlusIndex >= 0
+      ? shortcut.substring(0, lastPlusIndex)
+      : shortcut || (isMac ? "cmd+shift" : "ctrl+shift");
+  const defaultP2 =
+    lastPlusIndex >= 0 ? shortcut.substring(lastPlusIndex + 1) : "";
 
   const handleP1Change = (value) => {
-    setDefaultP1(value);
-    setDefaultP2("");
+    updatePromptShortcut(value);
   };
 
   const handleChange = (e) => {
     const inputValue = e.target.value;
-
-    // 清空输入时重置状态
     if (inputValue.length === 0) {
-      setDefaultP2("");
-      updatePromptShortcut("");
+      updatePromptShortcut(defaultP1);
       return;
     }
-
     const lastChar = inputValue.slice(-1).toLowerCase();
-
-    // 只允许数字和字母，自动转换为小写
     if (/^[a-zA-Z0-9]$/.test(lastChar)) {
-      setDefaultP2(lastChar);
       updatePromptShortcut(`${defaultP1}+${lastChar}`);
     }
   };
@@ -82,15 +81,15 @@ function ShortcutComp({
     const name = (localPrompt?.label ?? "").trim();
     const content = (localPrompt?.value ?? "").trim();
     if (!name) {
-      message.warning("Name is required.");
+      message.warning(VALIDATION_MSGS.NAME_REQUIRED);
       return;
     }
     if (!content) {
-      message.warning("Prompt content is required.");
+      message.warning(VALIDATION_MSGS.PROMPT_CONTENT_REQUIRED);
       return;
     }
     if (!localPrompt?.shortcut) {
-      message.warning("Shortcut is required.");
+      message.warning(VALIDATION_MSGS.SHORTCUT_REQUIRED);
       return;
     }
     setIsEditing(false);
@@ -143,18 +142,6 @@ function ShortcutComp({
   };
 
   useEffect(() => {
-    if (localPrompt?.shortcut) {
-      const lastPlusIndex = localPrompt.shortcut.lastIndexOf("+");
-      const p1 = localPrompt.shortcut.substring(0, lastPlusIndex);
-      const p2 = localPrompt.shortcut.substring(lastPlusIndex + 1);
-      setDefaultP1(p1);
-      setDefaultP2(p2);
-    } else {
-      setDefaultP1(isMac ? "cmd+shift" : "ctrl+shift");
-    }
-  }, [localPrompt, isMac]);
-
-  useEffect(() => {
     if (initialEditMode) {
       setIsEditing(true);
       setEditSnapshot({
@@ -170,7 +157,7 @@ function ShortcutComp({
     <Select
       value={defaultP1}
       onChange={handleP1Change}
-      style={{ width: "120px" }}
+      className={styles.shortcutCompSelectBefore}
       size="middle"
     >
       {isMac ? (
@@ -188,39 +175,24 @@ function ShortcutComp({
   );
 
   return (
-    <Card
-      size="small"
-      style={{
-        border: "1px solid #f0f0f0",
-        borderRadius: "8px",
-        boxShadow: "0 1px 2px rgba(0,0,0,0.03)",
-      }}
-      bodyStyle={{ padding: "8px" }}
-    >
-      <Space
-        style={{
-          width: "100%",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-        size="small"
-      >
+    <Card size="small" className={`${styles.shortcutCompCard} card-subtle`}>
+      <Space className={`${styles.shortcutCompSpace} flex-between`} size="small">
         {/* Title and Description - view / edit mode */}
-        <div style={{ flex: 1, minWidth: 0 }}>
+        <div className={`${styles.shortcutCompContent} flex-1`}>
           {isEditing ? (
             <>
               <Input
                 value={localPrompt?.label ?? ""}
                 onChange={(e) => updatePrompt("label", e.target.value)}
                 placeholder="Name"
-                style={{ marginBottom: "8px", fontWeight: 600 }}
+                className={styles.shortcutCompInputName}
               />
               <TextArea
                 value={localPrompt?.value ?? ""}
                 onChange={(e) => updatePrompt("value", e.target.value)}
                 placeholder="Prompt content"
                 autoSize={{ minRows: 2, maxRows: 6 }}
-                style={{ fontSize: "12px", marginBottom: "8px" }}
+                className={styles.shortcutCompTextarea}
               />
               <Space>
                 <Button
@@ -241,28 +213,12 @@ function ShortcutComp({
               </Space>
             </>
           ) : (
-            <div
-              style={{ display: "flex", alignItems: "flex-start", gap: "8px" }}
-            >
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <Text
-                  strong
-                  style={{
-                    fontSize: "14px",
-                    display: "block",
-                    marginBottom: "4px",
-                  }}
-                >
+            <div className={styles.shortcutCompViewRow}>
+              <div className={`${styles.shortcutCompViewContent} flex-1`}>
+                <Text strong className={styles.shortcutCompLabel}>
                   {localPrompt?.label || "—"}
                 </Text>
-                <Text
-                  type="secondary"
-                  style={{
-                    fontSize: "12px",
-                    lineHeight: "1.4",
-                    whiteSpace: "pre-wrap",
-                  }}
-                >
+                <Text type="secondary" className={styles.shortcutCompValue}>
                   {localPrompt?.value || "—"}
                 </Text>
               </div>
@@ -288,24 +244,14 @@ function ShortcutComp({
         </div>
 
         {/* Shortcut Input */}
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "flex-start",
-            gap: "12px",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-            <Text
-              type="secondary"
-              style={{ fontSize: "14px", minWidth: "60px" }}
-            >
+        <div className={`${styles.shortcutCompShortcutWrap} flex-col`}>
+          <div className={styles.shortcutCompShortcutRow}>
+            <Text type="secondary" className={styles.shortcutCompShortcutLabel}>
               Shortcut:
             </Text>
             {defaultP2 && (
-              <Tag color="blue" style={{ margin: 0 }}>
-                {`${defaultP1}+${defaultP2}`}
+              <Tag color="blue" className={styles.shortcutCompTag}>
+                {formatShortcutDisplay(`${defaultP1}+${defaultP2}`)}
               </Tag>
             )}
           </div>
@@ -313,7 +259,7 @@ function ShortcutComp({
           {isEditing && (
             <Input
               disabled={!isEditing}
-              style={{ width: "200px" }}
+              className={styles.shortcutCompInputShortcut}
               addonBefore={selectBefore}
               value={defaultP2}
               onChange={handleChange}

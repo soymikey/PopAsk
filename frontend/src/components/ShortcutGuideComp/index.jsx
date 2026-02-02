@@ -12,6 +12,7 @@ import {
   DEFAULT_SHORTCUT_LIST,
   SHORTCUT_COLORS,
 } from "../../constant";
+import styles from "./index.module.css";
 
 const { Text, Title } = Typography;
 
@@ -37,21 +38,12 @@ const ShortcutGuideComp = ({ visible, onClose, onNeverShow }) => {
     icon = null,
     color = "default"
   ) => (
-    <div
-      key={uniqueKey}
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: "8px 0",
-        borderBottom: "1px solid #f0f0f0",
-      }}
-    >
-      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-        {icon && <span style={{ color: "#1890ff" }}>{icon}</span>}
+    <div key={uniqueKey} className={`${styles.shortcutGuideItem} flex-between`}>
+      <div className={styles.shortcutGuideItemLeft}>
+        {icon && <span className={styles.shortcutGuideIcon}>{icon}</span>}
         <Text>{desc}</Text>
       </div>
-      <Tag color={color} style={{ fontFamily: "monospace", fontSize: "12px" }}>
+      <Tag color={color} className={styles.shortcutGuideTag}>
         {shortcutDisplay || "Set in Settings"}
       </Tag>
     </div>
@@ -60,8 +52,8 @@ const ShortcutGuideComp = ({ visible, onClose, onNeverShow }) => {
   return (
     <Modal
       title={
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <KeyOutlined style={{ color: "#1890ff" }} />
+        <div className={styles.shortcutGuideTitle}>
+          <KeyOutlined className={styles.shortcutGuideIcon} />
           <span>🎉 Welcome to PopAsk!</span>
         </div>
       }
@@ -69,11 +61,11 @@ const ShortcutGuideComp = ({ visible, onClose, onNeverShow }) => {
       onCancel={onClose}
       width={480}
       footer={[
-        <Text key="tip" type="secondary" style={{ fontSize: "12px" }}>
+        <Text key="tip" type="secondary" className={styles.shortcutGuideFooterTip}>
           💡 You can customize shortcuts in Settings{" "}
         </Text>,
         <Space key="buttons">
-          <Text type="link" onClick={onNeverShow} style={{ fontSize: "12px" }}>
+          <Text type="link" onClick={onNeverShow} className={styles.shortcutGuideFooterLink}>
             Don't show again
           </Text>
           <Button onClick={onClose} size="small" type="primary">
@@ -83,26 +75,16 @@ const ShortcutGuideComp = ({ visible, onClose, onNeverShow }) => {
       ]}
       closable={true}
     >
-      <div style={{ padding: "16px 0" }}>
+      <div className={styles.shortcutGuideBody}>
         {/* Usage Tips */}
-        <div
-          style={{
-            backgroundColor: "#e6f7ff",
-            border: "1px solid #91d5ff",
-            padding: "16px",
-            borderRadius: "8px",
-            marginTop: "16px",
-          }}
-        >
-          <div
-            style={{ display: "flex", alignItems: "flex-start", gap: "8px" }}
-          >
-            <BulbOutlined style={{ color: "#1890ff", marginTop: "2px" }} />
+        <div className={styles.shortcutGuideTipsBox}>
+          <div className={styles.shortcutGuideTipsRow}>
+            <BulbOutlined className={styles.shortcutGuideTipsIcon} />
             <div>
-              <Text strong style={{ color: "#1890ff" }}>
+              <Text strong className={styles.shortcutGuideTipsTitle}>
                 How to use:
               </Text>
-              <ul style={{ margin: "8px 0 0 0", paddingLeft: "16px" }}>
+              <ul className={styles.shortcutGuideTipsList}>
                 <li>Select text in any application</li>
                 <li>Press the corresponding shortcut</li>
                 <li>PopAsk will automatically process your request</li>
@@ -112,26 +94,12 @@ const ShortcutGuideComp = ({ visible, onClose, onNeverShow }) => {
           </div>
         </div>
         {/* System Shortcuts */}
-        <div style={{ marginBottom: "24px" }}>
-          <Title
-            level={5}
-            style={{
-              marginBottom: "12px",
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-            }}
-          >
-            <SettingOutlined style={{ color: "#1890ff" }} />
+        <div className={styles.shortcutGuideSection}>
+          <Title level={5} className={styles.shortcutGuideSectionTitle}>
+            <SettingOutlined className={styles.shortcutGuideIcon} />
             System Shortcuts
           </Title>
-          <div
-            style={{
-              backgroundColor: "#fafafa",
-              padding: "12px",
-              borderRadius: "8px",
-            }}
-          >
+          <div className={styles.shortcutGuideBox}>
             {systemShortcuts.map((item) =>
               renderShortcutItem(item.key, item.shortcut, item.desc, item.icon, "blue")
             )}
@@ -141,26 +109,12 @@ const ShortcutGuideComp = ({ visible, onClose, onNeverShow }) => {
         <Divider />
 
         {/* Prompt Shortcuts */}
-        <div style={{ marginBottom: "24px" }}>
-          <Title
-            level={5}
-            style={{
-              marginBottom: "12px",
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-            }}
-          >
-            <BulbOutlined style={{ color: "#fa8c16" }} />
+        <div className={styles.shortcutGuideSection}>
+          <Title level={5} className={styles.shortcutGuideSectionTitle}>
+            <BulbOutlined className={styles.shortcutGuideSectionIconOrange} />
             Default Prompt Shortcuts
           </Title>
-          <div
-            style={{
-              backgroundColor: "#fafafa",
-              padding: "12px",
-              borderRadius: "8px",
-            }}
-          >
+          <div className={styles.shortcutGuideBox}>
             {promptShortcuts.map((item) =>
               renderShortcutItem(item.key, item.shortcut, item.desc, null, item.color)
             )}

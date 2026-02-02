@@ -1,0 +1,70 @@
+.shortcutCardsHeader {
+  opacity: 0.6;
+  text-align: center;
+}
+
+.shortcutCardsHeaderText {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-base);
+}
+
+.shortcutCardsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  padding: 20px;
+  text-align: center;
+  overflow: auto;
+  gap: 4px;
+}
+
+.shortcutCardsCard {
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  width: 100%;
+  background-color: transparent;
+  height: 40px;
+}
+
+.shortcutCardsCard :global(.ant-card-body) {
+  display: flex;
+  flex-direction: column;
+  padding: 6px;
+}
+
+.shortcutCardsRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.shortcutCardsLabel {
+  font-size: var(--font-size-small);
+  color: var(--color-text-tertiary);
+}
+
+.shortcutCardsTag {
+  font-size: var(--font-size-small);
+  border-radius: 4px;
+  flex-shrink: 0;
+  margin-right: 0;
+}
+
+.shortcutCardsTagEmpty {
+  font-size: var(--font-size-small);
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+  margin-right: 0;
+}
+
+.shortcutCardsFooter {
+  text-align: center;
+  margin-top: 16px;
+}
+
+.shortcutCardsFooterText {
+  font-size: var(--font-size-base);
+}

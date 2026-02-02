@@ -1,0 +1,78 @@
+.shortcutCompCard :global(.ant-card-body) {
+  padding: 8px;
+}
+
+.shortcutCompSpace {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.shortcutCompContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.shortcutCompInputName {
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.shortcutCompTextarea {
+  font-size: var(--font-size-small);
+  margin-bottom: 8px;
+}
+
+.shortcutCompViewRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.shortcutCompViewContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.shortcutCompLabel {
+  font-size: var(--font-size-base);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.shortcutCompValue {
+  font-size: var(--font-size-small);
+  line-height: 1.4;
+  white-space: pre-wrap;
+}
+
+.shortcutCompShortcutWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.shortcutCompShortcutRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.shortcutCompShortcutLabel {
+  font-size: var(--font-size-base);
+  min-width: 60px;
+}
+
+.shortcutCompTag {
+  margin: 0;
+}
+
+.shortcutCompInputShortcut {
+  width: 200px;
+}
+
+.shortcutCompSelectBefore {
+  width: 120px;
+}

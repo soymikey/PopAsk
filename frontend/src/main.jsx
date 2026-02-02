@@ -5,20 +5,13 @@ import { ErrorBoundary } from "react-error-boundary";
 import App from "./App";
 import { initEnv } from "./utils";
 import { useAppStore } from "./store";
+import styles from "./main.module.css";
 
 function ErrorFallback({ error, resetErrorBoundary }) {
   return (
-    <div
-      style={{
-        padding: 24,
-        textAlign: "center",
-        fontFamily: "sans-serif",
-      }}
-    >
+    <div className={styles.errorFallback}>
       <h2>Something went wrong</h2>
-      <pre style={{ textAlign: "left", overflow: "auto", margin: "16px 0" }}>
-        {error?.message}
-      </pre>
+      <pre className={styles.errorFallbackPre}>{error?.message}</pre>
       <button type="button" onClick={resetErrorBoundary}>
         Reload
       </button>

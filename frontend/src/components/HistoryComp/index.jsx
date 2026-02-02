@@ -13,7 +13,7 @@ import { ClearOutlined } from "@ant-design/icons";
 import { useHistorySearch } from "./hooks/useHistorySearch";
 import { useHistoryActions } from "./hooks/useHistoryActions";
 import HistoryItem from "./HistoryItem";
-import "./index.css";
+import styles from "./index.module.css";
 
 const { Title } = Typography;
 const { Search } = Input;
@@ -32,24 +32,24 @@ function HistoryComp({ historyList, setHistoryList }) {
     });
 
   return (
-    <div className="history-comp-root">
+    <div className={styles.historyCompRoot}>
       {contextHolder}
 
-      <Card size="small" className="history-comp-card">
-        <div className="history-comp-header">
-          <div className="history-comp-header-left">
-            <Title level={4} className="history-comp-title">
+      <Card size="small" className={styles.historyCompCard}>
+        <div className={styles.historyCompHeader}>
+          <div className={styles.historyCompHeaderLeft}>
+            <Title level={4} className={styles.historyCompTitle}>
               Chat History
             </Title>
             {historyList.length > 0 && (
               <Badge
                 count={historyList.length}
                 size="small"
-                style={{ backgroundColor: "#1890ff", fontSize: "11px" }}
+                className={styles.historyCompBadge}
               />
             )}
           </div>
-          <div className="history-comp-header-right">
+          <div className={styles.historyCompHeaderRight}>
             {historyList.length > 0 && (
               <Tooltip title="Clear all history">
                 <Button
@@ -58,7 +58,7 @@ function HistoryComp({ historyList, setHistoryList }) {
                   icon={<ClearOutlined />}
                   onClick={handleClearAll}
                   size="small"
-                  className="history-comp-clear-btn"
+                  className={styles.historyCompClearBtn}
                 >
                   Clear All
                 </Button>
@@ -67,11 +67,11 @@ function HistoryComp({ historyList, setHistoryList }) {
           </div>
         </div>
 
-        <div className="history-comp-search-wrap">
+        <div className={styles.historyCompSearchWrap}>
           <Search
             placeholder="Search messages or responses..."
             allowClear
-            style={{ width: 300 }}
+            className={styles.historyCompSearch}
             value={searchKeyword}
             onChange={(e) => setSearchKeyword(e.target.value)}
             onSearch={setSearchKeyword}
@@ -81,33 +81,33 @@ function HistoryComp({ historyList, setHistoryList }) {
         {historyList.length === 0 ? (
           <Empty
             description={
-              <div className="history-comp-empty-desc">
-                <div className="history-comp-empty-desc-title">
+              <div className={styles.historyCompEmptyDesc}>
+                <div className={styles.historyCompEmptyDescTitle}>
                   No chat history yet
                 </div>
-                <div className="history-comp-empty-desc-sub">
+                <div className={styles.historyCompEmptyDescSub}>
                   Start a conversation to see it here
                 </div>
               </div>
             }
-            style={{ padding: "40px 0" }}
+            className={styles.historyCompEmpty}
           />
         ) : filteredHistory.length === 0 ? (
           <Empty
             description={
-              <div className="history-comp-empty-desc">
-                <div className="history-comp-empty-desc-title">
+              <div className={styles.historyCompEmptyDesc}>
+                <div className={styles.historyCompEmptyDescTitle}>
                   No results found
                 </div>
-                <div className="history-comp-empty-desc-sub">
+                <div className={styles.historyCompEmptyDescSub}>
                   Try a different search term
                 </div>
               </div>
             }
-            style={{ padding: "40px 0" }}
+            className={styles.historyCompEmpty}
           />
         ) : (
-          <div className="history-comp-list">
+          <div className={styles.historyCompList}>
             {filteredHistory.map((item, i) => {
               const realIndex = historyList.indexOf(item);
               return (

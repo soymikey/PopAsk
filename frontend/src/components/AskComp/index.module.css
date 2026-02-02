@@ -1,0 +1,105 @@
+.askCompPromptDropdownFooter {
+  padding: 0 8px 4px;
+  display: flex;
+  justify-content: center;
+}
+
+.recentPromptItem:hover {
+  cursor: pointer;
+  opacity: 0.5;
+}
+
+.askCompPromptDropdownFooter :global(.ant-tag) {
+  margin-right: 0;
+}
+
+:global(.ant-select-selection-item) button {
+  display: none;
+}
+
+:global(.ant-collapse-header) {
+  padding: 8px !important;
+}
+
+.root {
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+.spaceFull {
+  width: 100%;
+}
+
+.divider {
+  margin: 8px 0;
+}
+
+.extraBtnWrap {
+  margin-left: 8px;
+}
+
+.promptRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.promptLabel {
+  min-width: 55px;
+}
+
+.promptSelect {
+  min-width: 350px;
+}
+
+.collapse {
+  margin-top: 12px;
+}
+
+.recentPrompts {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.recentPromptTag {
+  max-width: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.recentPromptItemInner {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.cardTitle {
+  margin: 0;
+}
+
+.textarea {
+  font-size: var(--font-size-base);
+}
+
+.actionsRow {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.sendBtn {
+  min-width: 100px;
+}
+
+.responseCard {
+  border-color: var(--color-border-light);
+}
+
+.responseBody {
+  max-height: 500px;
+  overflow-y: auto;
+}

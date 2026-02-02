@@ -10,6 +10,7 @@ import ChatHistoryComp from "./components/ChatHistoryComp";
 import SettingsComp from "./components/SettingsComp";
 import ShortcutGuideComp from "./components/ShortcutGuideComp";
 import "./app.css";
+import styles from "./App.module.css";
 
 const App = () => {
   const isMac = useAppStore((s) => s.platform.isMac);
@@ -84,25 +85,10 @@ const App = () => {
   }, []);
 
   return (
-    <Layout
-      style={{
-        height: "100vh",
-        overflow: "hidden",
-        paddingLeft: 8,
-        paddingRight: 8,
-        paddingBottom: 8,
-      }}
-    >
+    <Layout className={styles.layout}>
       <Suspense
         fallback={
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              minHeight: 200,
-            }}
-          >
+          <div className={styles.suspenseFallback}>
             <Spin size="large" />
           </div>
         }

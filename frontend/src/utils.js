@@ -146,6 +146,15 @@ export const resetShortcut = () => {
     syncShortcutListToBackend(DEFAULT_PROMPT_OPTIONS, DEFAULT_SHORTCUT_LIST);
 };
 
+/** Formats shortcut string for display (e.g. cmd → ⌘). */
+export const formatShortcutDisplay = (str) => {
+    if (!str || typeof str !== "string") return str;
+    return str
+        .replace(/\bcmd\b/gi, "⌘")
+        .replace(/\bshift\b/gi, "Shift")
+        .replace(/\bctrl\b/gi, "Ctrl");
+};
+
 /**
  * Validates that shortcut keys are unique across prompt list and system shortcuts.
  * @param {Array} localPromptList

@@ -1,5 +1,6 @@
 import { Button, Card, Input, Space, Tooltip } from "antd";
 import { SendOutlined, SettingOutlined, StopOutlined } from "@ant-design/icons";
+import styles from "./index.module.css";
 
 const { TextArea } = Input;
 
@@ -20,21 +21,10 @@ export default function ChatInput({
   showPromptArea,
 }) {
   return (
-    <Card
-      size="small"
-      title={null}
-      style={{
-        position: "sticky",
-        bottom: 0,
-        backgroundColor: "#fff",
-        borderTop: "1px solid #f0f0f0",
-        zIndex: 10,
-        overflow: "hidden",
-      }}
-    >
-      <Space direction="vertical" style={{ width: "100%" }} size="middle">
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <div style={{ flex: 1 }}>
+    <Card size="small" title={null} className={styles.chatInputCard}>
+      <Space direction="vertical" className={styles.chatInputSpace} size="middle">
+        <div className={styles.chatInputRow}>
+          <div className="flex-1">
             <TextArea
               ref={inputRef}
               autoSize={{ minRows: 3, maxRows: 6 }}
@@ -42,7 +32,7 @@ export default function ChatInput({
               value={selection}
               onChange={onSelectionChange}
               allowClear
-              style={{ fontSize: "14px" }}
+              className={styles.chatInputTextarea}
               onPressEnter={(e) => {
                 const isCmdOrCtrl = isMac ? e.metaKey : e.ctrlKey;
                 if (isCmdOrCtrl && e.shiftKey) {
@@ -61,7 +51,7 @@ export default function ChatInput({
             />
           </div>
         </div>
-        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+        <div className={styles.chatInputActions}>
           <Tooltip title="Cmd+Enter to send OR Shift+Enter to send new chat">
             <Button
               disabled={selection.trim() === ""}
@@ -71,7 +61,7 @@ export default function ChatInput({
               loading={isAskLoading}
               icon={<SendOutlined />}
               onClick={onSend}
-              style={{ minWidth: "100px" }}
+              className={styles.chatInputSendBtn}
             >
               {isAskLoading ? "Sending..." : "Send"}
             </Button>
@@ -82,7 +72,7 @@ export default function ChatInput({
                 danger
                 icon={<StopOutlined />}
                 onClick={stopRequest}
-                style={{ marginLeft: "8px" }}
+                className={styles.chatInputStopBtn}
               />
             </Tooltip>
           )}

@@ -1,0 +1,54 @@
+.settingsCompRoot {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.settingsCompScroll {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.settingsCompCardTitle {
+  margin: 0;
+}
+
+.settingsCompInfoIcon {
+  color: var(--color-primary);
+}
+
+.settingsCompHint {
+  font-size: var(--font-size-small);
+  display: block;
+  margin-top: 8px;
+}
+
+.settingsCompSelectFull {
+  width: 100%;
+}
+
+.settingsCompEmptyText {
+  text-align: center;
+  display: block;
+}
+
+.settingsCompDragHint {
+  font-size: var(--font-size-small);
+  color: var(--color-text-muted);
+}
+
+.settingsCompSpaceFull {
+  width: 100%;
+}
+
+.settingsCompFooter {
+  flex-shrink: 0;
+  padding: 16px 0;
+  margin-top: 16px;
+  text-align: center;
+  display: flex;
+  justify-content: space-evenly;
+  background-color: #f5f5f5;
+}

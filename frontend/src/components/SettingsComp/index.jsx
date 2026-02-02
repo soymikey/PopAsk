@@ -15,6 +15,7 @@ import { InfoCircleOutlined, SaveOutlined, PlusOutlined } from "@ant-design/icon
 import { useAppStore } from "../../store";
 import { resetShortcut } from "../../utils";
 import { useSettingsForm } from "./hooks/useSettingsForm";
+import styles from "./index.module.css";
 
 const { Title, Text } = Typography;
 
@@ -40,26 +41,19 @@ function SettingsComp({ activeKey, isMac = false }) {
   } = useSettingsForm(activeKey);
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        height: "100%",
-        minHeight: 0,
-      }}
-    >
+    <div className={`${styles.settingsCompRoot} flex-col`}>
       {contextHolder}
 
-      <div style={{ flex: 1, overflowY: "auto", minHeight: 0 }}>
+      <div className={styles.settingsCompScroll}>
         {/* OpenAI API Key */}
         <Card
           title={
             <Space>
-              <Title level={4} style={{ margin: 0 }}>
+              <Title level={4} className={styles.settingsCompCardTitle}>
                 OpenAI API Key
               </Title>
               <Tooltip title="Your key is stored locally and never sent to our servers" placement="top">
-                <InfoCircleOutlined style={{ color: "#1890ff" }} />
+                <InfoCircleOutlined className={styles.settingsCompInfoIcon} />
               </Tooltip>
             </Space>
           }
@@ -71,7 +65,7 @@ function SettingsComp({ activeKey, isMac = false }) {
             onChange={(e) => setLocalOpenAIKey(e.target.value)}
             allowClear
           />
-          <Text type="secondary" style={{ fontSize: "12px", display: "block", marginTop: "8px" }}>
+          <Text type="secondary" className={styles.settingsCompHint}>
             Optional. Leave empty to use the default service.
           </Text>
         </Card>
@@ -80,14 +74,14 @@ function SettingsComp({ activeKey, isMac = false }) {
         <Card
           title={
             <Space>
-              <Title level={4} style={{ margin: 0 }}>
+              <Title level={4} className={styles.settingsCompCardTitle}>
                 OCR Settings
               </Title>
               <Tooltip
                 title="Select multiple languages for text recognition"
                 placement="top"
               >
-                <InfoCircleOutlined style={{ color: "#1890ff" }} />
+                <InfoCircleOutlined className={styles.settingsCompInfoIcon} />
               </Tooltip>
             </Space>
           }
@@ -95,7 +89,7 @@ function SettingsComp({ activeKey, isMac = false }) {
         >
           <Select
             mode="multiple"
-            style={{ width: "100%" }}
+            className={styles.settingsCompSelectFull}
             options={OCR_LANGUAGE_OPTIONS}
             value={localORCLang}
             onChange={onChangeORCHandler}
@@ -103,10 +97,7 @@ function SettingsComp({ activeKey, isMac = false }) {
             maxTagCount={3}
             showSearch
           />
-          <Text
-            type="secondary"
-            style={{ fontSize: "12px", display: "block", marginTop: "8px" }}
-          >
+          <Text type="secondary" className={styles.settingsCompHint}>
             up to 5 languages
           </Text>
         </Card>
@@ -114,13 +105,13 @@ function SettingsComp({ activeKey, isMac = false }) {
         {/* System Shortcuts */}
         <Card
           title={
-            <Title level={4} style={{ margin: 0 }}>
+            <Title level={4} className={styles.settingsCompCardTitle}>
               System Shortcuts
             </Title>
           }
           size="small"
         >
-          <Space direction="vertical" style={{ width: "100%" }} size="middle">
+          <Space direction="vertical" className={styles.settingsCompSpaceFull} size="middle">
             {localSystemShortcuts.map((item, index) => (
               <ShortcutComp
                 isShowDragIcon={false}
@@ -133,10 +124,7 @@ function SettingsComp({ activeKey, isMac = false }) {
               />
             ))}
             {localSystemShortcuts.length === 0 && (
-              <Text
-                type="secondary"
-                style={{ textAlign: "center", display: "block" }}
-              >
+              <Text type="secondary" className={styles.settingsCompEmptyText}>
                 No system shortcuts configured
               </Text>
             )}
@@ -147,12 +135,10 @@ function SettingsComp({ activeKey, isMac = false }) {
         <Card
           title={
             <Space>
-              <Title level={4} style={{ margin: 0 }}>
+              <Title level={4} className={styles.settingsCompCardTitle}>
                 Prompt Shortcuts
               </Title>
-              <span style={{ fontSize: "12px", color: "#999" }}>
-                (drag to reorder)
-              </span>
+              <span className={styles.settingsCompDragHint}>(drag to reorder)</span>
             </Space>
           }
           extra={
@@ -168,7 +154,7 @@ function SettingsComp({ activeKey, isMac = false }) {
                 <div {...provided.droppableProps} ref={provided.innerRef}>
                   <Space
                     direction="vertical"
-                    style={{ width: "100%" }}
+                    className={styles.settingsCompSpaceFull}
                     size="middle"
                   >
                     {localPromptList.map((prompt, index) => (
@@ -202,10 +188,7 @@ function SettingsComp({ activeKey, isMac = false }) {
                       </Draggable>
                     ))}
                     {localPromptList.length === 0 && (
-                      <Text
-                        type="secondary"
-                        style={{ textAlign: "center", display: "block" }}
-                      >
+                      <Text type="secondary" className={styles.settingsCompEmptyText}>
                         No prompt shortcuts configured
                       </Text>
                     )}
@@ -219,17 +202,7 @@ function SettingsComp({ activeKey, isMac = false }) {
       </div>
 
       {/* Save Button - pinned to bottom */}
-      <div
-        style={{
-          flexShrink: 0,
-          padding: "16px 0",
-          marginTop: "16px",
-          textAlign: "center",
-          display: "flex",
-          justifyContent: "space-evenly",
-          backgroundColor: "#f5f5f5",
-        }}
-      >
+      <div className={styles.settingsCompFooter}>
           <Button type="default" onClick={() => setShowShortcutGuide(true)}>
             📋 View Shortcut Guide
           </Button>

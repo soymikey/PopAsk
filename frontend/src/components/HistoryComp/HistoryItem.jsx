@@ -14,21 +14,18 @@ import {
   RobotOutlined,
 } from "@ant-design/icons";
 import { MarkDownComp } from "../MarkDownComp";
+import styles from "./index.module.css";
 
 const { Text, Paragraph } = Typography;
 
 function HistoryItem({ item, index, onDelete, onCopy }) {
   return (
-    <Card
-      size="small"
-      className="history-item-card"
-      bodyStyle={{ padding: "16px" }}
-    >
-      <div className="history-item-header">
-        <div className="history-item-header-left">
-          <Badge count={index + 1} size="small" className="history-comp-badge" />
-          <ClockCircleOutlined style={{ color: "#8c8c8c" }} />
-          <Text type="secondary" className="history-item-timestamp">
+    <Card size="small" className={styles.historyItemCard}>
+      <div className={styles.historyItemHeader}>
+        <div className={styles.historyItemHeaderLeft}>
+          <Badge count={index + 1} size="small" className={styles.historyCompBadge} />
+          <ClockCircleOutlined />
+          <Text type="secondary" className={styles.historyItemTimestamp}>
             {item.timestamp}
           </Text>
         </div>
@@ -38,17 +35,17 @@ function HistoryItem({ item, index, onDelete, onCopy }) {
           danger
           icon={<DeleteOutlined />}
           onClick={() => onDelete(index)}
-          className="history-item-delete-btn"
+          className={styles.historyItemDeleteBtn}
         />
       </div>
 
-      <Divider style={{ margin: "8px 0" }} />
+      <Divider className={styles.historyItemDivider} />
 
-      <div className="history-item-message-box">
-        <div className="history-item-message-header">
-          <div className="history-item-message-label">
-            <MessageOutlined style={{ color: "#262626" }} />
-            <Text strong className="history-item-message-label">
+      <div className={styles.historyItemMessageBox}>
+        <div className={styles.historyItemMessageHeader}>
+          <div className={styles.historyItemMessageLabel}>
+            <MessageOutlined />
+            <Text strong className={styles.historyItemMessageLabel}>
               Message
             </Text>
           </div>
@@ -57,24 +54,24 @@ function HistoryItem({ item, index, onDelete, onCopy }) {
             size="small"
             icon={<CopyOutlined />}
             onClick={() => onCopy(item.message)}
-            className="history-item-copy-btn history-item-copy-btn-message"
+            className={`${styles.historyItemCopyBtn} ${styles.historyItemCopyBtnMessage}`}
           >
             Copy
           </Button>
         </div>
         <Paragraph
-          className="history-item-message-content"
+          className={styles.historyItemMessageContent}
           ellipsis={{ rows: 2, expandable: true, symbol: "Show more" }}
         >
           {item.message}
         </Paragraph>
       </div>
 
-      <div className="history-item-response-box">
-        <div className="history-item-response-header">
-          <div className="history-item-response-label">
-            <RobotOutlined style={{ color: "#1890ff" }} />
-            <Text strong className="history-item-response-label">
+      <div className={styles.historyItemResponseBox}>
+        <div className={styles.historyItemResponseHeader}>
+          <div className={styles.historyItemResponseLabel}>
+            <RobotOutlined />
+            <Text strong className={styles.historyItemResponseLabel}>
               Response
             </Text>
           </div>
@@ -83,7 +80,7 @@ function HistoryItem({ item, index, onDelete, onCopy }) {
             size="small"
             icon={<CopyOutlined />}
             onClick={() => onCopy(item.response)}
-            className="history-item-copy-btn history-item-copy-btn-response"
+            className={`${styles.historyItemCopyBtn} ${styles.historyItemCopyBtnResponse}`}
           >
             Copy
           </Button>

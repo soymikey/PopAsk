@@ -21,6 +21,7 @@ import { useEffect, useState } from "react";
 import { LoadPromptsJSON } from "../../../wailsjs/go/main/App";
 import { BrowserOpenURL } from "../../../wailsjs/runtime/runtime";
 import { useAppStore } from "../../store";
+import styles from "./index.module.css";
 
 const PromptComp = () => {
   const promptList = useAppStore((s) => s.promptList);
@@ -101,22 +102,20 @@ const PromptComp = () => {
   }, []);
 
   return (
-    <div style={{ paddingBottom: "12px", paddingTop: "12px" }}>
+    <div className={styles.root}>
       {contextHolder}
       <Spin spinning={loading}>
         <Card
           size="small"
+          className={styles.card}
           title={
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <Typography.Title level={4} style={{ margin: 0 }}>
+            <div className={styles.cardTitleRow}>
+              <Typography.Title level={4} className={styles.cardTitle}>
                 Prompt Templates {/* https://prompts.chat/ */}
               </Typography.Title>
               <Button
                 type="link"
-                style={{
-                  color: "#1890ff",
-                  fontSize: "14px",
-                }}
+                className={styles.cardTitleLink}
                 onClick={() => {
                   BrowserOpenURL("https://prompts.chat/");
                 }}
@@ -125,76 +124,55 @@ const PromptComp = () => {
               </Button>
             </div>
           }
-          style={{
-            border: "1px solid #f0f0f0",
-            borderRadius: "8px",
-            boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
-          }}
-          bodyStyle={{ padding: "12px" }}
         >
           {/* Search Bar */}
-          <div style={{ marginBottom: "16px" }}>
+          <div className={styles.searchWrap}>
             <Input
               placeholder="Search prompt templates..."
               prefix={<SearchOutlined />}
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
               allowClear
-              style={{ borderRadius: "6px" }}
+              className={styles.searchInput}
             />
           </div>
 
           {filteredCategories.length === 0 ? (
             <Empty
               description={
-                <div style={{ textAlign: "center" }}>
+                <div className={styles.emptyWrap}>
                   <Typography.Text type="secondary">
                     {promptsCategories.length === 0
                       ? "No prompt templates available"
                       : "No matching prompt templates found"}
                   </Typography.Text>
                   <br />
-                  <Typography.Text
-                    type="secondary"
-                    style={{ fontSize: "12px" }}
-                  >
+                  <Typography.Text type="secondary" className={styles.emptyText}>
                     {promptsCategories.length === 0
                       ? "Prompt templates will appear here when available"
                       : "Try adjusting your search terms"}
                   </Typography.Text>
                 </div>
               }
-              style={{ marginTop: "40px" }}
+              className={styles.emptyRoot}
             />
           ) : (
-            <Collapse
-              defaultActiveKey={[]}
-              ghost
-              style={{ background: "transparent" }}
-            >
+            <Collapse defaultActiveKey={[]} ghost className={styles.collapse}>
               {filteredCategories.map((category, categoryIndex) => (
                 <Collapse.Panel
                   key={categoryIndex}
                   header={
-                    <Typography.Text strong style={{ fontSize: "14px" }}>
+                    <Typography.Text strong className={styles.panelHeader}>
                       {category.name}
                     </Typography.Text>
                   }
-                  style={{
-                    marginBottom: "8px",
-                    border: "1px solid #f0f0f0",
-                    borderRadius: "6px",
-                    backgroundColor: "#fafafa",
-                  }}
+                  className={styles.panel}
                 >
                   <List
                     dataSource={category.prompts}
                     renderItem={(prompt) => (
                       <List.Item
-                        style={{
-                          padding: "8px 0",
-                          borderBottom: "1px solid #f0f0f0",
-                        }}
+                        className={styles.listItem}
                         actions={[
                           <Tooltip title="Add to prompt list" key="add">
                             <Button
@@ -202,10 +180,7 @@ const PromptComp = () => {
                               size="small"
                               icon={<PlusOutlined />}
                               onClick={() => onAddPromptClick(prompt)}
-                              style={{
-                                borderRadius: "6px",
-                                fontSize: "12px",
-                              }}
+                              className={styles.addBtn}
                             >
                               Add
                             </Button>
@@ -214,25 +189,12 @@ const PromptComp = () => {
                       >
                         <List.Item.Meta
                           title={
-                            <Typography.Text
-                              strong
-                              style={{ fontSize: "13px", color: "#262626" }}
-                            >
+                            <Typography.Text strong className={styles.promptTitle}>
                               {prompt.act}
                             </Typography.Text>
                           }
                           description={
-                            <Typography.Text
-                              style={{
-                                fontSize: "12px",
-                                color: "#666",
-                                lineHeight: "1.4",
-                                display: "-webkit-box",
-                                WebkitLineClamp: 2,
-                                WebkitBoxOrient: "vertical",
-                                overflow: "hidden",
-                              }}
-                            >
+                            <Typography.Text className={styles.promptDesc}>
                               {prompt.prompt}
                             </Typography.Text>
                           }

@@ -1,6 +1,7 @@
 import { Avatar, Spin, Typography } from "antd";
 import { RobotOutlined } from "@ant-design/icons";
 import ChatMessageItem from "./ChatMessageItem";
+import styles from "./index.module.css";
 
 const { Text } = Typography;
 
@@ -32,35 +33,14 @@ export default function ChatMessageList({
         />
       ))}
       {isAskLoading && (
-        <div
-          style={{
-            display: "flex",
-            marginBottom: "16px",
-            justifyContent: "flex-start",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "flex-start",
-              gap: "8px",
-            }}
-          >
+        <div className={styles.typingRow}>
+          <div className={styles.typingInner}>
             <Avatar
               icon={<RobotOutlined />}
-              style={{ backgroundColor: "#1890ff", marginTop: "4px" }}
+              className={styles.typingAvatar}
               size="small"
             />
-            <div
-              style={{
-                backgroundColor: "#f5f5f5",
-                padding: "12px 16px",
-                borderRadius: "12px",
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-              }}
-            >
+            <div className={styles.typingBubble}>
               <Spin size="small" />
               <Text>Thinking...</Text>
             </div>
