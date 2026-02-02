@@ -70,17 +70,22 @@ func NewAPIService(ctx context.Context, app *App) *APIService {
 // HTTP request helper functions
 func (api *APIService) makeRequest(requestType, url, token string, payload []byte) ([]byte, error) {
 	api.logSvc.Info("Making %s request to: %s", requestType, url)
-	if len(payload) > 0 {
+	if api.IsDevelopment() && len(payload) > 0 {
 		api.logSvc.Info("Request body: %s", string(payload))
 	}
 
 	var request *http.Request
+	var errReq error
 
 	if payload != nil {
 		requestBody := bytes.NewReader(payload)
-		request, _ = http.NewRequest(requestType, url, requestBody)
+		request, errReq = http.NewRequest(requestType, url, requestBody)
 	} else {
-		request, _ = http.NewRequest(requestType, url, nil)
+		request, errReq = http.NewRequest(requestType, url, nil)
+	}
+	if errReq != nil {
+		api.logSvc.Error("NewRequest failed: %v", errReq)
+		return nil, fmt.Errorf("new request: %w", errReq)
 	}
 
 	request.Header.Add("Content-Type", "application/json")
@@ -94,10 +99,18 @@ func (api *APIService) makeRequest(requestType, url, token string, payload []byt
 		api.logSvc.Error("HTTP request failed: %v", err)
 		return nil, fmt.Errorf("request failed: %w", err)
 	}
+	defer response.Body.Close()
 
 	body, _ := io.ReadAll(response.Body)
 	api.logSvc.Info("HTTP request completed successfully, response size: %d bytes", len(body))
-	api.logSvc.Info("Response body: %s", string(body))
+	if api.IsDevelopment() {
+		api.logSvc.Info("Response body: %s", string(body))
+	}
+
+	if response.StatusCode >= 400 {
+		api.logSvc.Error("HTTP error status: %d", response.StatusCode)
+		return nil, fmt.Errorf("HTTP %d: %s", response.StatusCode, string(body))
+	}
 
 	return body, nil
 }
@@ -108,6 +121,33 @@ func (api *APIService) MakeGetRequest(url string, token string) ([]byte, error) 
 
 func (api *APIService) MakePostRequest(url, token string, payload []byte) ([]byte, error) {
 	return api.makeRequest("POST", url, token, payload)
+}
+
+// chatCompletions calls an OpenAI-compatible chat completions endpoint and returns the first choice content.
+func (api *APIService) chatCompletions(url, token string, messages []map[string]interface{}, model string) (string, error) {
+	req := BianxieChatRequest{Messages: messages, Model: model, Stream: false}
+	requestBody, err := json.Marshal(req)
+	if err != nil {
+		return "", fmt.Errorf("marshal request: %w", err)
+	}
+	response, err := api.MakePostRequest(url, token, requestBody)
+	if err != nil {
+		return "", err
+	}
+	var resp struct {
+		Choices []struct {
+			Message struct {
+				Content string `json:"content"`
+			} `json:"message"`
+		} `json:"choices"`
+	}
+	if err := json.Unmarshal(response, &resp); err != nil {
+		return "", fmt.Errorf("unmarshal response: %w", err)
+	}
+	if len(resp.Choices) == 0 {
+		return "", fmt.Errorf("empty choices from API")
+	}
+	return resp.Choices[0].Message.Content, nil
 }
 
 // API functions
@@ -136,28 +176,8 @@ func (api *APIService) ChatAPI(message string) (ChatResponse, error) {
 }
 
 func (api *APIService) OpenAIAPI(messages string) (ChatResponse, error) {
-	api.logSvc.Info("Calling OpenAIAPI with messages length: %d", len(messages))
-
-	// pop-ask accepts single "message"; send messages string as message
-	requestBody, err := json.Marshal(ChatRequest{Message: messages})
-	if err != nil {
-		api.logSvc.Error("OpenAIAPI marshal failed: %v", err)
-		return ChatResponse{}, fmt.Errorf("marshal request: %w", err)
-	}
-	url := fmt.Sprintf("%s/pop-ask", api.EnvOrDefault("SERVER_URL", "https://beaptmqzdyznkhktjntq.functions.supabase.co"))
-	token := api.EnvOrDefault("SUPABASE_ANON_KEY", "")
-	response, err := api.MakePostRequest(url, token, requestBody)
-	if err != nil {
-		api.logSvc.Error("OpenAIAPI failed: %v", err)
-		return ChatResponse{}, err
-	}
-	var chatResponse ChatResponse
-	if err := json.Unmarshal(response, &chatResponse); err != nil {
-		api.logSvc.Error("OpenAIAPI unmarshal failed: %v", err)
-		return ChatResponse{Code: 500, Data: string(response)}, fmt.Errorf("unmarshal response: %w", err)
-	}
-	api.logSvc.Info("OpenAIAPI completed successfully, response code: %d", chatResponse.Code)
-	return chatResponse, nil
+	// pop-ask accepts single "message"; same as ChatAPI
+	return api.ChatAPI(messages)
 }
 
 // CustomOpenAIAPI calls OpenAI API directly with the user's API key.
@@ -167,126 +187,72 @@ func (api *APIService) CustomOpenAIAPI(messages string, apiKey string) (ChatResp
 		api.logSvc.Error("CustomOpenAIAPI: apiKey is empty")
 		return ChatResponse{Code: 400, Data: "API key is required"}, nil
 	}
-
-	parsedMessages := []map[string]interface{}{}
+	var parsedMessages []map[string]interface{}
 	if err := json.Unmarshal([]byte(messages), &parsedMessages); err != nil {
 		api.logSvc.Error("CustomOpenAIAPI unmarshal messages failed: %v", err)
 		return ChatResponse{Code: 400, Data: err.Error()}, fmt.Errorf("unmarshal messages: %w", err)
 	}
-	requestBody, err := json.Marshal(BianxieChatRequest{Messages: parsedMessages, Model: "gpt-3.5-turbo", Stream: false})
-	if err != nil {
-		api.logSvc.Error("CustomOpenAIAPI marshal failed: %v", err)
-		return ChatResponse{Code: 500, Data: err.Error()}, fmt.Errorf("marshal request: %w", err)
-	}
-	url := "https://api.openai.com/v1/chat/completions"
-	response, err := api.MakePostRequest(url, apiKey, requestBody)
+	content, err := api.chatCompletions("https://api.openai.com/v1/chat/completions", apiKey, parsedMessages, "gpt-3.5-turbo")
 	if err != nil {
 		api.logSvc.Error("CustomOpenAIAPI failed: %v", err)
 		return ChatResponse{Code: 500, Data: err.Error()}, err
 	}
-
-	var openAIResp OpenHubChatResponse
-	if err := json.Unmarshal(response, &openAIResp); err != nil {
-		api.logSvc.Error("CustomOpenAIAPI unmarshal response failed: %v", err)
-		return ChatResponse{Code: 500, Data: string(response)}, fmt.Errorf("unmarshal response: %w", err)
-	}
-	if len(openAIResp.Choices) == 0 {
-		api.logSvc.Error("CustomOpenAIAPI empty choices")
-		return ChatResponse{Code: 502, Data: "empty choices from API"}, fmt.Errorf("empty choices from API")
-	}
 	api.logSvc.Info("CustomOpenAIAPI completed successfully")
-	return ChatResponse{Code: 200, Data: openAIResp.Choices[0].Message.Content}, nil
+	return ChatResponse{Code: 200, Data: content}, nil
 }
 
 func (api *APIService) AIBianxieAPI(messages string) (ChatResponse, error) {
 	api.logSvc.Info("Calling AIBianxieAPI with messages length: %d", len(messages))
-
-	parsedMessages := []map[string]interface{}{}
+	var parsedMessages []map[string]interface{}
 	if err := json.Unmarshal([]byte(messages), &parsedMessages); err != nil {
 		api.logSvc.Error("AIBianxieAPI unmarshal messages failed: %v", err)
 		return ChatResponse{Code: 400, Data: err.Error()}, fmt.Errorf("unmarshal messages: %w", err)
 	}
-	requestBody, err := json.Marshal(BianxieChatRequest{Messages: parsedMessages, Model: "gpt-3.5-turbo", Stream: false})
-	if err != nil {
-		api.logSvc.Error("AIBianxieAPI marshal failed: %v", err)
-		return ChatResponse{Code: 500, Data: err.Error()}, fmt.Errorf("marshal request: %w", err)
-	}
 	url := fmt.Sprintf("%s/v1/chat/completions", api.EnvOrDefault("BIANXIE_URL", "https://api.bianxie.ai"))
 	token := api.EnvOrDefault("BIANXIE_API_KEY", "")
-	response, err := api.MakePostRequest(url, token, requestBody)
+	content, err := api.chatCompletions(url, token, parsedMessages, "gpt-3.5-turbo")
 	if err != nil {
 		api.logSvc.Error("AIBianxieAPI failed: %v", err)
 		return ChatResponse{Code: 500, Data: err.Error()}, err
 	}
-
-	var bianxieResp BianxieChatResponse
-	if err := json.Unmarshal(response, &bianxieResp); err != nil {
-		api.logSvc.Error("AIBianxieAPI unmarshal response failed: %v", err)
-		return ChatResponse{Code: 500, Data: err.Error()}, fmt.Errorf("unmarshal response: %w", err)
-	}
-	if len(bianxieResp.Choices) == 0 {
-		api.logSvc.Error("AIBianxieAPI empty choices")
-		return ChatResponse{Code: 502, Data: "empty choices from API"}, fmt.Errorf("empty choices from API")
-	}
 	api.logSvc.Info("AIBianxieAPI completed successfully")
-	return ChatResponse{Code: 200, Data: bianxieResp.Choices[0].Message.Content}, nil
+	return ChatResponse{Code: 200, Data: content}, nil
 }
 
 func (api *APIService) AIOpenHubAPI(messages string) (ChatResponse, error) {
 	api.logSvc.Info("Calling AIOpenHubAPI with messages length: %d", len(messages))
-
-	parsedMessages := []map[string]interface{}{}
+	var parsedMessages []map[string]interface{}
 	if err := json.Unmarshal([]byte(messages), &parsedMessages); err != nil {
 		api.logSvc.Error("AIOpenHubAPI unmarshal messages failed: %v", err)
 		return ChatResponse{Code: 400, Data: err.Error()}, fmt.Errorf("unmarshal messages: %w", err)
 	}
-	requestBody, err := json.Marshal(BianxieChatRequest{Messages: parsedMessages, Model: "gpt-3.5-turbo", Stream: false})
-	if err != nil {
-		api.logSvc.Error("AIOpenHubAPI marshal failed: %v", err)
-		return ChatResponse{Code: 500, Data: err.Error()}, fmt.Errorf("marshal request: %w", err)
-	}
 	url := fmt.Sprintf("%s/v1/chat/completions", api.EnvOrDefault("OPENHUB_URL", "https://api.openai-hub.com"))
 	token := api.EnvOrDefault("OPENHUB_API_KEY", "")
-	response, err := api.MakePostRequest(url, token, requestBody)
+	content, err := api.chatCompletions(url, token, parsedMessages, "gpt-3.5-turbo")
 	if err != nil {
 		api.logSvc.Error("AIOpenHubAPI failed: %v", err)
 		return ChatResponse{Code: 500, Data: err.Error()}, err
 	}
-
-	var openHubResp OpenHubChatResponse
-	if err := json.Unmarshal(response, &openHubResp); err != nil {
-		api.logSvc.Error("AIOpenHubAPI unmarshal response failed: %v", err)
-		return ChatResponse{Code: 500, Data: err.Error()}, fmt.Errorf("unmarshal response: %w", err)
-	}
-	if len(openHubResp.Choices) == 0 {
-		api.logSvc.Error("AIOpenHubAPI empty choices")
-		return ChatResponse{Code: 502, Data: "empty choices from API"}, fmt.Errorf("empty choices from API")
-	}
 	api.logSvc.Info("AIOpenHubAPI completed successfully")
-	return ChatResponse{Code: 200, Data: openHubResp.Choices[0].Message.Content}, nil
+	return ChatResponse{Code: 200, Data: content}, nil
 }
 
 func (a *App) ChatAPI(message string) (ChatResponse, error) {
-	apiSvc := NewAPIService(a.ctx, a)
-	return apiSvc.ChatAPI(message)
+	return a.apiSvc.ChatAPI(message)
 }
 
 func (a *App) OpenAIAPI(messages string) (ChatResponse, error) {
-	apiSvc := NewAPIService(a.ctx, a)
-	return apiSvc.OpenAIAPI(messages)
+	return a.apiSvc.OpenAIAPI(messages)
 }
 
 func (a *App) CustomOpenAIAPI(messages string, apiKey string) (ChatResponse, error) {
-	apiSvc := NewAPIService(a.ctx, a)
-	return apiSvc.CustomOpenAIAPI(messages, apiKey)
+	return a.apiSvc.CustomOpenAIAPI(messages, apiKey)
 }
 
 func (a *App) AIBianxieAPI(messages string) (ChatResponse, error) {
-	apiSvc := NewAPIService(a.ctx, a)
-	return apiSvc.AIBianxieAPI(messages)
+	return a.apiSvc.AIBianxieAPI(messages)
 }
 
 func (a *App) AIOpenHubAPI(messages string) (ChatResponse, error) {
-	apiSvc := NewAPIService(a.ctx, a)
-	return apiSvc.AIOpenHubAPI(messages)
+	return a.apiSvc.AIOpenHubAPI(messages)
 }

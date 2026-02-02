@@ -67,9 +67,11 @@ func (a *App) startup(ctx context.Context) {
 
 	runtime.EventsOn(ctx, "syncShortcutList", func(data ...interface{}) {
 		if len(data) > 0 {
-			a.logSvc.Info("Received syncShortcutList event")
-			a.SetShortcutList(data[0].(string))
-			a.RegisterKeyboardShortcut(ctx)
+			if s, ok := data[0].(string); ok {
+				a.logSvc.Info("Received syncShortcutList event")
+				_ = a.SetShortcutList(s)
+				a.RegisterKeyboardShortcut(ctx)
+			}
 		}
 	})
 

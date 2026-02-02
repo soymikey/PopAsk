@@ -38,6 +38,12 @@ const STORAGE_KEYS = {
   recentPromptsActiveKey: IS_OPEN_RECENT_PROMPTS_KEY,
 };
 
+const DEFAULT_PLATFORM = {
+  isMac: false,
+  isUserInChina: false,
+  uniqueHardwareID: "",
+};
+
 const DEFAULT_STATE = {
   promptList: DEFAULT_PROMPT_OPTIONS,
   systemShortcuts: DEFAULT_SHORTCUT_LIST,
@@ -50,6 +56,7 @@ const DEFAULT_STATE = {
   recentPrompts: [],
   showPromptArea: IS_SHOW_PROMPT_AREA_VALUE,
   recentPromptsActiveKey: IS_OPEN_RECENT_PROMPTS_VALUE,
+  platform: DEFAULT_PLATFORM,
 };
 
 // Zustand persist v5: getItem returns { state, version? }, setItem receives that object (not a string).
@@ -89,66 +96,36 @@ const multiKeyStorage = {
 
 export const useAppStore = create(
   persist(
-    immer((set) => ({
-      ...DEFAULT_STATE,
+    immer((set) => {
+      // Factory for setters that accept value or updater function (immer state)
+      const createSetter = (key) => (fnOrValue) =>
+        set((state) => {
+          state[key] =
+            typeof fnOrValue === "function" ? fnOrValue(state[key]) : fnOrValue;
+        });
 
-      setPromptList: (fnOrValue) =>
-        set((state) => {
-          state.promptList = typeof fnOrValue === "function" ? fnOrValue(state.promptList) : fnOrValue;
-        }),
-      setSystemShortcuts: (fnOrValue) =>
-        set((state) => {
-          state.systemShortcuts =
-            typeof fnOrValue === "function" ? fnOrValue(state.systemShortcuts) : fnOrValue;
-        }),
-      setHistoryList: (fnOrValue) =>
-        set((state) => {
-          state.historyList =
-            typeof fnOrValue === "function" ? fnOrValue(state.historyList) : fnOrValue;
-        }),
-      setChatHistoryList: (fnOrValue) =>
-        set((state) => {
-          state.chatHistoryList =
-            typeof fnOrValue === "function" ? fnOrValue(state.chatHistoryList) : fnOrValue;
-        }),
-      setSelectedPrompt: (fnOrValue) =>
-        set((state) => {
-          state.selectedPrompt =
-            typeof fnOrValue === "function" ? fnOrValue(state.selectedPrompt) : fnOrValue;
-        }),
-      setShowShortcutGuide: (fnOrValue) =>
-        set((state) => {
-          state.showShortcutGuide =
-            typeof fnOrValue === "function" ? fnOrValue(state.showShortcutGuide) : fnOrValue;
-        }),
-      setORCLang: (fnOrValue) =>
-        set((state) => {
-          state.ORCLang =
-            typeof fnOrValue === "function" ? fnOrValue(state.ORCLang) : fnOrValue;
-        }),
-      setOpenAIKey: (fnOrValue) =>
-        set((state) => {
-          state.openAIKey =
-            typeof fnOrValue === "function" ? fnOrValue(state.openAIKey) : fnOrValue;
-        }),
-      setRecentPrompts: (fnOrValue) =>
-        set((state) => {
-          state.recentPrompts =
-            typeof fnOrValue === "function" ? fnOrValue(state.recentPrompts) : fnOrValue;
-        }),
-      setShowPromptArea: (fnOrValue) =>
-        set((state) => {
-          state.showPromptArea =
-            typeof fnOrValue === "function" ? fnOrValue(state.showPromptArea) : fnOrValue;
-        }),
-      setRecentPromptsActiveKey: (fnOrValue) =>
-        set((state) => {
-          state.recentPromptsActiveKey =
-            typeof fnOrValue === "function"
-              ? fnOrValue(state.recentPromptsActiveKey)
-              : fnOrValue;
-        }),
-    })),
+      return {
+        ...DEFAULT_STATE,
+
+        setPromptList: createSetter("promptList"),
+        setSystemShortcuts: createSetter("systemShortcuts"),
+        setHistoryList: createSetter("historyList"),
+        setChatHistoryList: createSetter("chatHistoryList"),
+        setSelectedPrompt: createSetter("selectedPrompt"),
+        setShowShortcutGuide: createSetter("showShortcutGuide"),
+        setORCLang: createSetter("ORCLang"),
+        setOpenAIKey: createSetter("openAIKey"),
+        setRecentPrompts: createSetter("recentPrompts"),
+        setShowPromptArea: createSetter("showPromptArea"),
+        setRecentPromptsActiveKey: createSetter("recentPromptsActiveKey"),
+        setPlatform: (partial) =>
+          set((state) => {
+            if (partial && typeof partial === "object" && !Array.isArray(partial)) {
+              state.platform = { ...state.platform, ...partial };
+            }
+          }),
+      };
+    }),
     {
       name: "popask-store",
       storage: multiKeyStorage,
@@ -164,6 +141,7 @@ export const useAppStore = create(
         recentPrompts: state.recentPrompts,
         showPromptArea: state.showPromptArea,
         recentPromptsActiveKey: state.recentPromptsActiveKey,
+        // platform is not persisted (runtime only)
       }),
     }
   )

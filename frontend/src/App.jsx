@@ -1,7 +1,7 @@
 import { Layout, Spin, Tabs } from "antd";
 import { useAppStore } from "./store";
 import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
-import { IsMac } from "../wailsjs/go/main/App";
+import { IsUserInChina } from "../wailsjs/go/main/App";
 import { syncShortcutListToBackend } from "./utils";
 
 import ChatComp from "./components/ChatComp";
@@ -12,17 +12,18 @@ import ShortcutGuideComp from "./components/ShortcutGuideComp";
 import "./app.css";
 
 const App = () => {
-  const [isMac, setIsMac] = useState(false);
+  const isMac = useAppStore((s) => s.platform.isMac);
   const showShortcutGuide = useAppStore((s) => s.showShortcutGuide);
   const setShowShortcutGuide = useAppStore((s) => s.setShowShortcutGuide);
+  const setPlatform = useAppStore((s) => s.setPlatform);
 
   useEffect(() => {
-    if (typeof window !== "undefined" && window?.go?.main?.App?.IsMac) {
-      IsMac()
-        .then(setIsMac)
-        .catch(() => setIsMac(false));
+    if (typeof window !== "undefined" && window?.go?.main?.App?.IsUserInChina) {
+      IsUserInChina()
+        .then((isUserInChina) => setPlatform({ isUserInChina }))
+        .catch(() => setPlatform({ isUserInChina: false }));
     }
-  }, []);
+  }, [setPlatform]);
 
   // current chat messages (not persisted)
   const [chatMessages, setChatMessages] = useState([]);
@@ -80,11 +81,6 @@ const App = () => {
   useEffect(() => {
     const { promptList, systemShortcuts } = useAppStore.getState();
     syncShortcutListToBackend(promptList, systemShortcuts);
-    const getLocationInfo = async () => {
-      const isUserInChina = await window.go.main.App.IsUserInChina();
-      window.config_.isUserInChina = isUserInChina;
-    };
-    getLocationInfo();
   }, []);
 
   return (

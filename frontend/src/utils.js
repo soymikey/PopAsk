@@ -54,7 +54,7 @@ export const getLocalStorage = (key, defaultValue) => {
         const item = localStorage.getItem(key);
         return item ? JSON.parse(item) : defaultValue;
     } catch (error) {
-        return DEFAULT_ORC_LANG;
+        return defaultValue;
     }
 };
 
