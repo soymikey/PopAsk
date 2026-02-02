@@ -1,3 +1,9 @@
+.ask-comp-prompt-dropdown-footer {
+  padding: 0 8px 4px;
+  display: flex;
+  justify-content: center;
+}
+
 .recent-prompt-item:hover {
   cursor: pointer;
   opacity: 0.5;

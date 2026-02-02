@@ -17,30 +17,21 @@ import {
   PlusOutlined,
   SaveOutlined,
 } from "@ant-design/icons";
-import { useEffect, useState, useRef, useCallback } from "react";
-import {
-  EventsOn,
-  EventsOff,
-  WindowCenter,
-  WindowShow,
-  WindowSetAlwaysOnTop,
-} from "../../../wailsjs/runtime/runtime";
+import { useEffect, useRef, useState } from "react";
 import { TAG_COLORS } from "../../constant";
-import {
-  messageGenerator,
-  languageFormate,
-  getLocalStorage,
-  sleep,
-  syncShortcutListToBackend,
-} from "../../utils";
 import "./index.css";
 import { useAppStore } from "../../store";
-import { DEFAULT_ORC_LANG, ORC_LANG_KEY } from "../../constant";
+import { useShortcutLabels } from "../../hooks/useShortcutLabels";
 import { useChatMessages } from "./hooks/useChatMessages";
 import { useChatShortcuts } from "./hooks/useChatShortcuts";
+import { useChatSession } from "./hooks/useChatSession";
+import { useMessageEditing } from "./hooks/useMessageEditing";
 import { usePromptModal } from "./hooks/usePromptModal";
+import { usePromptSelection } from "./hooks/usePromptSelection";
+import { useSelectionHandler } from "./hooks/useSelectionHandler";
 import ChatMessageList from "./ChatMessageList";
 import ChatInput from "./ChatInput";
+import { getPromptSelectOptions } from "../../utils/getPromptSelectOptions";
 import ShortcutCards, { formatShortcutDisplay } from "./ShortcutCards";
 
 const { TextArea } = Input;
@@ -66,10 +57,7 @@ const ChatComp = ({
   const setShowPromptArea = useAppStore((s) => s.setShowPromptArea);
 
   const [messageApi, contextHolder] = message.useMessage();
-  const [selection, setSelection] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [editingMessageId, setEditingMessageId] = useState(null);
-  const [editingContent, setEditingContent] = useState("");
 
   const askRef = useRef(null);
   const inputRef = useRef(null);
@@ -81,31 +69,63 @@ const ChatComp = ({
     messageApi,
   );
 
-  const handleChatWithEdit = useCallback(
-    (...args) => {
-      setEditingMessageId(null);
-      setEditingContent("");
-      handleChat(...args);
-    },
-    [handleChat],
-  );
+  const { saveChatHistory, newChatHandler, clearChat } = useChatSession({
+    chatMessages,
+    setChatMessages,
+    setChatHistoryList,
+    isAskLoading,
+    messageApi,
+  });
+
+  const {
+    editingMessageId,
+    editingContent,
+    setEditingContent,
+    handleCancelEdit,
+    handleEditMessage,
+    handleSaveEdit,
+    handleRegenerateResponse,
+    handleChatWithEdit,
+  } = useMessageEditing({
+    chatMessages,
+    messageApi,
+    handleChat,
+    isAskLoading,
+  });
 
   const {
     isModalVisible,
-    isEditMode,
-    editingPrompt,
     form,
-    handleEditPromptClick,
     handleModalCancel,
     handleModalOk,
   } = usePromptModal(promptList, setPromptList, systemShortcuts, messageApi);
 
-  const newChatText = `New (${isMac ? "Cmd" : "Ctrl"}+N)`;
-  const clearChatText = `Clear (${isMac ? "Cmd" : "Ctrl"}+K)`;
-  const saveChatText = `Save (${isMac ? "Cmd" : "Ctrl"}+S)`;
-  const sendPlaceholderText = `(${
-    isMac ? "Cmd" : "Ctrl"
-  }+Enter to send) (Shift+Enter to send new chat)`;
+  const shortcutLabels = useShortcutLabels(isMac);
+  const {
+    selection,
+    setSelection,
+    onSelectPromptHandler,
+    onChangeSelectionHandler,
+  } = usePromptSelection({
+    promptList,
+    selectedPrompt,
+    setSelectedPrompt,
+  });
+
+  useSelectionHandler({
+    isMac,
+    setActiveKey,
+    messageApi,
+    selectedPrompt,
+    setSelectedPrompt,
+    newChatHandler,
+    chatMessages,
+    chatHistoryList,
+    handleChatWithEdit,
+    setSelection,
+    setIsLoading,
+    inputRef,
+  });
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -113,99 +133,6 @@ const ChatComp = ({
   useEffect(() => {
     scrollToBottom();
   }, [chatMessages]);
-
-  const saveChatHistory = useCallback(
-    (messages, historyList) => {
-      if (isAskLoading || messages.length === 0) return;
-      if (
-        historyList.length > 0 &&
-        historyList.some(
-          (h) =>
-            h.length === messages.length &&
-            h.every((m, i) => m.content === messages[i]?.content),
-        )
-      ) {
-        setChatMessages([]);
-        return;
-      }
-      setChatHistoryList([messages, ...historyList]);
-      setChatMessages([]);
-    },
-    [isAskLoading, setChatMessages, setChatHistoryList],
-  );
-
-  const newChatHandler = useCallback(
-    (messages, historyList) => {
-      if (isAskLoading) return;
-      setChatMessages([]);
-      saveChatHistory(messages, historyList);
-    },
-    [isAskLoading, setChatMessages, saveChatHistory],
-  );
-
-  const clearChat = useCallback(() => {
-    if (isAskLoading) return;
-    setChatMessages([]);
-    messageApi.open({ type: "success", content: "Chat cleared" });
-  }, [isAskLoading, setChatMessages, messageApi]);
-
-  const handleCancelEdit = useCallback(() => {
-    setEditingMessageId(null);
-    setEditingContent("");
-  }, []);
-
-  const handleEditMessage = useCallback((messageId, content) => {
-    setEditingMessageId(messageId);
-    setEditingContent(content);
-  }, []);
-
-  const handleSaveEdit = useCallback(async () => {
-    if (!editingContent.trim()) {
-      messageApi.open({ type: "warning", content: "Please enter a message" });
-      return;
-    }
-    if (!editingMessageId) return;
-    const messageIndex = chatMessages.findIndex(
-      (msg) => msg.id === editingMessageId,
-    );
-    if (messageIndex === -1) return;
-    await handleChatWithEdit(
-      editingContent.trim(),
-      false,
-      true,
-      false,
-      messageIndex,
-    );
-    setEditingMessageId(null);
-    setEditingContent("");
-  }, [
-    editingContent,
-    editingMessageId,
-    chatMessages,
-    handleChatWithEdit,
-    messageApi,
-  ]);
-
-  const handleRegenerateResponse = useCallback(
-    async (messageId) => {
-      if (isAskLoading) return;
-      handleCancelEdit();
-      const messageIndex = chatMessages.findIndex(
-        (msg) => msg.id === messageId,
-      );
-      if (messageIndex <= 0) return;
-      const prevUserMessage = chatMessages[messageIndex - 1];
-      if (!prevUserMessage || prevUserMessage.type !== "user") return;
-      await handleChatWithEdit(
-        prevUserMessage.content,
-        false,
-        false,
-        true,
-        messageIndex,
-      );
-    },
-    [isAskLoading, chatMessages, handleChatWithEdit, handleCancelEdit],
-  );
 
   useChatShortcuts(activeKey, {
     isMac,
@@ -221,192 +148,25 @@ const ChatComp = ({
     showPromptArea,
   });
 
-  const onSelectionHandler = useCallback(
-    async (selectionData) => {
-      let timeoutId = null;
-      try {
-        const { shortcut, prompt, autoAsking, isOCR, isOpenWindow } =
-          selectionData;
-        let text = selectionData?.text || "";
-        if (isMac) {
-          WindowCenter();
-          WindowShow();
-        } else {
-          WindowCenter();
-          WindowSetAlwaysOnTop(true);
-          setTimeout(() => WindowSetAlwaysOnTop(false), 1000);
-        }
-        setActiveKey("chat");
-        if (isOCR) {
-          setIsLoading(true);
-          timeoutId = setTimeout(() => {
-            messageApi.open({
-              type: "error",
-              content: "OCR failed: Please check your network",
-            });
-            setIsLoading(false);
-          }, 10000);
-          const ORCLang = getLocalStorage(ORC_LANG_KEY, DEFAULT_ORC_LANG);
-          const lang =
-            ORCLang?.length > 1
-              ? ORCLang.join("+")
-              : (ORCLang?.[0] ?? "eng");
-          const { default: Tesseract } = await import("tesseract.js");
-          const result = await Tesseract.recognize(text, lang);
-          text = languageFormate(result?.data?.text || "");
-          clearTimeout(timeoutId);
-          setIsLoading(false);
-        }
-        if (text.length === 0) return;
-        let prompt_ = prompt;
-        if (isOpenWindow || isOCR) {
-          prompt_ = selectedPrompt;
-        }
-        newChatHandler(chatMessages, chatHistoryList);
-        setSelectedPrompt(prompt_);
-        const formattedMessage = messageGenerator(prompt_, text);
-        setSelection(formattedMessage);
-        if (autoAsking) {
-          setSelection("");
-          await handleChatWithEdit(formattedMessage, true);
-        }
-      } catch (error) {
-        messageApi.open({
-          type: "error",
-          content: error?.message || "error",
-        });
-      } finally {
-        await sleep(100);
-        inputRef.current?.focus();
-      }
-    },
-    [
-      isMac,
-      setActiveKey,
-      messageApi,
-      selectedPrompt,
-      setSelectedPrompt,
-      newChatHandler,
-      chatMessages,
-      chatHistoryList,
-      handleChatWithEdit,
-    ],
-  );
-
-  useEffect(() => {
-    EventsOn("GET_SELECTION", onSelectionHandler);
-    return () => EventsOff("GET_SELECTION");
-  }, [onSelectionHandler]);
-
-  const onSelectPromptHandler = useCallback(
-    (value) => {
-      setSelectedPrompt(value);
-      if (value.length === 0) return;
-      for (const prompt of promptList) {
-        if (selection.startsWith(prompt.value)) {
-          setSelection(
-            messageGenerator(value, selection.slice(prompt.value.length)),
-          );
-          return;
-        }
-      }
-      setSelection(messageGenerator(value, selection));
-    },
-    [promptList, selection, setSelectedPrompt],
-  );
-
-  const onChangeSelectionHandler = useCallback(
-    (event) => {
-      const minLen = (selectedPrompt?.length ?? 0) - 1;
-      if (minLen >= 0 && event.target.value.length < minLen) {
-        setSelectedPrompt("");
-      }
-      setSelection(event.target.value);
-    },
-    [selectedPrompt, setSelectedPrompt],
-  );
-
-  const renderPromptOptions = (items) =>
-    items.map((item) => ({
-      label: (
-        <div
-          key={item.value}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-          title={item.value}
-        >
-          <div
-            style={{
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              flex: 1,
-            }}
-          >
-            <div style={{ fontWeight: 500, fontSize: "14px" }}>
-              {item.label}
-            </div>
-            <div style={{ fontSize: 12, color: "#999", marginTop: "2px" }}>
-              {item.value}
-            </div>
-            {item?.shortcut && (
-              <Tag size="small" color="blue">
-                {formatShortcutDisplay(item.shortcut)}
-              </Tag>
-            )}
-          </div>
-        </div>
-      ),
-      value: item.value,
-      name: item.value,
-    }));
+  const promptSelectOptions = getPromptSelectOptions(promptList, {
+    formatShortcut: formatShortcutDisplay,
+  });
 
   return (
     <div>
       {contextHolder}
       <Spin spinning={isLoading}>
-        <div
-          style={{
-            height: "calc(100vh - 46px)",
-            display: "flex",
-            flexDirection: "column",
-            paddingTop: "12px",
-            paddingBottom: "12px",
-            gap: "8px",
-            position: "relative",
-          }}
-        >
-          <div
-            style={{
-              flex: 1,
-              display: "flex",
-              flexDirection: "column",
-              overflow: "auto",
-            }}
-          >
+        <div className="chat-comp-root">
+          <div className="chat-comp-body">
             <Card
               size="small"
+              className="chat-comp-card"
               title={
-                <Title
-                  level={4}
-                  style={{
-                    margin: 0,
-                    display: "flex",
-                    justifyContent: "space-between",
-                  }}
-                >
+                <Title level={4} className="chat-comp-card-title">
                   <span>Chat</span>
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: "8px",
-                      alignItems: "center",
-                    }}
-                  >
+                  <div className="chat-comp-card-actions">
                     {chatMessages.length > 0 && (
-                      <Tooltip title={newChatText}>
+                      <Tooltip title={shortcutLabels.newChatText}>
                         <Button
                           type="text"
                           size="small"
@@ -418,7 +178,7 @@ const ChatComp = ({
                       </Tooltip>
                     )}
                     {chatMessages.length > 0 && (
-                      <Tooltip title={saveChatText}>
+                      <Tooltip title={shortcutLabels.saveChatText}>
                         <Button
                           type="text"
                           size="small"
@@ -430,7 +190,7 @@ const ChatComp = ({
                       </Tooltip>
                     )}
                     {chatMessages.length > 0 && (
-                      <Tooltip placement="left" title={clearChatText}>
+                      <Tooltip placement="left" title={shortcutLabels.clearChatText}>
                         <Button
                           danger
                           type="text"
@@ -443,34 +203,8 @@ const ChatComp = ({
                   </div>
                 </Title>
               }
-              style={{
-                flex: 1,
-                display: "flex",
-                flexDirection: "column",
-              }}
-              headStyle={{
-                top: 0,
-                position: "sticky",
-                background: "white",
-                zIndex: 1000,
-              }}
-              bodyStyle={{
-                flex: 1,
-                display: "flex",
-                flexDirection: "column",
-                padding: "12px",
-                overflowY: "auto",
-                height: "100px",
-              }}
             >
-              <div
-                style={{
-                  flex: 1,
-                  padding: "16px",
-                  borderRadius: "8px",
-                  minHeight: 0,
-                }}
-              >
+              <div className="chat-comp-card-body-inner">
                 {chatMessages.length === 0 ? (
                   <ShortcutCards
                     systemShortcuts={systemShortcuts}
@@ -496,17 +230,15 @@ const ChatComp = ({
 
           {showPromptArea && (
             <Card size="small" title={null}>
-              <div
-                style={{ display: "flex", alignItems: "center", gap: "12px" }}
-              >
-                <Text strong style={{ minWidth: "55px" }}>
+              <div className="prompt-area-row">
+                <Text strong className="prompt-area-label">
                   Prompt:
                 </Text>
                 <Select
                   style={{ width: "100%" }}
                   placeholder="Select a prompt template"
                   onSelect={onSelectPromptHandler}
-                  options={renderPromptOptions(promptList)}
+                  options={promptSelectOptions}
                   value={selectedPrompt}
                   showSearch
                   filterOption={(input, option) => {
@@ -521,21 +253,12 @@ const ChatComp = ({
                   }}
                 />
               </div>
-              <div
-                style={{
-                  display: "flex",
-                  gap: "8px",
-                  flexWrap: "wrap",
-                  marginTop: "12px",
-                  overflowX: "auto",
-                }}
-                className="recent-prompts"
-              >
+              <div className="recent-prompts recent-prompts-row">
                 {recentPrompts?.map((prompt, index) => (
                   <div
                     key={prompt?.value}
                     onClick={() => onSelectPromptHandler(prompt?.value)}
-                    className="recent-prompt-item"
+                    className="recent-prompt-item recent-prompt-tag"
                     title={prompt?.value}
                   >
                     <Tag
@@ -548,24 +271,10 @@ const ChatComp = ({
                         );
                       }}
                       color={TAG_COLORS[index % TAG_COLORS.length]}
-                      style={{
-                        maxWidth: "200px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        cursor: "pointer",
-                      }}
                     >
-                      <div
-                        style={{
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          whiteSpace: "nowrap",
-                          flex: 1,
-                        }}
-                      >
+                      <span className="recent-prompt-tag-inner">
                         {prompt?.label || prompt?.value}
-                      </div>
+                      </span>
                     </Tag>
                   </div>
                 ))}
@@ -578,7 +287,7 @@ const ChatComp = ({
             askRef={askRef}
             selection={selection}
             onSelectionChange={onChangeSelectionHandler}
-            sendPlaceholderText={sendPlaceholderText}
+            sendPlaceholderText={shortcutLabels.sendPlaceholderText}
             isMac={isMac}
             onSend={() => {
               handleChatWithEdit(selection, false);

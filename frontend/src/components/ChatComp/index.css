@@ -1,3 +1,87 @@
+/* ChatComp layout */
+.chat-comp-root {
+  height: calc(100vh - 46px);
+  display: flex;
+  flex-direction: column;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  gap: 8px;
+  position: relative;
+}
+
+.chat-comp-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+
+.chat-comp-card-title {
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.chat-comp-card-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.chat-comp-card.ant-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.chat-comp-card .ant-card-head {
+  top: 0;
+  position: sticky;
+  background: white;
+  z-index: 1000;
+}
+.chat-comp-card .ant-card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  overflow-y: auto;
+  min-height: 100px;
+}
+.chat-comp-card-body-inner {
+  flex: 1;
+  padding: 16px;
+  border-radius: 8px;
+  min-height: 0;
+}
+.prompt-area-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.prompt-area-label {
+  min-width: 55px;
+}
+.recent-prompts-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+  overflow-x: auto;
+}
+.recent-prompt-tag {
+  max-width: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+.recent-prompt-tag-inner {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
 .chat-message {
   margin-bottom: 16px;
 }

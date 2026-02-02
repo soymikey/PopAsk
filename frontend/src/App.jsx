@@ -112,6 +112,7 @@ const App = () => {
           activeKey={activeKey}
           items={items}
           onChange={onChange}
+          destroyInactiveTabPane={false}
         />
 
         <ShortcutGuideComp

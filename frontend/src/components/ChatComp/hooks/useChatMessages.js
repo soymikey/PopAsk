@@ -9,6 +9,24 @@ import {
 } from "../../../utils";
 import { DEFAULT_DAILY_LIMIT } from "../../../constant";
 
+// Normalize backend response.data to display string. Handles both plain string
+// and stringified JSON like {"role":"assistant","content":"..."}.
+function normalizeResponseData(data) {
+  if (data == null) return "";
+  if (typeof data === "string") {
+    try {
+      const parsed = JSON.parse(data);
+      if (parsed && typeof parsed.content === "string") return parsed.content;
+    } catch {
+      // not JSON, use as-is
+    }
+    return data;
+  }
+  if (typeof data === "object" && typeof data.content === "string")
+    return data.content;
+  return String(data);
+}
+
 export function useChatMessages(chatMessages, setChatMessages, messageApi) {
   const promptList = useAppStore((s) => s.promptList);
   const selectedPrompt = useAppStore((s) => s.selectedPrompt);
@@ -112,7 +130,8 @@ export function useChatMessages(chatMessages, setChatMessages, messageApi) {
         setIsAskLoading(false);
         if (response.code === 200) {
           const newCount = incrementDailyUsageCount();
-          const assistantMessage = assistantMessageGenerator(response.data);
+          const content = normalizeResponseData(response.data);
+          const assistantMessage = assistantMessageGenerator(content);
           setChatMessages((prev) => [...prev, assistantMessage]);
 
           const prompt = promptList.find(
@@ -135,9 +154,10 @@ export function useChatMessages(chatMessages, setChatMessages, messageApi) {
             });
           }
         } else {
+          const errContent = normalizeResponseData(response.data);
           messageApi.open({
             type: "error",
-            content: response.data,
+            content: errContent,
           });
         }
       } catch (error) {

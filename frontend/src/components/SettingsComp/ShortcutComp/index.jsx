@@ -1,7 +1,22 @@
-import { Input, Select, Card, Space, Typography, Tag, Button, message, Modal } from "antd";
+import {
+  Input,
+  Select,
+  Card,
+  Space,
+  Typography,
+  Tag,
+  Button,
+  message,
+  Modal,
+} from "antd";
 const { Option } = Select;
 const { TextArea } = Input;
-import { EditOutlined, CheckOutlined, CloseOutlined, DeleteOutlined } from "@ant-design/icons";
+import {
+  EditOutlined,
+  CheckOutlined,
+  CloseOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
 import React, { useEffect, useState } from "react";
 
 const { Text } = Typography;
@@ -17,7 +32,11 @@ function ShortcutComp({
   onEditModeConsumed,
 }) {
   const [isEditing, setIsEditing] = useState(false);
-  const [editSnapshot, setEditSnapshot] = useState({ label: "", value: "" });
+  const [editSnapshot, setEditSnapshot] = useState({
+    label: "",
+    value: "",
+    shortcut: "",
+  });
   const [defaultP1, setDefaultP1] = useState(
     isMac ? "cmd+shift" : "ctrl+shift",
   );
@@ -70,6 +89,10 @@ function ShortcutComp({
       message.warning("Prompt content is required.");
       return;
     }
+    if (!localPrompt?.shortcut) {
+      message.warning("Shortcut is required.");
+      return;
+    }
     setIsEditing(false);
   };
 
@@ -77,6 +100,7 @@ function ShortcutComp({
     setEditSnapshot({
       label: localPrompt?.label ?? "",
       value: localPrompt?.value ?? "",
+      shortcut: localPrompt?.shortcut ?? "",
     });
     setIsEditing(true);
   };
@@ -92,7 +116,12 @@ function ShortcutComp({
       setLocalPromptList(
         localPromptList.map((prompt, i) =>
           i === index
-            ? { ...prompt, label: editSnapshot.label, value: editSnapshot.value }
+            ? {
+                ...prompt,
+                label: editSnapshot.label,
+                value: editSnapshot.value,
+                shortcut: editSnapshot.shortcut,
+              }
             : prompt,
         ),
       );
@@ -131,6 +160,7 @@ function ShortcutComp({
       setEditSnapshot({
         label: localPrompt?.label ?? "",
         value: localPrompt?.value ?? "",
+        shortcut: localPrompt?.shortcut ?? "",
       });
       onEditModeConsumed?.();
     }
@@ -165,18 +195,14 @@ function ShortcutComp({
         borderRadius: "8px",
         boxShadow: "0 1px 2px rgba(0,0,0,0.03)",
       }}
-      bodyStyle={{ padding: "16px" }}
-      // title={
-      //   isShowDragIcon ? (
-      //     <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-      //       <DragOutlined style={{ color: "#999", cursor: "grab" }} />
-      //       <span>Drag to reorder</span>
-      //     </div>
-      //   ) : null
-      // }
+      bodyStyle={{ padding: "8px" }}
     >
       <Space
-        style={{ width: "100%", justifyContent: "space-between" }}
+        style={{
+          width: "100%",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
         size="small"
       >
         {/* Title and Description - view / edit mode */}
@@ -215,17 +241,27 @@ function ShortcutComp({
               </Space>
             </>
           ) : (
-            <div style={{ display: "flex", alignItems: "flex-start", gap: "8px" }}>
+            <div
+              style={{ display: "flex", alignItems: "flex-start", gap: "8px" }}
+            >
               <div style={{ flex: 1, minWidth: 0 }}>
                 <Text
                   strong
-                  style={{ fontSize: "14px", display: "block", marginBottom: "4px" }}
+                  style={{
+                    fontSize: "14px",
+                    display: "block",
+                    marginBottom: "4px",
+                  }}
                 >
                   {localPrompt?.label || "—"}
                 </Text>
                 <Text
                   type="secondary"
-                  style={{ fontSize: "12px", lineHeight: "1.4", whiteSpace: "pre-wrap" }}
+                  style={{
+                    fontSize: "12px",
+                    lineHeight: "1.4",
+                    whiteSpace: "pre-wrap",
+                  }}
                 >
                   {localPrompt?.value || "—"}
                 </Text>
@@ -274,14 +310,17 @@ function ShortcutComp({
             )}
           </div>
 
-          <Input
-            style={{ width: "200px" }}
-            addonBefore={selectBefore}
-            value={defaultP2}
-            onChange={handleChange}
-            placeholder="key"
-            size="middle"
-          />
+          {isEditing && (
+            <Input
+              disabled={!isEditing}
+              style={{ width: "200px" }}
+              addonBefore={selectBefore}
+              value={defaultP2}
+              onChange={handleChange}
+              placeholder="key"
+              size="middle"
+            />
+          )}
         </div>
       </Space>
     </Card>

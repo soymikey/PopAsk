@@ -14,3 +14,24 @@
   height: 100%;
   overflow: hidden;
 }
+
+/* Shared prompt select option (ChatComp, AskComp) */
+.prompt-select-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.prompt-select-option-content {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+.prompt-select-option-label {
+  font-weight: 500;
+  font-size: 14px;
+}
+.prompt-select-option-value {
+  font-size: 12px;
+  color: #999;
+  margin-top: 2px;
+}

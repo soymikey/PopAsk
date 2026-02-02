@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 )
 
 // Request/Response structs
@@ -60,7 +61,9 @@ type APIService struct {
 // NewAPIService 创建新的API服务
 func NewAPIService(ctx context.Context, app *App) *APIService {
 	service := &APIService{
-		client: &http.Client{},
+		client: &http.Client{
+			Timeout: DefaultHTTPClientTimeout,
+		},
 	}
 	service.SetContext(ctx)
 	service.SetApp(app)
@@ -101,7 +104,11 @@ func (api *APIService) makeRequest(requestType, url, token string, payload []byt
 	}
 	defer response.Body.Close()
 
-	body, _ := io.ReadAll(response.Body)
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		api.logSvc.Error("Read body failed: %v", err)
+		return nil, fmt.Errorf("read body: %w", err)
+	}
 	api.logSvc.Info("HTTP request completed successfully, response size: %d bytes", len(body))
 	if api.IsDevelopment() {
 		api.logSvc.Info("Response body: %s", string(body))

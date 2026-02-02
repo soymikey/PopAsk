@@ -1,251 +1,55 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Card,
-  Space,
   Typography,
   Button,
   message,
   Empty,
   Tooltip,
-  Divider,
-  Badge,
   Input,
+  Badge,
 } from "antd";
-import {
-  DeleteOutlined,
-  CopyOutlined,
-  ClockCircleOutlined,
-  ClearOutlined,
-  MessageOutlined,
-  RobotOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
-import { MarkDownComp } from "../MarkDownComp";
+import { ClearOutlined } from "@ant-design/icons";
+import { useHistorySearch } from "./hooks/useHistorySearch";
+import { useHistoryActions } from "./hooks/useHistoryActions";
+import HistoryItem from "./HistoryItem";
+import "./index.css";
 
-const { Title, Text, Paragraph } = Typography;
+const { Title } = Typography;
 const { Search } = Input;
 
 function HistoryComp({ historyList, setHistoryList }) {
   const [messageApi, contextHolder] = message.useMessage();
-  const [searchKeyword, setSearchKeyword] = useState("");
 
-  // Filter history based on search keyword
-  const filteredHistory = historyList.filter((item) => {
-    if (!searchKeyword.trim()) return true;
-    const keyword = searchKeyword.toLowerCase();
-    return (
-      item.message.toLowerCase().includes(keyword) ||
-      item.response.toLowerCase().includes(keyword)
-    );
-  });
+  const { searchKeyword, setSearchKeyword, filteredHistory } =
+    useHistorySearch(historyList);
 
-  const handleDeleteHistory = (index) => {
-    const newHistoryList = historyList.filter((_, i) => i !== index);
-    setHistoryList(newHistoryList);
-    messageApi.open({
-      type: "success",
-      content: "History item deleted",
+  const { handleDeleteHistory, handleClearAll, handleCopyToClipboard } =
+    useHistoryActions({
+      historyList,
+      setHistoryList,
+      messageApi,
     });
-  };
-
-  const handleClearAll = () => {
-    setHistoryList([]);
-    messageApi.open({
-      type: "success",
-      content: "All history cleared",
-    });
-  };
-
-  const handleCopyToClipboard = async (text) => {
-    try {
-      await navigator.clipboard.writeText(text);
-      messageApi.open({
-        type: "success",
-        content: "Copied to clipboard",
-      });
-    } catch (error) {
-      messageApi.open({
-        type: "error",
-        content: "Failed to copy to clipboard",
-      });
-    }
-  };
-
-  const renderHistoryItem = (item, index) => (
-    <Card
-      size="small"
-      style={{
-        marginBottom: "12px",
-        border: "1px solid #f0f0f0",
-        borderRadius: "8px",
-        boxShadow: "0 1px 2px rgba(0,0,0,0.03)",
-      }}
-      bodyStyle={{ padding: "16px" }}
-    >
-      {/* Header with timestamp and actions */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <Badge
-            count={index + 1}
-            size="small"
-            style={{ backgroundColor: "#1890ff" }}
-          />
-          <ClockCircleOutlined style={{ color: "#8c8c8c" }} />
-          <Text type="secondary" style={{ fontSize: "12px" }}>
-            {item.timestamp}
-          </Text>
-        </div>
-        <Button
-          type="text"
-          size="small"
-          danger
-          icon={<DeleteOutlined />}
-          onClick={() => handleDeleteHistory(index)}
-          style={{ padding: "4px 8px" }}
-        />
-      </div>
-
-      <Divider style={{ margin: "8px 0" }} />
-
-      {/* Message Section */}
-      <div
-        style={{
-          background: "#f5f5f5",
-          padding: "12px",
-          borderRadius: "6px",
-          border: "1px solid #d9d9d9",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            marginBottom: "8px",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <MessageOutlined style={{ color: "#262626" }} />
-            <Text strong style={{ fontSize: "13px", color: "#262626" }}>
-              Message
-            </Text>
-          </div>
-          <Button
-            type="text"
-            size="small"
-            icon={<CopyOutlined />}
-            onClick={() => handleCopyToClipboard(item.message)}
-            style={{
-              padding: "0",
-              height: "auto",
-              marginTop: "4px",
-              color: "#262626",
-            }}
-          >
-            Copy
-          </Button>
-        </div>
-        <Paragraph
-          style={{
-            margin: "0",
-            fontSize: "13px",
-            lineHeight: "1.5",
-            wordBreak: "break-word",
-            color: "#262626",
-          }}
-          ellipsis={{ rows: 2, expandable: true, symbol: "Show more" }}
-        >
-          {item.message}
-        </Paragraph>
-      </div>
-
-      {/* Response Section */}
-      <div
-        style={{
-          background: "#f0f8ff",
-          padding: "12px",
-          borderRadius: "6px",
-          border: "1px solid #91d5ff",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            marginBottom: "8px",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <RobotOutlined style={{ color: "#1890ff" }} />
-            <Text strong style={{ fontSize: "13px", color: "#1890ff" }}>
-              Response
-            </Text>
-          </div>
-          <Button
-            type="text"
-            size="small"
-            icon={<CopyOutlined />}
-            onClick={() => handleCopyToClipboard(item.response)}
-            style={{
-              padding: "0",
-              height: "auto",
-              marginTop: "4px",
-              color: "#1890ff",
-            }}
-          >
-            Copy
-          </Button>
-        </div>
-        <MarkDownComp>{item.response}</MarkDownComp>
-      </div>
-    </Card>
-  );
 
   return (
-    <div style={{ paddingBottom: "12px", paddingTop: "12px" }}>
+    <div className="history-comp-root">
       {contextHolder}
 
-      {/* History List */}
-      <Card
-        size="small"
-        style={{
-          border: "1px solid #f0f0f0",
-          borderRadius: "8px",
-          boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
-        }}
-      >
-        {/* Header with Clear All button */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            padding: 8,
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-            <Title level={4} style={{ margin: 0, color: "#262626" }}>
+      <Card size="small" className="history-comp-card">
+        <div className="history-comp-header">
+          <div className="history-comp-header-left">
+            <Title level={4} className="history-comp-title">
               Chat History
             </Title>
             {historyList.length > 0 && (
               <Badge
                 count={historyList.length}
                 size="small"
-                style={{
-                  backgroundColor: "#1890ff",
-                  fontSize: "11px",
-                }}
+                style={{ backgroundColor: "#1890ff", fontSize: "11px" }}
               />
             )}
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <div className="history-comp-header-right">
             {historyList.length > 0 && (
               <Tooltip title="Clear all history">
                 <Button
@@ -254,10 +58,7 @@ function HistoryComp({ historyList, setHistoryList }) {
                   icon={<ClearOutlined />}
                   onClick={handleClearAll}
                   size="small"
-                  style={{
-                    borderRadius: "6px",
-                    padding: "4px 8px",
-                  }}
+                  className="history-comp-clear-btn"
                 >
                   Clear All
                 </Button>
@@ -265,7 +66,8 @@ function HistoryComp({ historyList, setHistoryList }) {
             )}
           </div>
         </div>
-        <div style={{ padding: "12px 0px" }}>
+
+        <div className="history-comp-search-wrap">
           <Search
             placeholder="Search messages or responses..."
             allowClear
@@ -279,11 +81,11 @@ function HistoryComp({ historyList, setHistoryList }) {
         {historyList.length === 0 ? (
           <Empty
             description={
-              <div style={{ color: "#8c8c8c" }}>
-                <div style={{ fontSize: "14px", marginBottom: "4px" }}>
+              <div className="history-comp-empty-desc">
+                <div className="history-comp-empty-desc-title">
                   No chat history yet
                 </div>
-                <div style={{ fontSize: "12px" }}>
+                <div className="history-comp-empty-desc-sub">
                   Start a conversation to see it here
                 </div>
               </div>
@@ -293,11 +95,11 @@ function HistoryComp({ historyList, setHistoryList }) {
         ) : filteredHistory.length === 0 ? (
           <Empty
             description={
-              <div style={{ color: "#8c8c8c" }}>
-                <div style={{ fontSize: "14px", marginBottom: "4px" }}>
+              <div className="history-comp-empty-desc">
+                <div className="history-comp-empty-desc-title">
                   No results found
                 </div>
-                <div style={{ fontSize: "12px" }}>
+                <div className="history-comp-empty-desc-sub">
                   Try a different search term
                 </div>
               </div>
@@ -305,15 +107,20 @@ function HistoryComp({ historyList, setHistoryList }) {
             style={{ padding: "40px 0" }}
           />
         ) : (
-          <div
-            style={{
-              overflowY: "auto",
-              paddingRight: "4px",
-            }}
-          >
-            {filteredHistory.map((item, index) => (
-              <div key={index}>{renderHistoryItem(item, index)}</div>
-            ))}
+          <div className="history-comp-list">
+            {filteredHistory.map((item, i) => {
+              const realIndex = historyList.indexOf(item);
+              return (
+                <div key={`${realIndex}-${i}-${item?.timestamp}`}>
+                  <HistoryItem
+                    item={item}
+                    index={realIndex}
+                    onDelete={handleDeleteHistory}
+                    onCopy={handleCopyToClipboard}
+                  />
+                </div>
+              );
+            })}
           </div>
         )}
       </Card>

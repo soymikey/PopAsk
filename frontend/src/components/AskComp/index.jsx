@@ -1,12 +1,10 @@
 import {
   Button,
-  Layout,
   message,
   Select,
   Input,
   Spin,
   Tag,
-  Tooltip,
   Divider,
   Space,
   Modal,
@@ -18,28 +16,18 @@ import {
 const { Panel } = Collapse;
 import { PlusOutlined, DeleteOutlined, SendOutlined } from "@ant-design/icons";
 import { useEffect, useState, useRef } from "react";
-import {
-  EventsOn,
-  EventsOff,
-  WindowShow,
-} from "../../../wailsjs/runtime/runtime";
-import { ChatAPI } from "../../../wailsjs/go/main/App";
 import { DEFAULT_PROMPT_OPTIONS, TAG_COLORS } from "../../constant";
-import {
-  messageGenerator,
-  newPromptGenerator,
-  languageFormate,
-  getLocalStorage,
-  historyGenerator,
-} from "../../utils";
+import { messageGenerator } from "../../utils";
 import useLocalStorage from "../../hooks/useLocalStorage";
 import { useAppStore } from "../../store";
+import { getPromptSelectOptions } from "../../utils/getPromptSelectOptions";
+import { useAskChat } from "./hooks/useAskChat";
+import { useAddPromptModal } from "./hooks/useAddPromptModal";
+import { useAskSelectionHandler } from "./hooks/useAskSelectionHandler";
 import "./index.css";
 import {
-  DEFAULT_ORC_LANG,
-  SELECTED_PROMPT_KEY,
-  ORC_LANG_KEY,
   IS_OPEN_RECENT_PROMPTS_VALUE,
+  SELECTED_PROMPT_KEY,
 } from "../../constant";
 import { MarkDownComp } from "../MarkDownComp";
 const { TextArea } = Input;
@@ -55,274 +43,120 @@ const AskComp = ({
   setHistoryList,
 }) => {
   const [messageApi, contextHolder] = message.useMessage();
-  const [form] = Form.useForm();
-
   const [selection, setSelection] = useState("");
-  const [chatResponse, setChatResponse] = useState(null);
   const [selectedPrompt, setSelectedPrompt] = useLocalStorage(
     SELECTED_PROMPT_KEY,
     DEFAULT_PROMPT_OPTIONS[0].value
   );
   const [isLoading, setIsLoading] = useState(false);
-  const [isAskLoading, setIsAskLoading] = useState(false);
 
   const recentPrompts = useAppStore((s) => s.recentPrompts);
   const setRecentPrompts = useAppStore((s) => s.setRecentPrompts);
   const recentPromptsActiveKey = useAppStore((s) => s.recentPromptsActiveKey);
-  const setRecentPromptsActiveKey = useAppStore((s) => s.setRecentPromptsActiveKey);
+  const setRecentPromptsActiveKey = useAppStore(
+    (s) => s.setRecentPromptsActiveKey
+  );
 
   const askRef = useRef(null);
 
-  const [isModalVisible, setIsModalVisible] = useState(false);
-
-  const addPrompt = (newPrompt, newPromptTitle) => {
-    const newPrompt_ = newPromptGenerator(newPromptTitle, newPrompt);
-    if (!newPrompt_) {
-      messageApi.open({
-        type: "error",
-        content: "Please enter prompt title and prompt",
-      });
-      return;
+  const { chatResponse, setChatResponse, isAskLoading, handleChat } = useAskChat(
+    {
+      promptList,
+      selectedPrompt,
+      historyList,
+      setHistoryList,
+      messageApi,
     }
-    setPromptList([...promptList, newPrompt_]);
+  );
 
-    setIsModalVisible(false);
-    form.resetFields();
-    messageApi.open({
-      type: "success",
-      content: "Prompt added successfully",
-    });
-  };
+  const {
+    isModalVisible,
+    form,
+    handleAddPromptClick,
+    handleModalCancel,
+    handleModalOk,
+  } = useAddPromptModal({
+    promptList,
+    setPromptList,
+    messageApi,
+  });
 
-  const handleAddPromptClick = () => {
-    setIsModalVisible(true);
-  };
-
-  const handleModalCancel = () => {
-    setIsModalVisible(false);
-    form.resetFields();
-  };
-
-  const handleModalOk = () => {
-    form.validateFields().then((values) => {
-      addPrompt(values.prompt, values.title);
-    });
-  };
-
-  const handleChat = async (message) => {
-    setChatResponse(null);
-    setIsAskLoading(true);
-    const response = await ChatAPI(message);
-    setIsAskLoading(false);
-    if (response.code === 200) {
-      setChatResponse(response.data);
-      setHistoryList([
-        historyGenerator(message, response.data),
-        ...historyList,
-      ]);
-      const prompt = promptList.find((p) => p.value === selectedPrompt);
-      if (!prompt) return;
-      setRecentPrompts((prev) => {
-        const filteredPrompts = prev.filter((p) => p.label !== prompt.label);
-        const newPrompts = [prompt, ...filteredPrompts];
-        return newPrompts.slice(0, 12);
-      });
-    } else {
-      messageApi.open({
-        type: "error",
-        content: response.data,
-      });
-    }
-  };
-  const onSelectionHandler = async (selection) => {
-    try {
-      const {
-        text: selectionText,
-        shortcut,
-        prompt,
-        autoAsking,
-        isOCR,
-        isOpenWindow,
-      } = selection;
-      let text = selectionText;
-      WindowShow();
-      setActiveKey("ask");
-
-      setIsLoading(true);
-      if (isOCR) {
-        const ORCLang = getLocalStorage(ORC_LANG_KEY, DEFAULT_ORC_LANG);
-        const lang = ORCLang.length > 1 ? ORCLang.join("+") : ORCLang[0];
-        const { default: Tesseract } = await import("tesseract.js");
-        const result = await Tesseract.recognize(text, lang);
-        text = languageFormate(result?.data?.text || "");
-      }
-      if (text.length === 0) {
-        return;
-      }
-      let prompt_ = prompt;
-      if (isOpenWindow || isOCR) {
-        prompt_ = selectedPrompt;
-      }
-
-      setSelectedPrompt(prompt_);
-
-      setSelection(messageGenerator(prompt_, text));
-      setChatResponse(null);
-      if (autoAsking) {
-        handleChat(messageGenerator(prompt_, text));
-      }
-    } catch (error) {
-      messageApi.open({
-        type: "error",
-        content: error?.message || "error",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  useAskSelectionHandler({
+    setActiveKey,
+    selectedPrompt,
+    setSelectedPrompt,
+    setSelection,
+    setChatResponse,
+    handleChat,
+    messageApi,
+    setIsLoading,
+  });
 
   const onSelectPromptHandler = (value) => {
     setSelectedPrompt(value);
   };
 
   const onChangeSelectionHandler = (event) => {
-    if (event.target.value.length < selectedPrompt.length - 1) {
+    const minLen = (selectedPrompt?.length ?? 0) - 1;
+    if (minLen >= 0 && event.target.value.length < minLen) {
       setSelectedPrompt("");
     }
-
     setSelection(event.target.value);
   };
 
   useEffect(() => {
-    EventsOn("GET_SELECTION", (event) => {
-      onSelectionHandler(event);
-    });
-
-    return () => {
-      EventsOff("GET_SELECTION");
-    };
-  }, [selectedPrompt]);
-
-  // useEffect(() => {
-  //   // cmd+enter 的是 触发点击按钮
-  //   window.addEventListener("keydown", (e) => {
-  //     if (e.metaKey && e.key === "Enter") {
-  //       askRef.current?.click();
-  //     }
-  //   });
-  // }, [askRef]);
-
-  useEffect(() => {
-    if (selectedPrompt.length === 0) {
-      return;
-    }
+    if (!selectedPrompt?.length) return;
     for (const prompt of promptList) {
       if (selection.startsWith(prompt.value)) {
-        const newSelection = selection.slice(prompt.value.length);
-        setSelection(messageGenerator(selectedPrompt, newSelection));
+        setSelection(
+          messageGenerator(selectedPrompt, selection.slice(prompt.value.length))
+        );
         return;
       }
     }
     setSelection(messageGenerator(selectedPrompt, selection));
   }, [selectedPrompt]);
 
-  const dropdownRenderElement = (menu) => {
-    const customMenuItem = (
-      <>
-        <Divider style={{ margin: "8px 0" }} />
-        <div
-          style={{
-            padding: "0 8px 4px",
-            display: "flex",
-            justifyContent: "center",
-          }}
+  const dropdownRenderElement = (menu) => (
+    <>
+      {menu}
+      <Divider style={{ margin: "8px 0" }} />
+      <div className="ask-comp-prompt-dropdown-footer">
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={handleAddPromptClick}
         >
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={handleAddPromptClick}
-          >
-            Add Prompt
-          </Button>
-        </div>
-      </>
-    );
-    return (
-      <>
-        {menu} {customMenuItem}
-      </>
-    );
-  };
+          Add Prompt
+        </Button>
+      </div>
+    </>
+  );
 
-  const renderPromptOptions = (items) => {
-    const options = items.map((item, index) => ({
-      label: (
-        <div
-          key={item.value}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
+  const promptSelectOptions = getPromptSelectOptions(promptList, {
+    renderExtra: (item, items) => (
+      <div style={{ marginLeft: "8px" }}>
+        <Button
+          type="text"
+          size="small"
+          icon={<DeleteOutlined />}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const newPromptList = (items || []).filter(
+              (i) => i.value !== item.value
+            );
+            setPromptList(newPromptList);
+            syncShortcutList(newPromptList, systemShortcuts);
+            messageApi.open({
+              type: "success",
+              content: "Prompt deleted successfully",
+            });
           }}
-          title={`${item.value}`}
-        >
-          <div
-            style={{ overflow: "hidden", textOverflow: "ellipsis", flex: 1 }}
-          >
-            <div
-              style={{ fontWeight: 500, fontSize: "14px" }}
-            >{`${item.label}`}</div>
-            <div
-              style={{
-                fontSize: 12,
-                color: "#999",
-                whiteSpace: "wrap",
-                marginTop: "2px",
-              }}
-            >
-              {`${item.value}`}
-            </div>
-            {item?.shortcut && (
-              <div
-                style={{
-                  fontSize: 11,
-                  color: "#1890ff",
-                  whiteSpace: "wrap",
-                  marginTop: "2px",
-                }}
-              >
-                <Tag size="small" color="blue">{`${item?.shortcut}`}</Tag>
-              </div>
-            )}
-          </div>
-          <div style={{ marginLeft: "8px" }}>
-            <Button
-              type="text"
-              size="small"
-              icon={<DeleteOutlined />}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-
-                const newPromptList = items.filter(
-                  (i) => i.value !== item.value
-                );
-                setPromptList(newPromptList);
-                syncShortcutList(newPromptList, systemShortcuts);
-                messageApi.open({
-                  type: "success",
-                  content: "Prompt deleted successfully",
-                });
-              }}
-            />
-          </div>
-        </div>
-      ),
-      value: item.value,
-      name: item.value,
-    }));
-    return options;
-  };
+        />
+      </div>
+    ),
+  });
 
   return (
     <div style={{ paddingTop: "12px", paddingBottom: "12px" }}>
@@ -340,11 +174,11 @@ const AskComp = ({
                 placeholder="Select a prompt template"
                 dropdownRender={dropdownRenderElement}
                 onSelect={onSelectPromptHandler}
-                options={renderPromptOptions(promptList)}
+                options={promptSelectOptions}
                 value={selectedPrompt}
                 showSearch
                 filterOption={(input, option) =>
-                  option.label.props.children[0].props.children[0].props.children
+                  (option.value || "")
                     .toLowerCase()
                     .includes(input.toLowerCase())
                 }

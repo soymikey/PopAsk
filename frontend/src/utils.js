@@ -145,3 +145,22 @@ export const resetShortcut = () => {
     setPromptList(DEFAULT_PROMPT_OPTIONS);
     syncShortcutListToBackend(DEFAULT_PROMPT_OPTIONS, DEFAULT_SHORTCUT_LIST);
 };
+
+/**
+ * Validates that shortcut keys are unique across prompt list and system shortcuts.
+ * @param {Array} localPromptList
+ * @param {Array} localSystemShortcuts
+ * @returns {{ error: boolean, message: string }}
+ */
+export const validateShortcut = (localPromptList, localSystemShortcuts) => {
+    const list = [...(localPromptList ?? []), ...(localSystemShortcuts ?? [])];
+    const shortcutMap = new Map();
+    for (const item of list) {
+        if (!item?.shortcut) continue;
+        if (shortcutMap.has(item.shortcut)) {
+            return { error: true, message: `Shortcut already exists: [${item.shortcut}]` };
+        }
+        shortcutMap.set(item.shortcut, item);
+    }
+    return { error: false, message: "" };
+};

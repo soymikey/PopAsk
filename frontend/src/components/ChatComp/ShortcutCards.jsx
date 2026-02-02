@@ -13,7 +13,7 @@ export function formatShortcutDisplay(str) {
 
 export default function ShortcutCards({ systemShortcuts, promptList }) {
   const shortcuts = [...(systemShortcuts || []), ...(promptList || [])].filter(
-    (s) => s?.label && s?.value
+    (s) => s?.label && s?.value,
   );
 
   return (
@@ -46,6 +46,7 @@ export default function ShortcutCards({ systemShortcuts, promptList }) {
               transition: "all 0.3s ease",
               width: "100%",
               backgroundColor: "transparent",
+              height: "40px",
             }}
             bodyStyle={{
               display: "flex",
@@ -57,22 +58,32 @@ export default function ShortcutCards({ systemShortcuts, promptList }) {
               style={{
                 display: "flex",
                 justifyContent: "space-between",
-                alignItems: "flex-start",
+                alignItems: "center",
               }}
             >
-              <div style={{ flex: 1, fontSize: "12px", color: "#666" }}>
+              <div style={{ fontSize: "12px", color: "#666" }}>
                 {shortcut.label}
               </div>
               {shortcut.shortcut ? (
                 <Tag
                   color={TAG_COLORS[index % TAG_COLORS.length]}
-                  style={{ fontSize: "12px", borderRadius: "4px", flexShrink: 0 }}
+                  style={{
+                    fontSize: "12px",
+                    borderRadius: "4px",
+                    flexShrink: 0,
+                    marginRight: "0px",
+                  }}
                 >
                   {formatShortcutDisplay(shortcut.shortcut)}
                 </Tag>
               ) : (
                 <Tag
-                  style={{ fontSize: "12px", flexShrink: 0, color: "#999" }}
+                  style={{
+                    fontSize: "12px",
+                    flexShrink: 0,
+                    color: "#999",
+                    marginRight: "0px",
+                  }}
                 >
                   Set in Settings
                 </Tag>

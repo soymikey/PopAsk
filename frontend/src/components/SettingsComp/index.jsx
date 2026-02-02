@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import ShortcutComp from "./ShortcutComp";
 import {
   Button,
-  message,
   Select,
   Tooltip,
   Card,
@@ -11,127 +10,34 @@ import {
   Typography,
   Input,
 } from "antd";
-import {
-  DEFAULT_ORC_LANG,
-  DEFAULT_PROMPT_LIST,
-} from "../../constant";
 import { OCR_LANGUAGE_OPTIONS } from "../../constant";
 import { InfoCircleOutlined, SaveOutlined, PlusOutlined } from "@ant-design/icons";
 import { useAppStore } from "../../store";
-import { syncShortcutListToBackend, resetShortcut } from "../../utils";
+import { resetShortcut } from "../../utils";
+import { useSettingsForm } from "./hooks/useSettingsForm";
 
 const { Title, Text } = Typography;
 
 function SettingsComp({ activeKey, isMac = false }) {
-  const promptList = useAppStore((s) => s.promptList);
-  const setPromptList = useAppStore((s) => s.setPromptList);
-  const systemShortcuts = useAppStore((s) => s.systemShortcuts);
-  const setSystemShortcuts = useAppStore((s) => s.setSystemShortcuts);
-  const ORCLang = useAppStore((s) => s.ORCLang);
-  const setORCLang = useAppStore((s) => s.setORCLang);
-  const openAIKey = useAppStore((s) => s.openAIKey);
-  const setOpenAIKey = useAppStore((s) => s.setOpenAIKey);
   const setShowShortcutGuide = useAppStore((s) => s.setShowShortcutGuide);
-  const [localORCLang, setLocalORCLang] = useState(DEFAULT_ORC_LANG);
-  const [localOpenAIKey, setLocalOpenAIKey] = useState("");
 
-  const [localPromptList, setLocalPromptList] = useState(DEFAULT_PROMPT_LIST);
-  const [localSystemShortcuts, setLocalSystemShortcuts] = useState([]);
-  const [newlyAddedPromptId, setNewlyAddedPromptId] = useState(null);
-
-  const [messageApi, contextHolder] = message.useMessage();
-
-  const onChangeORCHandler = (value) => {
-    if (value.length > 5) {
-      messageApi.open({
-        type: "error",
-        content: "can't select more than 5 languages",
-      });
-      return;
-    }
-    setLocalORCLang(value);
-  };
-
-  const validateShortcut = () => {
-    const list = [...localPromptList, ...localSystemShortcuts];
-    const shortcutMap = new Map();
-
-    for (const item of list) {
-      if (!item?.shortcut) continue;
-
-      if (shortcutMap.has(item.shortcut)) {
-        return {
-          error: true,
-          message: `Shortcut already exists: [${item.shortcut}]`,
-        };
-      }
-      shortcutMap.set(item.shortcut, item);
-    }
-
-    return { error: false, message: "" };
-  };
-
-  const handleSave = () => {
-    const validateResult = validateShortcut();
-    if (validateResult.error) {
-      message.error(validateResult.message);
-      return;
-    }
-    setORCLang(localORCLang);
-    setOpenAIKey(localOpenAIKey);
-    setPromptList(localPromptList);
-    setSystemShortcuts(localSystemShortcuts);
-    syncShortcutListToBackend(localPromptList, localSystemShortcuts);
-    messageApi.open({
-      type: "success",
-      content: "Settings saved successfully",
-    });
-  };
-
-  const handleDragEnd = (result) => {
-    if (!result.destination) return;
-
-    const items = Array.from(localPromptList);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
-    if (JSON.stringify(items) === JSON.stringify(localPromptList)) return;
-    setLocalPromptList(items);
-  };
-
-  const addCustomPrompt = () => {
-    const hasIncompleteCustom = localPromptList.some(
-      (p) => p?.id?.startsWith?.("custom_") && (!p.label?.trim() || !p.value?.trim()),
-    );
-    if (hasIncompleteCustom) {
-      messageApi.warning("Finish editing the current custom prompt (name and content) first.");
-      return;
-    }
-    const newItem = { id: `custom_${Date.now()}`, label: "", value: "", shortcut: "" };
-    setNewlyAddedPromptId(newItem.id);
-    setLocalPromptList([newItem, ...localPromptList]);
-  };
-
-  useEffect(() => {
-    setLocalPromptList(promptList);
-  }, [promptList, systemShortcuts]);
-
-  useEffect(() => {
-    setLocalSystemShortcuts(systemShortcuts);
-  }, [systemShortcuts]);
-
-  useEffect(() => {
-    setLocalORCLang(ORCLang);
-  }, [ORCLang]);
-
-
-  useEffect(() => {
-    if (activeKey === "settings") {
-      setLocalORCLang(ORCLang);
-      setLocalOpenAIKey(openAIKey ?? "");
-      setLocalPromptList(promptList);
-      setLocalSystemShortcuts(systemShortcuts);
-    }
-  }, [activeKey]);
+  const {
+    contextHolder,
+    localORCLang,
+    setLocalORCLang,
+    localOpenAIKey,
+    setLocalOpenAIKey,
+    localPromptList,
+    setLocalPromptList,
+    localSystemShortcuts,
+    setLocalSystemShortcuts,
+    newlyAddedPromptId,
+    setNewlyAddedPromptId,
+    onChangeORCHandler,
+    handleSave,
+    handleDragEnd,
+    addCustomPrompt,
+  } = useSettingsForm(activeKey);
 
   return (
     <div
