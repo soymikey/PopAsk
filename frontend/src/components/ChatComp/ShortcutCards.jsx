@@ -11,7 +11,7 @@ export default function ShortcutCards({ systemShortcuts, promptList }) {
   );
 
   return (
-    <div>
+    <div className={styles.shortcutCardsRoot}>
       <div className={styles.shortcutCardsHeader}>
         <Text className={styles.shortcutCardsHeaderText}>
           Shortcuts reference

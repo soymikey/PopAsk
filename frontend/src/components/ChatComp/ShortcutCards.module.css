@@ -1,3 +1,7 @@
+.shortcutCardsRoot {
+  height: 200px;
+}
+
 .shortcutCardsHeader {
   opacity: 0.6;
   text-align: center;
@@ -9,30 +13,28 @@
 }
 
 .shortcutCardsGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  padding: 20px;
-  text-align: center;
-  overflow: auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  flex-wrap: wrap;
+  align-items: flex-start;
   gap: 4px;
 }
 
 .shortcutCardsCard {
+  width: calc(50% - 2px);
   border: 1px solid var(--color-border);
   border-radius: 8px;
-  transition: all 0.3s ease;
-  width: 100%;
   background-color: transparent;
   height: 40px;
+  box-sizing: border-box;
 }
 
 .shortcutCardsCard :global(.ant-card-body) {
   display: flex;
   flex-direction: column;
   padding: 6px;
+  min-height: 40px;
 }
 
 .shortcutCardsRow {
