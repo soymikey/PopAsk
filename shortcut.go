@@ -53,11 +53,17 @@ func (s *ShortcutService) RegisterKeyboardShortcut() {
 
 	// Start new hook listener
 	s.hookChan = make(chan hook.Event)
+	seenShortcut := make(map[string]bool) // 同一快捷键只注册一次，避免触发两次
 	for _, prompt := range s.shortcutList {
 		shortcutStr, ok := prompt["shortcut"].(string)
 		if !ok || shortcutStr == "" {
 			continue
 		}
+		if seenShortcut[shortcutStr] {
+			s.logSvc.Info("Skipping duplicate shortcut: %s", shortcutStr)
+			continue
+		}
+		seenShortcut[shortcutStr] = true
 		valueStr, ok := prompt["value"].(string)
 		if !ok {
 			continue
