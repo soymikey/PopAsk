@@ -20,8 +20,11 @@ import {
 import { useEffect, useState } from "react";
 import { LoadPromptsJSON } from "../../../wailsjs/go/main/App";
 import { BrowserOpenURL } from "../../../wailsjs/runtime/runtime";
+import { useAppStore } from "../../store";
 
-const PromptComp = ({ promptList, setPromptList }) => {
+const PromptComp = () => {
+  const promptList = useAppStore((s) => s.promptList);
+  const setPromptList = useAppStore((s) => s.setPromptList);
   const [messageApi, contextHolder] = message.useMessage();
 
   const [promptsCategories, setPromptsCategories] = useState([]);

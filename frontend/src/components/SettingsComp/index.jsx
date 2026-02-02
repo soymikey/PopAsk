@@ -17,24 +17,21 @@ import {
 } from "../../constant";
 import { OCR_LANGUAGE_OPTIONS } from "../../constant";
 import { InfoCircleOutlined, SaveOutlined, PlusOutlined } from "@ant-design/icons";
+import { useAppStore } from "../../store";
+import { syncShortcutListToBackend, resetShortcut } from "../../utils";
 
 const { Title, Text } = Typography;
 
-function SettingsComp({
-  promptList,
-  setPromptList,
-  systemShortcuts,
-  setSystemShortcuts,
-  syncShortcutList,
-  showShortcutGuide,
-  resetShortcut,
-  ORCLang,
-  setORCLang,
-  openAIKey,
-  setOpenAIKey,
-  activeKey,
-  isMac = false,
-}) {
+function SettingsComp({ activeKey, isMac = false }) {
+  const promptList = useAppStore((s) => s.promptList);
+  const setPromptList = useAppStore((s) => s.setPromptList);
+  const systemShortcuts = useAppStore((s) => s.systemShortcuts);
+  const setSystemShortcuts = useAppStore((s) => s.setSystemShortcuts);
+  const ORCLang = useAppStore((s) => s.ORCLang);
+  const setORCLang = useAppStore((s) => s.setORCLang);
+  const openAIKey = useAppStore((s) => s.openAIKey);
+  const setOpenAIKey = useAppStore((s) => s.setOpenAIKey);
+  const setShowShortcutGuide = useAppStore((s) => s.setShowShortcutGuide);
   const [localORCLang, setLocalORCLang] = useState(DEFAULT_ORC_LANG);
   const [localOpenAIKey, setLocalOpenAIKey] = useState("");
 
@@ -84,7 +81,7 @@ function SettingsComp({
     setOpenAIKey(localOpenAIKey);
     setPromptList(localPromptList);
     setSystemShortcuts(localSystemShortcuts);
-    syncShortcutList(localPromptList, localSystemShortcuts);
+    syncShortcutListToBackend(localPromptList, localSystemShortcuts);
     messageApi.open({
       type: "success",
       content: "Settings saved successfully",
@@ -123,7 +120,7 @@ function SettingsComp({
   }, [systemShortcuts]);
 
   useEffect(() => {
-    setLocalORCLang(localORCLang);
+    setLocalORCLang(ORCLang);
   }, [ORCLang]);
 
 
@@ -327,7 +324,7 @@ function SettingsComp({
           backgroundColor: "#f5f5f5",
         }}
       >
-          <Button type="default" onClick={showShortcutGuide}>
+          <Button type="default" onClick={() => setShowShortcutGuide(true)}>
             📋 View Shortcut Guide
           </Button>
 

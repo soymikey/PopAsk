@@ -53,6 +53,7 @@ import {
   checkDailyUsageLimit,
   incrementDailyUsageCount,
   sleep,
+  syncShortcutListToBackend,
 } from "../../utils";
 import "./index.css";
 import { useAppStore } from "../../store";
@@ -75,18 +76,17 @@ const formatShortcutDisplay = (str) => {
 const ChatComp = ({
   activeKey,
   setActiveKey,
-  promptList,
-  setPromptList,
-  systemShortcuts,
-  syncShortcutList,
-  chatHistoryList,
-  setChatHistoryList,
   chatMessages,
   setChatMessages,
-  selectedPrompt,
-  setSelectedPrompt,
-  openAIKey,
 }) => {
+  const promptList = useAppStore((s) => s.promptList);
+  const setPromptList = useAppStore((s) => s.setPromptList);
+  const systemShortcuts = useAppStore((s) => s.systemShortcuts);
+  const chatHistoryList = useAppStore((s) => s.chatHistoryList);
+  const setChatHistoryList = useAppStore((s) => s.setChatHistoryList);
+  const selectedPrompt = useAppStore((s) => s.selectedPrompt);
+  const setSelectedPrompt = useAppStore((s) => s.setSelectedPrompt);
+  const openAIKey = useAppStore((s) => s.openAIKey);
   const newChatText = `New (${window.config_.isMac ? "Cmd" : "Ctrl"}+N)`;
 
   const clearChatText = `Clear (${window.config_.isMac ? "Cmd" : "Ctrl"}+K)`;
@@ -152,7 +152,7 @@ const ChatComp = ({
       prompt.value === promptId ? newPrompt_ : prompt,
     );
     setPromptList(updatedPromptList);
-    syncShortcutList(updatedPromptList, systemShortcuts);
+    syncShortcutListToBackend(updatedPromptList, systemShortcuts);
 
     setIsModalVisible(false);
     setIsEditMode(false);
@@ -645,7 +645,7 @@ const ChatComp = ({
                   (i) => i.value !== item.value,
                 );
                 setPromptList(newPromptList);
-                syncShortcutList(newPromptList, systemShortcuts);
+                syncShortcutListToBackend(newPromptList, systemShortcuts);
                 messageApi.open({
                   type: "success",
                   content: "Prompt deleted successfully",

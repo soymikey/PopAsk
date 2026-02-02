@@ -1,4 +1,7 @@
 import { IsMac, GetUniqueHardwareID } from "../wailsjs/go/main/App";
+import { EventsEmit } from "../wailsjs/runtime/runtime";
+import { useAppStore } from "./store";
+import { DEFAULT_PROMPT_OPTIONS, DEFAULT_SHORTCUT_LIST } from "./constant";
 
 export const initEnv = async () => {
     return {
@@ -130,4 +133,15 @@ export const checkDailyUsageLimit = (limit = 5) => {
 
 export const sleep = (ms) => {
     return new Promise((resolve) => setTimeout(resolve, ms));
+};
+
+export const syncShortcutListToBackend = (promptList, systemShortcuts) => {
+    EventsEmit("syncShortcutList", JSON.stringify([...(promptList ?? []), ...(systemShortcuts ?? [])]));
+};
+
+export const resetShortcut = () => {
+    const { setSystemShortcuts, setPromptList } = useAppStore.getState();
+    setSystemShortcuts(DEFAULT_SHORTCUT_LIST);
+    setPromptList(DEFAULT_PROMPT_OPTIONS);
+    syncShortcutListToBackend(DEFAULT_PROMPT_OPTIONS, DEFAULT_SHORTCUT_LIST);
 };

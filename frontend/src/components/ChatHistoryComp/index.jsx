@@ -23,18 +23,16 @@ import { useState, useMemo } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { MarkDownComp } from "../MarkDownComp";
+import { useAppStore } from "../../store";
 import "./index.css";
 dayjs.extend(relativeTime);
 
 const { Text, Title } = Typography;
 const { Panel } = Collapse;
 
-const ChatHistoryComp = ({
-  chatHistoryList,
-  setChatHistoryList,
-  setActiveKey,
-  setChatMessages,
-}) => {
+const ChatHistoryComp = ({ setActiveKey, setChatMessages }) => {
+  const chatHistoryList = useAppStore((s) => s.chatHistoryList);
+  const setChatHistoryList = useAppStore((s) => s.setChatHistoryList);
   const [expandedKeys, setExpandedKeys] = useState([]);
   const [searchText, setSearchText] = useState("");
 
