@@ -6,6 +6,7 @@ toolchain go1.24.5
 
 require (
 	github.com/go-vgo/robotgo v0.110.8
+	github.com/joho/godotenv v1.5.1
 	github.com/robotn/gohook v0.42.2
 	github.com/shirou/gopsutil/v3 v3.24.5
 	github.com/wailsapp/wails/v2 v2.10.1

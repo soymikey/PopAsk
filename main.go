@@ -4,6 +4,7 @@ import (
 	"embed"
 	"log"
 
+	"github.com/joho/godotenv"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/logger"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -19,6 +20,9 @@ var assets embed.FS
 var icon []byte
 
 func main() {
+	// Load .env from current working directory
+	_ = godotenv.Load(".env")
+
 	// Create an instance of the app structure
 	app := NewApp()
 

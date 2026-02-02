@@ -77,6 +77,14 @@ func (b *BaseService) GetLogService() *LogService {
 	return b.logSvc
 }
 
+// EnvOrDefault 返回 os.Getenv(key)，为空时返回 def。
+func (b *BaseService) EnvOrDefault(key, def string) string {
+	if v := os.Getenv(key); v != "" {
+		return v
+	}
+	return def
+}
+
 // IsDevelopment 判断是否为开发环境
 func (b *BaseService) IsDevelopment() bool {
 	// 1. Wails 特有环境变量

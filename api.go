@@ -9,11 +9,6 @@ import (
 	"net/http"
 )
 
-// API URLs
-const SERVER_URL = "https://extension.migaox.com"
-const BIANXIE_URL = "https://api.bianxie.ai"
-const OPENHUB_URL = "https://api.openai-hub.com"
-
 // Request/Response structs
 type ChatRequest struct {
 	Message string `json:"message"`
@@ -118,7 +113,7 @@ func (api *APIService) ChatAPI(message string) (ChatResponse, error) {
 	var chatResponse ChatResponse
 
 	requestBody, _ := json.Marshal(ChatRequest{Message: message})
-	url := fmt.Sprintf("%s/ai-translator/openai", SERVER_URL)
+	url := fmt.Sprintf("%s/ai-translator/openai", api.EnvOrDefault("SERVER_URL", "https://extension.migaox.com"))
 	response, err := api.MakePostRequest(url, "", requestBody)
 
 	if err != nil {
@@ -138,7 +133,7 @@ func (api *APIService) ChatAPIV2(messages string) (ChatResponse, error) {
 	var chatResponse ChatResponse
 
 	requestBody, _ := json.Marshal(ChatRequestV2{Messages: messages})
-	url := fmt.Sprintf("%s/ai-translator/openai/chat", SERVER_URL)
+	url := fmt.Sprintf("%s/ai-translator/openai/chat", api.EnvOrDefault("SERVER_URL", "https://extension.migaox.com"))
 	response, err := api.MakePostRequest(url, "", requestBody)
 
 	if err != nil {
@@ -160,8 +155,9 @@ func (api *APIService) AIBianxieAPI(messages string) (ChatResponse, error) {
 	json.Unmarshal([]byte(messages), &parsedMessages)
 	requestBody, _ := json.Marshal(BianxieChatRequest{Messages: parsedMessages, Model: "gpt-3.5-turbo", Stream: false})
 	// println("requestBody", string(requestBody))
-	url := fmt.Sprintf("%s/v1/chat/completions", BIANXIE_URL)
-	response, err := api.MakePostRequest(url, "sk-8SjlkyqUQMESPzZdfma7abopO9HcZ3epYmwckJcMAQwLnPHD", requestBody)
+	url := fmt.Sprintf("%s/v1/chat/completions", api.EnvOrDefault("BIANXIE_URL", "https://api.bianxie.ai"))
+	token := api.EnvOrDefault("BIANXIE_API_KEY", "")
+	response, err := api.MakePostRequest(url, token, requestBody)
 
 	if err != nil {
 		api.logSvc.Error("AIBianxieAPI failed: %v", err)
@@ -182,8 +178,9 @@ func (api *APIService) AIOpenHubAPI(messages string) (ChatResponse, error) {
 	json.Unmarshal([]byte(messages), &parsedMessages)
 	requestBody, _ := json.Marshal(BianxieChatRequest{Messages: parsedMessages, Model: "gpt-3.5-turbo", Stream: false})
 	// println("requestBody", string(requestBody))
-	url := fmt.Sprintf("%s/v1/chat/completions", OPENHUB_URL)
-	response, err := api.MakePostRequest(url, "sk-S1KQNcR9Op9Er1VmeGVj3NhPf5Hsa0aq3aAU6zpkmOwUI8TJ", requestBody)
+	url := fmt.Sprintf("%s/v1/chat/completions", api.EnvOrDefault("OPENHUB_URL", "https://api.openai-hub.com"))
+	token := api.EnvOrDefault("OPENHUB_API_KEY", "")
+	response, err := api.MakePostRequest(url, token, requestBody)
 
 	if err != nil {
 		api.logSvc.Error("AIOpenHubAPI failed: %v", err)

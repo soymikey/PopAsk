@@ -29,23 +29,23 @@ import "./app.css";
 const App = () => {
   const [promptList, setPromptList] = useLocalStorage(
     PROMPT_LIST_KEY,
-    DEFAULT_PROMPT_OPTIONS
+    DEFAULT_PROMPT_OPTIONS,
   );
   const [systemShortcuts, setSystemShortcuts] = useLocalStorage(
     SYSTEM_SHORTCUT_KEY,
-    DEFAULT_SHORTCUT_LIST
+    DEFAULT_SHORTCUT_LIST,
   );
 
   // history
   const [historyList, setHistoryList] = useLocalStorage(
     HISTORY_LIST_KEY,
-    DEFAULT_HISTORY_LIST
+    DEFAULT_HISTORY_LIST,
   );
 
   // chat history
   const [chatHistoryList, setChatHistoryList] = useLocalStorage(
     CHAT_HISTORY_LIST_KEY,
-    DEFAULT_CHAT_HISTORY_LIST
+    DEFAULT_CHAT_HISTORY_LIST,
   );
 
   // current chat messages
@@ -53,7 +53,7 @@ const App = () => {
 
   const [selectedPrompt, setSelectedPrompt] = useLocalStorage(
     SELECTED_PROMPT_KEY,
-    DEFAULT_PROMPT_OPTIONS_VALUE
+    DEFAULT_PROMPT_OPTIONS_VALUE,
   );
 
   const [activeKey, setActiveKey] = useState("chat");
@@ -61,7 +61,7 @@ const App = () => {
   // Shortcut guide state
   const [showShortcutGuide, setShowShortcutGuide] = useLocalStorage(
     "showShortcutGuide",
-    true
+    true,
   );
 
   const [ORCLang, setORCLang] = useLocalStorage(ORC_LANG_KEY, DEFAULT_ORC_LANG);
@@ -73,7 +73,7 @@ const App = () => {
   const syncShortcutList = (promptList, systemShortcuts) => {
     EventsEmit(
       "syncShortcutList",
-      JSON.stringify([...promptList, ...systemShortcuts])
+      JSON.stringify([...promptList, ...systemShortcuts]),
     );
   };
 
