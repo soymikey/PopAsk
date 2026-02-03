@@ -137,9 +137,9 @@ func (api *APIService) MakePostRequest(url, token string, payload []byte) ([]byt
 }
 
 type ChatCompletionsOptions struct {
-	URL     string
-	Token   string
-	Model   string
+	URL      string
+	Token    string
+	Model    string
 	Messages []map[string]interface{}
 }
 
@@ -178,7 +178,7 @@ func (api *APIService) ChatAPI(message string) (ChatResponse, error) {
 		return ChatResponse{}, fmt.Errorf("marshal request: %w", err)
 	}
 	url := fmt.Sprintf("%s/pop-ask", api.EnvOrDefault("SERVER_URL", "https://beaptmqzdyznkhktjntq.functions.supabase.co"))
-	token := api.EnvOrDefault("SUPABASE_ANON_KEY", "")
+	token := api.EnvOrDefault("SUPABASE_ANON_KEY", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJlYXB0bXF6ZHl6bmtoa3RqbnRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAwNDIwNzgsImV4cCI6MjA4NTYxODA3OH0.hFb6eXZwpBU3NPfamByQpGLXH-O9jkXpyNrfyQKVdJE")
 	response, err := api.MakePostRequest(url, token, requestBody)
 	if err != nil {
 		api.logSvc.Error("ChatAPI failed: %v", err)
