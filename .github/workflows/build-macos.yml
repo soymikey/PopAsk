@@ -65,8 +65,15 @@ jobs:
         run: |
           security default-keychain -s build.keychain
           security unlock-keychain -p "" build.keychain
+          security list-keychains -d user -s build.keychain
+          IDENTITY=$(security find-identity -v -p codesigning build.keychain | grep "Developer ID Application" | head -1 | awk '{print $2}')
+          if [ -z "$IDENTITY" ]; then
+            echo "Available identities in build.keychain:"
+            security find-identity -v -p codesigning build.keychain
+            exit 1
+          fi
           codesign --force --deep --options runtime \
-            -s "Developer ID Application" \
+            -s "$IDENTITY" \
             --entitlements build/darwin/entitlements.plist \
             build/bin/PopAsk.app
 
