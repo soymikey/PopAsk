@@ -1,10 +1,10 @@
-# 调试用：仅在推送到 windows 分支时构建 Windows 安装包
+# 调试用：仅在推送到 feature/windows 分支时构建 Windows 安装包
 name: Build (Windows)
 
 on:
   push:
     branches:
-      - windows
+      - feature/windows
 
 env:
   NODE_OPTIONS: "--max-old-space-size=4096"
