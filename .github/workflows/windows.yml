@@ -32,7 +32,7 @@ jobs:
 
       - name: Install NSIS
         run: |
-          winget install NSIS.NSIS --silent --accept-package-agreements
+          choco install nsis -y
           $nsis = "${env:ProgramFiles(x86)}\NSIS"
           if (-not (Test-Path $nsis)) { $nsis = "$env:ProgramFiles\NSIS" }
           echo "$nsis" >> $env:GITHUB_PATH
