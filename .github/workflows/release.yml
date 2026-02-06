@@ -63,55 +63,38 @@ jobs:
         run: |
           ditto -c -k --keepParent build/bin/PopAsk.app PopAsk.zip
           MAX_WAIT=1200
-          POLL_INTERVAL=30
-          MAX_ATTEMPTS=3
-          NOTARIZED=0
-          for ATTEMPT in $(seq 1 $MAX_ATTEMPTS); do
-            echo "Notarization attempt $ATTEMPT of $MAX_ATTEMPTS"
-            SUBMISSION_OUTPUT=$(xcrun notarytool submit PopAsk.zip \
+          for attempt in 1 2 3; do
+            echo "Notarization attempt $attempt of 3"
+            ( xcrun notarytool submit PopAsk.zip \
               --apple-id "$APPLE_ID" \
               --password "$APPLE_APP_SPECIFIC_PASSWORD" \
               --team-id "$APPLE_TEAM_ID" \
-              --output-format json)
-            SUBMISSION_ID=$(echo "$SUBMISSION_OUTPUT" | grep -o '"id":"[^"]*"' | head -1 | cut -d'"' -f4)
-            if [ -z "$SUBMISSION_ID" ]; then
-              echo "Failed to get submission id. Output: $SUBMISSION_OUTPUT"
-              exit 1
-            fi
-            echo "Submission id: $SUBMISSION_ID"
-            ELAPSED=0
-            while [ $ELAPSED -lt $MAX_WAIT ]; do
-              if STATUS=$(xcrun notarytool info "$SUBMISSION_ID" \
-                --apple-id "$APPLE_ID" \
-                --password "$APPLE_APP_SPECIFIC_PASSWORD" \
-                --team-id "$APPLE_TEAM_ID" 2>&1); then
-                if echo "$STATUS" | grep -q "status: Accepted"; then
-                  echo "Notarization accepted."
-                  NOTARIZED=1
-                  break 2
-                fi
-                if echo "$STATUS" | grep -q "status: Invalid"; then
-                  echo "Notarization invalid. Fetching log..."
-                  xcrun notarytool log "$SUBMISSION_ID" --apple-id "$APPLE_ID" --password "$APPLE_APP_SPECIFIC_PASSWORD" --team-id "$APPLE_TEAM_ID" || true
-                  exit 1
-                fi
-              else
-                echo "Poll failed (will retry): $STATUS"
-              fi
-              sleep $POLL_INTERVAL
-              ELAPSED=$((ELAPSED + POLL_INTERVAL))
-              echo "Waiting... ${ELAPSED}s / ${MAX_WAIT}s"
+              --wait ) &
+            pid=$!
+            elapsed=0
+            while kill -0 $pid 2>/dev/null && [ $elapsed -lt $MAX_WAIT ]; do
+              sleep 30
+              elapsed=$((elapsed + 30))
+              echo "Waiting... ${elapsed}s / ${MAX_WAIT}s"
             done
-            if [ $NOTARIZED -eq 1 ]; then break; fi
-            if [ $ATTEMPT -lt $MAX_ATTEMPTS ]; then
-              echo "Notarization timed out after ${MAX_WAIT}s. Retrying from submission..."
+            if kill -0 $pid 2>/dev/null; then
+              kill $pid 2>/dev/null || true
+              wait $pid 2>/dev/null || true
+              echo "Attempt $attempt timed out after 20 minutes."
+              [ $attempt -eq 3 ] && exit 1
+              continue
             fi
+            wait $pid
+            status=$?
+            if [ $status -eq 0 ]; then
+              echo "Notarization accepted."
+              xcrun stapler staple build/bin/PopAsk.app
+              exit 0
+            fi
+            echo "Attempt $attempt failed with exit code $status."
+            [ $attempt -eq 3 ] && exit 1
           done
-          if [ $NOTARIZED -ne 1 ]; then
-            echo "Notarization timed out after $MAX_ATTEMPTS attempts (${MAX_WAIT}s each)."
-            exit 1
-          fi
-          xcrun stapler staple build/bin/PopAsk.app
+          exit 1
 
       - name: Zip app for release
         run: |
