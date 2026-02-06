@@ -4,3 +4,10 @@ frontend/dist
 logs/
 .env
 macCertification/
+
+# macOS
+.DS_Store
+
+# Certificates / secrets
+*.p12
+certificate.p12
